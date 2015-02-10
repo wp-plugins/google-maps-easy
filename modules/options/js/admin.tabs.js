@@ -90,6 +90,7 @@
          * Adds an event listener to the tabs.
          * @param {string} events
          * @param {function} callback
+         * @param {boolean} once
          */
         on: function (events, callback, once) {
             if (typeof once !== 'boolean') {
@@ -143,11 +144,36 @@
         _init: function () {
             this.hideAll();
 
-            this.getTabs().on('click', $.proxy(function (e) {
+            var shellChanger = $.proxy(function (e) {
                 e.preventDefault();
 
-                this.show($(e.currentTarget).attr('href'));
-            }, this));
+                var editController = app.EditMapController;
+
+                if (editController.Form.isDirty()) {
+                    if (!confirm('You have not saved your changes after editing map. ' +
+                        'Do you want to leave this page without saving?')) {
+                        return;
+                    }
+
+                    editController.Form.setDirty(false);
+                }
+
+                try {
+                    this.show($(e.currentTarget).attr('href'));
+                } catch (exception) {
+                    if (e.currentTarget.hash === undefined) {
+                        return;
+                    }
+
+                    this.show(e.currentTarget.hash);
+                }
+            }, this);
+
+            if (app.HashParser) {
+                app.HashParser.onChange(shellChanger);
+            }
+
+            this.getTabs().on('click', shellChanger);
 
             if (!this.storeHashes) {
                 this.showDefaultTab();

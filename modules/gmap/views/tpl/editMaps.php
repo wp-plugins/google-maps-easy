@@ -44,12 +44,12 @@
                             </div>
                             <!-- /.col-xs-3 egm-marker-latlng -->
                             <div class="col-xs-3 egm-marker-actions">
-                                <button class="button button-small egm-marker-edit" type="button" data-toggle="tooltip" title="Edit">
+                                <button class="button button-small egm-marker-edit" type="button" title="Edit">
                                     <i class="fa fa-fw fa-pencil"></i>
                                     <!-- /.fa fa-fw fa-pencil -->
                                 </button>
                                 <!-- /#egmEditMarker.button -->
-                                <button class="button button-small egm-marker-remove" type="button" data-toggle="tooltip" title="Delete">
+                                <button class="button button-small egm-marker-remove" type="button" title="Delete">
                                     <i class="fa fa-fw fa-trash-o"></i>
                                     <!-- /.fa fa-fw fa-trash-o -->
                                 </button>

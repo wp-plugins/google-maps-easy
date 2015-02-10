@@ -1,9 +1,9 @@
 === Google Maps Easy ===
 Contributors: supsystic.com
-Donate link: http://dev.supsystic.com/plugins/google-maps-plugin/
+Donate link: http://supsystic.com/plugins/google-maps-plugin/
 Tags: google map, google map plugin, google maps wordpress plugin, google maps, google maps plugin, directions,  map, maps, location, direction, map marker, marker, geocoder, post map, widget map, widget, google map widget, custom marker icons and text, custom marker text, geo, google map short code,  google map styles, openstreetmap, latitude, longitude, placemarker, pronamic, reverse geocode, wp map, wp maps, supsystic
 Tested up to: 4.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers or locations. Display any data on the map: text, images, videos. Custom map marker icons
@@ -58,6 +58,12 @@ Important! Short code must be inserted in a text editor page, and not in the vis
 1. Google Maps Easy WordPress plugin admin area
 
 == Changelog ==
+
+= 1.0.4 =
+ * Fixes UI bugs 
+ * Fixed WordPress navigation for plugin pages
+ * Fixed UI alerts for non-saved maps
+ * Minor issues fix
 
 = 1.0.3 =
 * Release on WordPress.org

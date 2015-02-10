@@ -1,9 +1,12 @@
 var gmpAdminFormChanged = []
 ,	gmpDefaultOpenTab = '';
-window.onbeforeunload = function(){
-	// If there are at lease one unsaved form - show message for confirnation for page leave
-	if(gmpAdminFormChanged.length)
-		return 'Some changes were not-saved. Are you sure you want to leave?';
+window.onbeforeunload = function() {
+	if (window.EasyGoogleMaps && window.EasyGoogleMaps.EditMapController) {
+		if (window.EasyGoogleMaps.EditMapController.Form.isDirty()) {
+			return 'You have not saved your changes after editing map. ' +
+				'Do you want to leave this page without saving?';
+		}
+	}
 };
 jQuery(document).ready(function(){
 	jQuery('#gmpAdminOptionsTabs').tabs({

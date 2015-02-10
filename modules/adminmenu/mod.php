@@ -18,11 +18,39 @@ class adminmenuGmp extends moduleGmp {
 	public function initMenu() {
 		$accessCap = 'manage_options';
 		$accessCap = dispatcherGmp::applyFilters('adminMenuAccessCap', $accessCap);
+
 		$options = array(
-            'add_new_map' => array('title' => langGmp::_('Add New Map'),	'capability' => $accessCap, 'menu_slug' => $this->_mainSlug. '&tab=gmpAddMap',	'function' =>  array(frameGmp::_()->getModule('gmap')->getController(), 'getAllMaps')),
-            'all_maps' => array('title' => langGmp::_('All Maps'), 'capability' => $accessCap, 'menu_slug' => $this->_mainSlug. '&tab=gmpAllMaps', 'function' =>  array(frameGmp::_()->getModule('gmap')->getController(), 'getAllMaps')),
-            'plugin_settings' => array('title' => langGmp::_('Plugin Settings'),		'capability' => $accessCap, 'menu_slug' => $this->_mainSlug. '&tab=gmpPluginSettings',	'function' => array(frameGmp::_()->getModule('gmap')->getController(), 'getAllMaps')),
-        );
+			'add_new_map'     => array(
+				'title'      => langGmp::_('Add New Map'),
+				'capability' => $accessCap,
+				'menu_slug'  => $this->_mainSlug . '#gmpAddMap',
+				'function'   => array(
+					frameGmp::_()->getModule('gmap')->getController(),
+					'getAllMaps'
+				)
+			),
+			'all_maps'        => array(
+				'title'      => langGmp::_('All Maps'),
+				'capability' => $accessCap,
+				'menu_slug'  => $this->_mainSlug . '#gmpAllMaps',
+				'function'   => array(
+					frameGmp::_()->getModule('gmap')->getController(),
+					'getAllMaps'
+				)
+			),
+			'plugin_settings' => array(
+				'title'      => langGmp::_(
+					'Plugin Settings'
+				),
+				'capability' => $accessCap,
+				'menu_slug'  => $this->_mainSlug . '#gmpPluginSettings',
+				'function'   => array(
+					frameGmp::_()->getModule('gmap')->getController(),
+					'getAllMaps'
+				)
+			),
+		);
+
 		$options = dispatcherGmp::applyFilters('adminMenuOptions', $options);
 		$mainSlug = dispatcherGmp::applyFilters('adminMenuMainSlug', $this->_mainSlug);	
 		add_menu_page(langGmp::_('Google Maps Easy'), langGmp::_('Google Maps Easy'), $accessCap, $this->_mainSlug, array(frameGmp::_()->getModule('options')->getView(), 'getAdminPage'), 'dashicons-admin-site');

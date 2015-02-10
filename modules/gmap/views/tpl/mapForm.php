@@ -2,7 +2,7 @@
 
 <?php echo htmlGmp::formStart(
     'editMapForm',
-    array('attrs' => 'id="gmpEditMapForm" class="gmpMapFormItm"')
+    array('attrs' => 'id="gmpEditMapForm" class="gmpMapFormItm" data-dirty="false"')
 ); ?>
 
 <table class="form-table egm-form-map">

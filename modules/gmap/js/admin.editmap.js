@@ -60,6 +60,12 @@
                 width_units: '%',
                 height: 250
             },
+            isDirty: function () {
+                return this.attr('data-dirty') == 'true';
+            },
+            setDirty: function (dirty) {
+                this.attr('data-dirty', dirty);
+            },
             control: function (name, subname) {
                 var selectorStr = 'map_opts[' + name + ']';
 
@@ -126,6 +132,8 @@
 
                         _ctrl.editMap(response.data.map_id);
                         _ctrl.refreshMapsList();
+
+                        this.setDirty(false);
                     }, this)
                 });
             }
@@ -216,6 +224,10 @@
         init: function () {
             this.resetPage();
             this.loadByHash();
+
+            this.Form.on('change', $.proxy(function () {
+                this.Form.setDirty(true);
+            }, this));
 
             this.Buttons.Save.on('click', $.proxy(function (e) {
                 e.preventDefault();
