@@ -675,6 +675,13 @@
 
     $(document).ready(function () {
         app.MarkerEditController = new Controller();
+
+        // Fix for tineMCE height in Chrome and FF:
+        var $tinyEditor = $('.wp-editor-area');
+
+        if ($tinyEditor.length) {
+          $tinyEditor.css({ height: 240 });
+        }
     });
 
 }(jQuery, window.EasyGoogleMaps = window.EasyGoogleMaps || {}));
