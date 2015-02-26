@@ -45,7 +45,7 @@ class gmapModelGmp extends modelGmp {
 		}
 		$insert = array(
 			'title'			=> trim($params['title']),
-			'description'	=> $params['description'],
+			'description'	=> isset($params['description']) ? $params['description'] : '',
 			'html_options'	=> utilsGmp::serialize($htmlOpts),
 			'params'		=> utilsGmp::serialize($mapOpts),
 			'create_date'	=> date('Y-m-d H:i:s')

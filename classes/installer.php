@@ -107,8 +107,10 @@ class installerGmp {
 			  KEY `id` (`id`),
 			  UNIQUE INDEX `code` (`code`)
 			) DEFAULT CHARSET=utf8");
-			dbGmp::query("`".$wpPrefix.GMP_DB_PREF."options` (  `code` ,  `value` ,  `label` ) 
+			dbGmp::query("insert into `".$wpPrefix.GMP_DB_PREF."options` (  `code` ,  `value` ,  `label` ) 
 					VALUES ( 'save_statistic',  '0',  'Send statistic')");
+			dbGmp::query("insert into `@__options` (`code`,`value`,`label`) VALUES
+			('infowindow_size','". utilsGmp::serialize(array('width'=>'100','height'=>'100')). "','Info Window Size')");
 		}
 		$eol = "\n";
 		
@@ -167,12 +169,12 @@ class installerGmp {
 		 */
 		if(!dbGmp::exist($wpPrefix.GMP_DB_PREF."icons")){
 			dbDelta("CREATE TABLE IF NOT EXISTS `".$wpPrefix.GMP_DB_PREF."icons"."` (
-					`id` int(11) NOT NULL AUTO_INCREMENT,
-					`title` varchar(100) CHARACTER SET utf8,   
-					`description` text CHARACTER SET utf8,   
-					`path` varchar(250) CHARACTER SET utf8,   
-					 PRIMARY KEY (`id`)
-					)");        
+				`id` int(11) NOT NULL AUTO_INCREMENT,
+				`title` varchar(100) CHARACTER SET utf8,   
+				`description` text CHARACTER SET utf8,   
+				`path` varchar(250) CHARACTER SET utf8,   
+				 PRIMARY KEY (`id`)
+			)");        
 		}
 
 		/**

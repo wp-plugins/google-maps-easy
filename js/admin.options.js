@@ -91,58 +91,7 @@ jQuery(document).ready(function(){
 			}
 		}, 500);
 	}
-	
-	jQuery('#toeModActivationPopupFormGmp').submit(function(){
-		jQuery(this).sendFormGmp({
-			msgElID: 'toeModActivationPopupMsgGmp',
-			onSuccess: function(res){
-				if(res && !res.error) {
-					var goto = jQuery('#toeModActivationPopupFormGmp').find('input[name=goto]').val();
-					if(goto && goto != '') {
-					  toeRedirect(goto);  
-					} else
-					  toeReload();
-				}
-			}
-		});
-		return false;
-	});
-	jQuery('.toeRemovePlugActivationNoticeGmp').click(function(){
-		  jQuery(this).parents('.info_box:first').animateRemove();
-		  return false;
-	});
-	if(window.location && window.location.href && window.location.href.indexOf('plugins.php')) {
-		if(GMP_DATA.allCheckRegPlugs && typeof(GMP_DATA.allCheckRegPlugs) == 'object') {
-			for(var plugName in GMP_DATA.allCheckRegPlugs) {
-				var plugRow = jQuery('#'+ plugName.toLowerCase())
-				,	updateMsgRow = plugRow.next('.plugin-update-tr');
-				if(plugRow.size() && updateMsgRow.find('.update-message').size()) {
-					updateMsgRow.find('.update-message').find('a').each(function(){
-						if(jQuery(this).html() == 'update now') {
-							jQuery(this).click(function(){
-								toeShowModuleActivationPopupGmp( plugName, 'activateUpdate', jQuery(this).attr('href') );
-								return false;
-							});
-						}
-					});
-				}
-			}
-		}
-	}
 });
-function toeShowModuleActivationPopupGmp(plugName, action, goto) {
-	action = action ? action : 'activatePlugin';
-	goto = goto ? goto : '';
-	jQuery('#toeModActivationPopupFormGmp').find('input[name=plugName]').val(plugName);
-	jQuery('#toeModActivationPopupFormGmp').find('input[name=action]').val(action);
-	jQuery('#toeModActivationPopupFormGmp').find('input[name=goto]').val(goto);
-	
-	tb_show(toeLangGmp('Activate plugin'), '#TB_inline?width=710&height=220&inlineId=toeModActivationPopupShellGmp', false);
-	var popupWidth = jQuery('#TB_ajaxContent').width()
-	,	docWidth = jQuery(document).width();
-	// Here I tried to fix usual wordpress popup displace to right side
-	jQuery('#TB_window').css({'left': Math.round((docWidth - popupWidth)/2)+ 'px', 'margin-left': '0'});
-}
 function changeAdminFormGmp(formId) {
 	if(jQuery.inArray(formId, gmpAdminFormChanged) == -1)
 		gmpAdminFormChanged.push(formId);

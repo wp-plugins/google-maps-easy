@@ -326,8 +326,10 @@ class utilsGmp {
      * 
      * @return NULL Check if it's site or multisite and activate.
      */
-    public function activatePlugin() 
-    {
+    static public function activatePlugin() {
+		if(GMP_TEST_MODE) {
+			add_action('activated_plugin', array(frameGmp::_(), 'savePluginActivationErrors'));
+		}
         global $wpdb;
         if (function_exists('is_multisite') && is_multisite()) {
             $orig_id = $wpdb->blogid;
@@ -349,8 +351,7 @@ class utilsGmp {
      * 
      * @return NULL Check if it's site or multisite and decativate it.
      */
-    public function deactivatePlugin() 
-    {
+    static public function deactivatePlugin() {
         global $wpdb;
         if (function_exists('is_multisite') && is_multisite()) {
             $orig_id = $wpdb->blogid;
@@ -366,7 +367,6 @@ class utilsGmp {
             installerGmp::delete();
         }
     }
-	
 	static public function isWritable($filename) {
 		return is_writable($filename);
 	}

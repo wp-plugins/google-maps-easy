@@ -86,7 +86,7 @@ abstract class controllerGmp {
 	public function __call($name, $arguments) {
 		$model = $this->getModel();
 		if(method_exists($model, $name))
-			return $model->$name($arguments[0]);
+			return $model->$name(isset($arguments[0]) ? $arguments[0] : NULL);
 		else
 			return false;
 	}

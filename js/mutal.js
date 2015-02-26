@@ -14,14 +14,3 @@ function toggleBounce(marker,animType) {
 		marker.setAnimation(google.maps.Animation.BOUNCE);
 	}
 }
- function gmpGetLicenseBlock() {
-   return '<a class="mapLicenzetext GmpMapLicenseBlock" href="http://supsystic.com/" target="_blank">'+ 'Easy Google Maps'+ '</a>';
-}
-function gmpAddLicenzeBlock(mapId){
-	if(parseInt(GMP_DATA.youHaveLicense))
-		return;
-	var befElem = jQuery('#'+ mapId).find('.gmnoprint').find('.gm-style-cc');
-	befElem.css('float', 'right');
-	befElem.css('width', '400px');
-	befElem.find('a').after(gmpGetLicenseBlock());
-}

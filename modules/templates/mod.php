@@ -69,11 +69,7 @@ class templatesGmp extends moduleGmp {
 			frameGmp::_()->addScript('ajaxupload', GMP_JS_PATH. 'ajaxupload.js');
 			frameGmp::_()->addScript('postbox', get_bloginfo('wpurl'). '/wp-admin/js/postbox.js');
 			add_action('wp_enqueue_scripts', array($this, 'addThickbox'));
-
-			$jsData['allCheckRegPlugs']	= modInstallerGmp::getCheckRegPlugs();
-		} else {
-
-        }
+		}
         foreach($this->_styles as $s => $sInfo) {
             if(isset($sInfo['for'])) {
                 if(($sInfo['for'] == 'frontend' && is_admin()) || ($sInfo['for'] == 'admin' && !is_admin()))

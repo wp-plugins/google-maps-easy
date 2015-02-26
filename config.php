@@ -56,11 +56,12 @@
     
     
     define('GMP_PLUGIN_INSTALLED', true);
-    define('GMP_VERSION', '1.0.5');
+    define('GMP_VERSION', '1.0.6');
     define('GMP_USER', 'user');
     
     define('GMP_CLASS_PREFIX', 'gmpc');        
     define('GMP_FREE_VERSION', false);
+	define('GMP_TEST_MODE', true);
     
     define('GMP_API_UPDATE_URL', 'http://localhost/');
     

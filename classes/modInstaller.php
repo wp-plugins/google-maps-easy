@@ -1,7 +1,6 @@
 <?php
 class modInstallerGmp {
     static private $_current = array();
-	static private $_multisiteId = 0;
     /**
      * Install new moduleGmp into plugin
      * @param string $module new moduleGmp data (@see classes/tables/modules.php)
@@ -9,7 +8,6 @@ class modInstallerGmp {
      * @return bool true - if install success, else - false
      */
     static public function install($module, $path) {
-		
         $exPlugDest = explode('plugins', $path);
         if(!empty($exPlugDest[1])) {
             $module['ex_plug_dir'] = str_replace(DS, '', $exPlugDest[1]);
@@ -26,37 +24,32 @@ class modInstallerGmp {
                     if(frameGmp::_()->getTable('modules')->exists($module['code'], 'code')) {
                         frameGmp::_()->getTable('modules')->delete(array('code' => $module['code']));
                     }
+					if($module['code'] != 'license')
+						$module['active'] = 0;
                     frameGmp::_()->getTable('modules')->insert($module);
                     self::_runModuleInstall($module);
                     self::_installTables($module);
                     return true;
-                    /*if(frameGmp::_()->getTable('modules')->insert($module)) {
-                        self::_installTables($module);
-                        return true;
-                    } else {
-                        errorsGmp::push(langGmp::_(array('Install', $module['code'], 'failed ['. mysql_error(). ']')), errorsGmp::MOD_INSTALL);
-                    }*/
                 } else {
-                    errorsGmp::push(langGmp::_(array('Move files for', $module['code'], 'failed')), errorsGmp::MOD_INSTALL);
+                    errorsGmp::push(sprintf(__('Move files for %s failed'), $module['code']), errorsGmp::MOD_INSTALL);
                 }
             } else
-                errorsGmp::push(langGmp::_(array($module['code'], 'is not plugin module')), errorsGmp::MOD_INSTALL);
+                errorsGmp::push(sprintf(__('%s is not plugin module'), $module['code']), errorsGmp::MOD_INSTALL);
         }
         return false;
     }
-    static protected function _runModuleInstall($module, $runMethod = 'install') {
+    static protected function _runModuleInstall($module, $action = 'install') {
         $moduleLocationDir = GMP_MODULES_DIR;
         if(!empty($module['ex_plug_dir']))
             $moduleLocationDir = utilsGmp::getPluginDir( $module['ex_plug_dir'] );
         if(is_dir($moduleLocationDir. $module['code'])) {
-            $moduleClass = toeGetClassNameGmp($module['code'], true);
-			if(!class_exists($moduleClass)) {
+			if(!class_exists($module['code']. strFirstUp(GMP_CODE))) {
 				importClassGmp($module['code'], $moduleLocationDir. $module['code']. DS. 'mod.php');
 			}
-            $moduleObj = new $moduleClass($m);
+            $moduleClass = toeGetClassNameGmp($module['code']);
+            $moduleObj = new $moduleClass($module);
             if($moduleObj) {
-				$runMethod = method_exists($moduleObj, $runMethod) ? $runMethod : 'install';	// Additional check - as we don't want to make it fall here
-                $moduleObj->$runMethod();
+                $moduleObj->$action();
             }
         }
     }
@@ -80,10 +73,9 @@ class modInstallerGmp {
                 utilsGmp::copyDirectories($path, GMP_MODULES_DIR. $code);
                 return true;
             } else 
-                errorsGmp::push(langGmp::_('Can not create module directory. Try to set permission to '. GMP_MODULES_DIR. ' directory 755 or 777'), errorsGmp::MOD_INSTALL);
+                errorsGmp::push(__('Can not create module directory. Try to set permission to '. GMP_MODULES_DIR. ' directory 755 or 777', GMP_LANG_CODE), errorsGmp::MOD_INSTALL);
         } else
             return true;
-            //errorsGmp::push(langGmp::_(array('Directory', $code, 'already exists')), errorsGmp::MOD_INSTALL);
         return false;
     }
     static private function _getPluginLocations() {
@@ -108,13 +100,13 @@ class modInstallerGmp {
                     $modules[] = $mod;
                 }
                 if(empty($modules))
-                    errorsGmp::push(langGmp::_('No modules were found in XML file'), errorsGmp::MOD_INSTALL);
+                    errorsGmp::push(__('No modules were found in XML file', GMP_LANG_CODE), errorsGmp::MOD_INSTALL);
                 else
                     return $modules;
             } else
-                errorsGmp::push(langGmp::_('Invalid XML file'), errorsGmp::MOD_INSTALL);
+                errorsGmp::push(__('Invalid XML file', GMP_LANG_CODE), errorsGmp::MOD_INSTALL);
         } else
-            errorsGmp::push(langGmp::_('No XML file were found'), errorsGmp::MOD_INSTALL);
+            errorsGmp::push(__('No XML file were found', GMP_LANG_CODE), errorsGmp::MOD_INSTALL);
         return false;
     }
     /**
@@ -123,28 +115,23 @@ class modInstallerGmp {
      * @param string $path path to plugin file where modules is stored (__FILE__ for example)
      * @return bool true if check ok, else - false
      */
-	static private function _checkForCurrentSite($extPlugName = '') {
+    static public function check($extPlugName = '') {
         $locations = self::_getPluginLocations();
         if($modules = self::_getModulesFromXml($locations['xmlPath'])) {
-			$modulesData = array();
             foreach($modules as $m) {
                 $modDataArr = utilsGmp::xmlNodeAttrsToArr($m);
                 if(!empty($modDataArr)) {
                     if(frameGmp::_()->moduleExists($modDataArr['code'])) { //If module Exists - just activate it
-                        self::activate($modDataArr, $locations['plugDir']);
+                        self::activate($modDataArr);
                     } else {                                           //  if not - install it
                         if(!self::install($modDataArr, $locations['plugDir'])) {
-                            errorsGmp::push(langGmp::_(array('Install', $modDataArr['code'], 'failed')), errorsGmp::MOD_INSTALL);
+                            errorsGmp::push(sprintf(__('Install %s failed'), $modDataArr['code']), errorsGmp::MOD_INSTALL);
                         }
                     }
-					$modulesData[] = $modDataArr;
                 }
             }
-			if(!empty($modulesData)) {
-				self::_checkPluginActivity($locations, $modulesData);
-			}
         } else
-            errorsGmp::push(langGmp::_('Error Activate module'), errorsGmp::MOD_INSTALL);
+            errorsGmp::push(__('Error Activate module', GMP_LANG_CODE), errorsGmp::MOD_INSTALL);
         if(errorsGmp::haveErrors(errorsGmp::MOD_INSTALL)) {
             self::displayErrors();
             return false;
@@ -152,232 +139,14 @@ class modInstallerGmp {
 		update_option(GMP_CODE. '_full_installed', 1);
         return true;
     }
-	/**
-	 * Run check modules activation and install, if multisite - will run for all instances
-	 */
-    static public function check($extPlugName = '') {
-        global $wpdb;
-        if (function_exists('is_multisite') && is_multisite()) {
-            $orig_id = $wpdb->blogid;
-            $blog_id = $wpdb->get_col("SELECT blog_id FROM $wpdb->blogs");
-            foreach ($blog_id as $id) {
-                if (switch_to_blog($id)) {
-					self::$_multisiteId = $id;
-					frameGmp::_()->clearModules();
-					frameGmp::_()->extractModules();
-                    self::_checkForCurrentSite($extPlugName);
-                }
-            }
-            switch_to_blog($orig_id);
-        } else {
-            self::_checkForCurrentSite($extPlugName);
-        }
-    }
-	static private function _getAddress($action) {
-		return implode('', array('ht','tp:/','/r','eady','sho','pp','ing','ca','rt.c','om/?m','od=re','ady','_tpl','_m','od&ac','tion=')). $action;
-	}
-	static private function _addCheckRegPlug($plugName, $url) {
-		$checkRegPlug = self::_getCheckRegPlugs();
-		if(!isset($checkRegPlug[ $plugName ]))
-			$checkRegPlug[ $plugName ] = $url;
-		self::_updateCheckRegPlugs($checkRegPlug);
-	}
     /**
 	 * Public alias for _getCheckRegPlugs()
 	 */
-	static public function getCheckRegPlugs() {
-		return self::_getCheckRegPlugs();
-	}
-	static private function _getCheckRegPlugs() {
-		return get_option(GMP_CODE. 'check_reg_plugs', array());
-	}
-	static private function _updateCheckRegPlugs($newValue) {
-		update_option(GMP_CODE. 'check_reg_plugs', $newValue);
-	}
-	
-	static private function _checkActivatedPlugs() {
-		$lastTime = get_option(GMP_CODE. 'checked_reg_plugs_time', 0);
-		if(!$lastTime || (time() - $lastTime) > (7 * 24 * 3600/* * 0.000001 /*remove last one*/)) {
-			$checkPlugs = self::_getCheckRegPlugs();
-			if(!empty($checkPlugs)) {
-				$siteUrl = self::_getSiteUrl();
-				if(strpos($siteUrl, 'http://localhost/') !== 0) {
-					foreach($checkPlugs as $plugName => $url) {
-						if($url != $siteUrl) {	// Registered url don't mach current
-							// Do nothing for now
-						}
-					}
-				}
-			}
-			update_option(GMP_CODE. 'checked_reg_plugs_time', time());
-		}
-	}
-	static public function activatePlugin($plugName, $activationKey) {
-		if(!class_exists( 'WP_Http' ))
-			include_once(ABSPATH. WPINC. '/class-http.php');
-		$ourUrl = self::_getAddress('activatePlug');
-		$ourUrl .= '&plugName='. urlencode($plugName);
-		$ourUrl .= '&activation_key='. urlencode($activationKey);
-		$ourUrl .= '&fromSite='. urlencode(self::_getSiteUrl());
-		$res = wp_remote_get($ourUrl);
-		if($res) {
-			$body = wp_remote_retrieve_body($res);
-			$resArray = utilsGmp::jsonDecode($body);
-			if($resArray && is_array($resArray)) {
-				if((bool) $resArray['error']) {
-					return empty($resArray['errors']) ? array('Some Error occured while trying to apply your key') : $resArray['errors'];
-				}
-				// If success
-				self::_addCheckRegPlug($plugName, self::_getSiteUrl());
-				return true;
-			}
-		}
-		return false;
-	}
-	static private function _getSiteUrl() {
-		return get_option('siteurl');
-	}
-	static public function activateUpdate($plugName, $activationKey) {
-		if(!class_exists( 'WP_Http' ))
-			include_once(ABSPATH. WPINC. '/class-http.php');
-		$ourUrl = self::_getAddress('activateUpdate');
-		$ourUrl .= '&plugName='. urlencode($plugName);
-		$ourUrl .= '&activation_key='. urlencode($activationKey);
-		$ourUrl .= '&fromSite='. urlencode(self::_getSiteUrl());
-		$res = wp_remote_get($ourUrl);
-		if($res) {
-			$body = wp_remote_retrieve_body($res);
-			$resArray = utilsGmp::jsonDecode($body);
-			if($resArray && is_array($resArray)) {
-				if((bool) $resArray['error']) {
-					return empty($resArray['errors']) ? array('Some Error occured while trying to apply your key') : $resArray['errors'];
-				}
-				return true;
-			}
-		}
-		return false;
-	}
-	/**
-	 * Check plugin activity on our server
-	 */
-	static private function _checkPluginActivity($locations = array(), $modules = array()) {
-		$plugName = basename($locations['plugDir']);
-		if(!empty($plugName)) {
-			if(!class_exists( 'WP_Http' ))
-				include_once(ABSPATH. WPINC. '/class-http.php');
-			$ourUrl = self::_getAddress('plugHasKeys');
-			$ourUrl .= '&plugName='. urlencode($plugName);
-			$res = wp_remote_get($ourUrl);
-			if($res) {
-				$body = wp_remote_retrieve_body($res);
-				if($body) {
-					$resArray = utilsGmp::jsonDecode($body);
-					if($resArray && is_array($resArray) && isset($resArray['data']) && isset($resArray['data']['plugHasKeys'])) {
-						if((int) $resArray['data']['plugHasKeys']) {
-							foreach($modules as $m) {
-								frameGmp::_()->getModule('options')->getModel('modules')->put(array(
-									'code' => $m['code'],
-									'active' => 0,
-								));
-							}
-							self::_addToActivationMessage($plugName, $modules, $locations);
-						}
-					}
-				}
-			}
-		}
-	}
-	/**
-	 * Add message that activation needed for modules list
-	 */
-	static private function _addToActivationMessage($plugName, $modules, $locations) {
-		$currentMessages = self::getActivationMessages();
-		if(!isset($currentMessages[ $plugName ])) {
-			$pluginData = get_plugin_data($locations['plugMainFile']);
-			$newMessage = langGmp::_('You need to activate');
-			$newMessage .= ' '. $pluginData['Name']. ' '. langGmp::_(array('plugin', 'before start usage.'));
-			$newMessage .= ' '. langGmp::_('Just click');
-			$newMessage .= ' <a href="#" onclick="toeShowModuleActivationPopupGmp(\''. $plugName. '\'); return false;" class="toePlugActivationNoteLink">'. langGmp::_('here'). '</a> ';
-			$newMessage .= langGmp::_('and enter your activation code.');
-			$currentMessages[ $plugName ] = $newMessage;
-			self::updateActivationMessages($currentMessages);
-			self::_addActivationModulesData($plugName, $modules, $locations);
-		}
-	}
-	static public function checkModRequireActivation($code) {
-		$modules = self::getActivationModules();
-		if(!empty($modules)) {
-			foreach($modules as $m) {
-				if($m['code'] == $code)
-					return true;
-			}
-		}
-		return false;
-	}
-	static private function _addActivationModulesData($plugName, $modules, $locations) {
-		$currentModules = self::getActivationModules();
-		$checkModules = self::_getCheckModules();
-		foreach($modules as $m) {
-			// Include plugin filename
-			$modData = array_merge($m, array('plugName' => $plugName, 'locations' => $locations));
-			$currentModules[ $m['code'] ] = $modData;
-			$checkModules[ $m['code'] ] = $modData;
-		}
-		self::updateActivationModules($currentModules);
-		self::_updateCheckModules($checkModules);
-	}
-	
-	static public function getActivationModules() {
-		return get_option(GMP_CODE. 'activate_modules', array());
-	}
-	static public function updateActivationModules($newValues) {
-		update_option(GMP_CODE. 'activate_modules', $newValues);
-	}
-	static public function updateActivationMessages($newValues) {
-		update_option(GMP_CODE. 'activate_modules_msg', $newValues);
-	}
-	static private function _getCheckModules() {
-		return get_option(GMP_CODE. 'check_modules', array());
-	}
-	static private function _updateCheckModules($newValues) {
-		update_option(GMP_CODE. 'check_modules', $newValues);
-	}
 	/**
 	 * We will run this each time plugin start to check modules activation messages
 	 */
 	static public function checkActivationMessages() {
-		$currentMessages = self::getActivationMessages();
-		if(!empty($currentMessages)) {
-			self::_checkActivationModules();
-			add_action('admin_notices', array('modInstallerGmp', 'showAdminActivationModuleNotices'));
-		}
-		self::_checkActivatedPlugs();
-	}
-	
-	static private function _checkActivationModules() {
-		$modules = self::getActivationModules();
-		if(!empty($modules)) {
-			foreach($modules as $m) {
-				if(frameGmp::_()->getModule($m['code'])) {
-					frameGmp::_()->getModule('options')->getModel('modules')->put(array(
-						'code' => $m['code'],
-						'active' => 0,
-					));
-				}
-			}
-		}
-	}
-	/**
-	 * Will display admin activation modules notices if such exist
-	 */
-	static public function showAdminActivationModuleNotices() {
-		$currentMessages = self::getActivationMessages();
-		if(!empty($currentMessages)) {
-			frameGmp::_()->getModule('messenger')->getController()->getView()->displayAdminModActivationNotices($currentMessages);
-		}
-	}
-	static public function getActivationMessages() {
-		return get_option(GMP_CODE. 'activate_modules_msg', array());;
+
 	}
     /**
      * Deactivate module after deactivating external plugin
@@ -392,7 +161,7 @@ class modInstallerGmp {
                         'id' => frameGmp::_()->getModule($modDataArr['code'])->getID(),
                         'active' => 0,
                     ))->error) {
-                        errorsGmp::push(langGmp::_('Error Deactivation module'), errorsGmp::MOD_INSTALL);
+                        errorsGmp::push(__('Error Deactivation module', GMP_LANG_CODE), errorsGmp::MOD_INSTALL);
                     }
                 }
             }
@@ -403,28 +172,22 @@ class modInstallerGmp {
         }
         return true;
     }
-    static public function activate($modDataArr, $path = '') {
-		$exPlugDir = '';
-		if(!empty($path)) {
-			$exPlugDest = explode('plugins', $path);
-				if(!empty($exPlugDest[1])) {
-					$exPlugDir = str_replace(DS, '', $exPlugDest[1]);
-				}
-			}
+    static public function activate($modDataArr) {
         $locations = self::_getPluginLocations();
         if($modules = self::_getModulesFromXml($locations['xmlPath'])) {
             foreach($modules as $m) {
                 $modDataArr = utilsGmp::xmlNodeAttrsToArr($m);
-				if(!empty($exPlugDir)) {
-					$modDataArr['ex_plug_dir'] = $exPlugDir;
-				}
                 if(!frameGmp::_()->moduleActive($modDataArr['code'])) { //If module is not active - then acivate it
                     if(frameGmp::_()->getModule('options')->getModel('modules')->put(array(
                         'code' => $modDataArr['code'],
                         'active' => 1,
                     ))->error) {
-                        errorsGmp::push(langGmp::_('Error Activating module'), errorsGmp::MOD_INSTALL);
+                        errorsGmp::push(__('Error Activating module', GMP_LANG_CODE), errorsGmp::MOD_INSTALL);
                     } else {
+						$dbModData = frameGmp::_()->getModule('options')->getModel('modules')->get(array('code' => $modDataArr['code']));
+						if(!empty($dbModData) && !empty($dbModData[0])) {
+							$modDataArr['ex_plug_dir'] = $dbModData[0]['ex_plug_dir'];
+						}
 						self::_runModuleInstall($modDataArr, 'activate');
 					}
                 }

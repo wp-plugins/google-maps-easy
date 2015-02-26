@@ -53,7 +53,7 @@ class csvControllerGmp extends controllerGmp {
 		foreach($maps as $map) {
 			$c = 0;
 			foreach($mapHeaders as $k => $v) {
-				$mapValue = $this->_prepareValueToExport($map[$k]);
+				$mapValue = $this->_prepareValueToExport((isset($map[$k]) ? $map[$k] : ''));
 				$csvGenerator->addCell($r, $c, $mapValue);
 				$c++;
 			}
@@ -92,7 +92,7 @@ class csvControllerGmp extends controllerGmp {
 			case 'marker_group_description':
 				$value = $marker['groupObj']['description']; break;
 			default:
-				$value = $marker[$key]; break;
+				$value = isset($marker[$key]) ? $marker[$key] : ''; break;
 		}
 		return $value;
 	}

@@ -21,7 +21,7 @@ class markerModelGmp extends modelGmp {
 			}
 			if(!$update)
 				$marker['create_date'] = date('Y-m-d H:i:s');
-			$marker['params'] = utilsGmp::serialize($marker['params']);
+			$marker['params'] = isset($marker['params']) ? utilsGmp::serialize($marker['params']) : '';
 			if($update) {
 				dispatcherGmp::doAction('beforeMarkerUpdate', $id, $marker);
 				$dbRes = frameGmp::_()->getTable('marker')->update($marker, array('id' => $id));

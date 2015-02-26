@@ -123,9 +123,7 @@ class frameGmp {
         add_action('init', array($this, 'addStyles'));
 
         register_activation_hook(  GMP_DIR. DS. GMP_MAIN_FILE, array('utilsGmp', 'activatePlugin')  ); //See classes/install.php file
-//        register_deactivation_hook(GMP_DIR. DS. GMP_MAIN_FILE, array('utilsGmp', 'deactivatePlugin'));
-
-        register_uninstall_hook(GMP_DIR.DS.GMP_MAIN_FILE, array('InstallerGmp', 'delete'));
+        register_uninstall_hook(GMP_DIR.DS.GMP_MAIN_FILE, array('installerGmp', 'delete'));
 
         add_action('admin_notices', array('errorsGmp', 'displayOnAdmin'));
 
@@ -422,8 +420,7 @@ class frameGmp {
     /**
      * Loads all of the UI files (CSS, JS).
      */
-    public function loadUI()
-    {
+    public function loadUI() {
         if (!$this->isAdminPlugPage()) {
             return;
         }
@@ -458,4 +455,10 @@ class frameGmp {
         );
         $this->addScript('gmp-vendor-ui-js', GMP_UI_URI . 'js/supsystic.ui.js');
     }
+	public function savePluginActivationErrors() {
+		update_option(GMP_CODE. '_plugin_activation_errors',  ob_get_contents());
+	}
+	public function getActivationErrors() {
+		return get_option(GMP_CODE. '_plugin_activation_errors');
+	}
 }

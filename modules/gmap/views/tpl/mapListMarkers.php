@@ -10,7 +10,7 @@
                 ); ?>"
                 style="cursor: help;"<?php endif; ?>>
             <?php echo htmlspecialchars(
-                $this->map['markers'][$i]['title']
+                (isset($this->map['markers'][$i]) ? $this->map['markers'][$i]['title'] : '')
             ); ?><?php if ($i < 1 && count($this->map['markers']) > 1): ?>,<?php endif; ?>
         </span>
             <?php //array_shift($this->map['markers']); ?>

@@ -161,14 +161,9 @@ var gmapPreview = {
         var map = new google.maps.Map(document.getElementById(mapElemId), mapOptions);
         this.maps[mapForPreview.id].mapObject = map;
 
-        console.log(mapOptions);
-
         if(mapForPreview.markers && mapForPreview.markers.length > 0) {
             this.drawMarkers(mapForPreview.markers, mapForPreview.id);
         }
-        google.maps.event.addListenerOnce(this.maps[mapForPreview.id].mapObject, 'tilesloaded', function(){
-            gmpAddLicenzeBlock(mapElemId);
-        });
         if(this.maps[mapForPreview.id].onAfterDraw && this.maps[mapForPreview.id].onAfterDraw.length) {
             for(var i in this.maps[mapForPreview.id].onAfterDraw) {
                 this.maps[mapForPreview.id].onAfterDraw[i]( this.maps[mapForPreview.id] );

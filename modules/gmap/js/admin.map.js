@@ -236,9 +236,11 @@
             };
 
             marker.unbindForm = function () {
-                this.form.control('title').unbind('.egm');
-                this.form.control('coord_x').unbind('.egm');
-                this.form.control('coord_y').unbind('.egm');
+				if(this.form) {
+					this.form.control('title').unbind('.egm');
+					this.form.control('coord_x').unbind('.egm');
+					this.form.control('coord_y').unbind('.egm');
+				}
             };
 
             marker.egmInit = function () {

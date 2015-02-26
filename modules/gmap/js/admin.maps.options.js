@@ -440,7 +440,6 @@ function gmpDrawMap(params) {
 	gmpTempMap = currentMap;
 	currentMap = map;	
 	google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
-		gmpAddLicenzeBlock(params.mapContainerId);
 		google.maps.event.addListener(map, 'zoom_changed', function() {
 			jQuery('#gmpEditMapForm').find('[name="map_opts[zoom]"]').val( map.getZoom() );
 		});

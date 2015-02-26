@@ -13,7 +13,6 @@ class promoGmp extends moduleGmp {
 		dispatcherGmp::addFilter('adminMenuOptions', array($this, 'addWelcomePageToMenus'), 99);
 		dispatcherGmp::addFilter('adminMenuMainOption', array($this, 'addWelcomePageToMainMenu'), 99);
 		dispatcherGmp::addFilter('adminMenuMainSlug', array($this, 'modifyMainAdminSlug'), 99);
-		//dispatcherGmp::addAction(implode('', array('ad','d','M','ap','B','ot','t','o','mC','o','n','tr','o','ls')), array($this, 'weLoveYou'));
 		dispatcherGmp::addAction('editMapFormProButtons', array($this, 'showProAdminPromoButtons'));
 		dispatcherGmp::addAction('editMapFormEnd', array($this, 'showProAdminFormEndPromo'));
 		dispatcherGmp::addAction('underMapAdminFormData', array($this, 'printUnderMapAdminFormData'));
@@ -21,7 +20,6 @@ class promoGmp extends moduleGmp {
 		* Check and send statistic
 		*/
 		$this->checkStatisticStatus();
-		dispatcherGmp::addFilter(implode('', array('j','sI','ni','t','Va','r','ia','b','le','s')), array($this, 'youCanDoThis'));
 		
 		dispatcherGmp::addAction('beforeMapUpdate', array($this, 'saveOldMapUpdateData'));
 		dispatcherGmp::addAction('afterMapUpdate', array($this, 'trackMapChanges'));
@@ -154,17 +152,10 @@ class promoGmp extends moduleGmp {
 			$this->getModel()->checkAndSend();
 		}
 	}
-	public function weLoveYou() {
-		
-	}
 	public function printUnderMapAdminFormData() {
 		if(!frameGmp::_()->getModule('license')) {
 			echo $this->getView()->getUnderMapAdminFormData();
 		}
-	}
-	public function youCanDoThis($js) {
-		$js[implode('', array('y','o','uH','a','ve','Li','c','e','ns','e'))] = 1; //frameGmp::_()->getModule(implode('', array('l','i','ce','n','se'))) ? 1 : 0;
-		return $js;
 	}
 	public function getMinStatSend() {
 		return $this->_minDataInStatToSend;
