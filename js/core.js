@@ -6,19 +6,18 @@ else if(jQuery.inArray(GMP_DATA.animationSpeed, ['fast', 'slow']) == -1)
     GMP_DATA.animationSpeed = 'fast';
 GMP_DATA.showSubscreenOnCenter = parseInt(GMP_DATA.showSubscreenOnCenter);
 var sdLoaderImgGmp = '<img src="'+ GMP_DATA.loader+ '" />';
-var gmpGeocoder;
-var gmpEvents = {};
+var g_gmpAnimationSpeed = 300;
+
 jQuery.fn.showLoaderGmp = function() {
-    jQuery(this).html( sdLoaderImgGmp );
-}
+    return jQuery(this).html( sdLoaderImgGmp );
+};
 jQuery.fn.appendLoaderGmp = function() {
     jQuery(this).append( sdLoaderImgGmp );
-}
-
+};
 jQuery.sendFormGmp = function(params) {
 	// Any html element can be used here
 	return jQuery('<br />').sendFormGmp(params);
-}
+};
 /**
  * Send form or just data to server by ajax and route response
  * @param string params.fid form element ID, if empty - current element will be used
@@ -35,7 +34,7 @@ jQuery.fn.sendFormGmp = function(params) {
         params = {fid: false, msgElID: false, onSuccess: false};
 
     if(params.fid)
-        form = jQuery('#'+ params.fid);
+        form = jQuery('#'+ fid);
     else
         form = jQuery(this);
     
@@ -52,14 +51,9 @@ jQuery.fn.sendFormGmp = function(params) {
 		var addStrData = [];
         for(var i in params.appendData) {
 			if(dataIsString) {
-				if(toeInArrayGmp(typeof(params.appendData[i]), ['array', 'object'])) {
-					for(var k in params.appendData[i]) {
-						addStrData.push(i+ '[]='+ params.appendData[i][k]);
-					}
-				} else
-					addStrData.push(i+ '='+ params.appendData[i]);
+				addStrData.push(i+ '='+ params.appendData[i]);
 			} else
-				data[i] = params.appendData[i];
+            data[i] = params.appendData[i];
         }
 		if(dataIsString)
 			data += '&'+ addStrData.join('&');
@@ -72,8 +66,7 @@ jQuery.fn.sendFormGmp = function(params) {
            msgEl = params.msgElID;
        else
             msgEl = jQuery('#'+ params.msgElID);
-    } else
-        msgEl = jQuery('#msg');
+    }
 	if(typeof(params.inputsWraper) == 'string') {
 		form = jQuery('#'+ params.inputsWraper);
 		sentFromForm = true;
@@ -81,10 +74,20 @@ jQuery.fn.sendFormGmp = function(params) {
 	if(sentFromForm && form) {
         jQuery(form).find('*').removeClass('gmpInputError');
     }
-	if(msgEl) {
+	if(msgEl && !params.btn) {
 		jQuery(msgEl).removeClass('gmpSuccessMsg')
 			.removeClass('gmpErrorMsg')
 			.showLoaderGmp();
+	} 
+	if(params.btn) {
+		jQuery(params.btn).attr('disabled', 'disabled');
+		// Font awesome usage
+		params.btnIconElement = jQuery(params.btn).find('.fa').size() ? jQuery(params.btn).find('.fa') : jQuery(params.btn);
+		if(jQuery(params.btn).find('.fa').size()) {
+			params.btnIconElement
+				.data('prev-class', params.btnIconElement.attr('class'))
+				.attr('class', 'fa fa-spinner fa-spin');
+		}
 	}
     var url = '';
 	if(typeof(params.url) != 'undefined')
@@ -97,10 +100,13 @@ jQuery.fn.sendFormGmp = function(params) {
     jQuery('.gmpErrorForField').hide(GMP_DATA.animationSpeed);
 	var dataType = params.dataType ? params.dataType : 'json';
 	// Set plugin orientation
-	if(typeof(data) == 'string')
+	if(typeof(data) == 'string') {
 		data += '&pl='+ GMP_DATA.GMP_CODE;
-	else
+		data += '&reqType=ajax';
+	} else {
 		data['pl'] = GMP_DATA.GMP_CODE;
+		data['reqType'] = 'ajax';
+	}
 	
     jQuery.ajax({
         url: url,
@@ -111,13 +117,13 @@ jQuery.fn.sendFormGmp = function(params) {
             toeProcessAjaxResponseGmp(res, msgEl, form, sentFromForm, params);
 			if(params.clearMsg) {
 				setTimeout(function(){
-					jQuery(msgEl).animateClear();
+					if(msgEl)
+						jQuery(msgEl).animateClear();
 				}, typeof(params.clearMsg) == 'boolean' ? 5000 : params.clearMsg);
 			}
         }
     });
-}
-
+};
 /**
  * Hide content in element and then clear it
  */
@@ -127,19 +133,18 @@ jQuery.fn.animateClear = function() {
 	jQuery(newContent).hide(GMP_DATA.animationSpeed, function(){
 		jQuery(newContent).remove();
 	});
-}
+};
 /**
  * Hide content in element and then remove it
  */
-jQuery.fn.animateRemove = function(animationSpeed, callback) {
+jQuery.fn.animateRemoveGmp = function(animationSpeed, onSuccess) {
 	animationSpeed = animationSpeed == undefined ? GMP_DATA.animationSpeed : animationSpeed;
 	jQuery(this).hide(animationSpeed, function(){
-		if(callback && typeof(callback) === 'function')
-			callback(this);
 		jQuery(this).remove();
+		if(typeof(onSuccess) === 'function')
+			onSuccess();
 	});
-}
-
+};
 function toeProcessAjaxResponseGmp(res, msgEl, form, sentFromForm, params) {
     if(typeof(params) == 'undefined')
         params = {};
@@ -147,6 +152,12 @@ function toeProcessAjaxResponseGmp(res, msgEl, form, sentFromForm, params) {
         msgEl = jQuery('#'+ msgEl);
     if(msgEl)
         jQuery(msgEl).html('');
+	if(params.btn) {
+		jQuery(params.btn).removeAttr('disabled');
+		if(params.btnIconElement) {
+			params.btnIconElement.attr('class', params.btnIconElement.data('prev-class'));
+		}
+	}
     /*if(sentFromForm) {
         jQuery(form).find('*').removeClass('gmpInputError');
     }*/
@@ -156,15 +167,33 @@ function toeProcessAjaxResponseGmp(res, msgEl, form, sentFromForm, params) {
                 jQuery(msgEl).removeClass('gmpSuccessMsg')
 					.addClass('gmpErrorMsg');
             }
+			var errorsArr = [];
             for(var name in res.errors) {
                 if(sentFromForm) {
-                    jQuery(form).find('[name*="'+ name+ '"]').addClass('gmpInputError');
+					var inputError = jQuery(form).find('[name*="'+ name+ '"]');
+                    inputError.addClass('gmpInputError');
+					if(inputError.attr('placeholder')) {
+						//inputError.attr('placeholder', res.errors[ name ]);
+					}
+					if(!inputError.data('keyup-error-remove-binded')) {
+						inputError.keydown(function(){
+							jQuery(this).removeClass('gmpInputError');
+						}).data('keyup-error-remove-binded', 1);
+					}
                 }
                 if(jQuery('.gmpErrorForField.toe_'+ nameToClassId(name)+ '').exists())
                     jQuery('.gmpErrorForField.toe_'+ nameToClassId(name)+ '').show().html(res.errors[name]);
                 else if(msgEl)
                     jQuery(msgEl).append(res.errors[name]).append('<br />');
+				else
+					errorsArr.push( res.errors[name] );
             }
+			if(errorsArr.length && params.btn) {
+				jQuery('<div />').html( errorsArr.join('<br />') ).appendTo('body').dialog({
+					modal: true
+				,	width: '500px'
+				});
+			}
         } else if(res.messages.length) {
             if(msgEl) {
                 jQuery(msgEl).removeClass('gmpErrorMsg')
@@ -242,301 +271,76 @@ function toeInArrayGmp(needle, haystack) {
 	}
 	return false;
 }
-function createAjaxLinkGmp(param) {
-	return GMP_DATA.ajaxurl+ '?'+ paramGmp(param);
-}
-function paramGmp(param) {
-	var param = jQuery.extend({}, param);
-	param['pl'] = GMP_DATA.GMP_CODE;
-	return jQuery.param( param );
-}
-function addDataTableRow(datatable, rowData) {
-	datatable.fnAddData(rowData);
-}
-function updateDataTableRow(datatable, rowId, rowData) {
-	var tblRowId = getDataTableRowId(datatable, rowId);
-	if(tblRowId !== false) {
-		datatable.fnUpdate(rowData, tblRowId);
-	}
-}
-function removeDataTableRow(datatable, rowId) {
-	var tblRowId = getDataTableRowId(datatable, rowId);
-	if(tblRowId !== false) {
-		datatable.fnDeleteRow(tblRowId);
-	}
-}
-function getDataTableRow(datatable, rowId) {
-	var tblRowId = getDataTableRowId(datatable, rowId);
-	if(tblRowId !== false) {
-		return datatable.fnGetData(tblRowId);
-	}
-	return false;
-}
-function getDataTableRowId(datatable, rowId) {
-	if(!datatable)
-		return false;
-	var cells = []
-	,	rows = datatable.fnGetNodes()
-	,	tblRowId = false;
-	for(var i = 0; i < rows.length; i++){
-		// Get HTML of 3rd column (for example)
-		cells.push(jQuery(rows[i]).find('td:eq(0)').html());
-	}
-	if(cells.length) {
-		for(var i = 0; i < cells.length; i++) {
-			if(cells[i] == rowId) {
-				tblRowId = i;
-				break;
-			}
-		}
-	}
-	return tblRowId;
-}
-function buildAjaxSelect(select, sendData, params) {
-	var contMsg = jQuery('<span />').insertAfter( select );
-	sendData.reqType = 'ajax';
-	jQuery.sendFormGmp({
-		msgElID: contMsg
-	,	data: sendData
-	,	onSuccess: function(res) {
-			if(!res.error) {
-				select.html('');
-				if(params.selectTxt)
-					select.append('<option value="0">'+ params.selectTxt+ '</option>');
-				if(res.data[ params.itemsKey ]) {
-					for(var i in res.data[ params.itemsKey ]) {
-						var title = res.data[ params.itemsKey ][i][ params.idNameKeys.name ];//.post_title;
-						if(params.titlePrepareCallback && typeof(params.titlePrepareCallback) === 'function') {
-							title = params.titlePrepareCallback(title, res.data[ params.itemsKey ][i]);
-						}
-						select.append('<option value="'+ res.data[ params.itemsKey ][i][ params.idNameKeys.id ]+ '">'+ title+ '</option>');
-					}
-					if(typeof(params.selectedValue) !== 'undefined' && params.selectedValue !== null) {
-						select.val( params.selectedValue );
-					}
-				}
-			}
-		}
-	});
-}
-function detectInputType(input) {
-	// TODO: add type detection for other inputs
-	if(input.hasClass('colorpicker_input'))
-		return 'colorpicker'
-	if(input.hasClass('hidden_val_input') || input.data() == '')
-		return 'hidden_check'
-	var attrType = input.attr('type');
-	return attrType;
-}
-function fillFormData(params) {
-	params = params || {};
-	var form = typeof(params.form) === 'string' ? jQuery(params.form) : params.form
-	//,	keys = params.keys || {}
-	,	data = params.data || {}
-	,	arrayInset = params.arrayInset ? params.arrayInset : false;
-	for(var key in data) {
-		var formElementName = arrayInset ? arrayInset+ '['+ key+ ']' : key
-		,	formElement = form.find('[name="'+ formElementName+ '"]');
-		if(formElement.size()) {
-			var type = detectInputType(formElement);
-			switch(type) {
-				case 'colorpicker':
-					formElement.css('background-color', data[key]).val(data[key]);
-					break;
-				case 'checkbox':
-					parseInt(data[key]) ? formElement.attr('checked', 'checked') : formElement.removeAttr('checked');
-					break;
-				case 'hidden_check':
-					var checkboxId = formElement.attr('id').substr(0, toeStrlen(formElement.attr('id')) - toeStrlen('_text'))+ '_check'
-					,	checkboxElement = form.find('#'+ checkboxId);
-					parseInt(data[key]) ? checkboxElement.attr('checked', 'checked') : checkboxElement.removeAttr('checked');
-					checkboxElement.trigger('change');
-					break;
-				default:
-					formElement.val( data[key] );
-					break;
-			}
-			if(toeInArray(type, ['colorpicker', 'hidden_check', 'hidden']) === -1) {
-				formElement.trigger('change');
-			}
-		}
-	}
-	/*for(var key in keys) {
-		var formElementName = arrayInset ? arrayInset+ '['+ key+ ']' : key
-		,	formElement = form.find('[name="'+ formElementName+ '"]');
-		switch(keys[key].type) {
-			case 'checkbox':
-				parseInt(data[key]) ? formElement.attr('checked', 'checked') : formElement.removeAttr('checked');
-				break;
-			default:
-				formElement.val( data[key] );
-				break;
-		}
-	}*/
-}
-function objToOneDimension(obj, params) {
-	params = params || {};
-	var newObj = {};
-	for(var key in obj) {
-		if(toeInArrayGmp(typeof(obj[ key ]), ['array', 'object']) && (!params.exclude || !toeInArrayGmp(key, params.exclude))) {
-			var dimensioned = objToOneDimension(obj[ key ]);
-			for(var i in dimensioned) {
-				newObj[ i ] = dimensioned[ i ];
-			}
-		} else {
-			newObj[ key ] = obj[ key ];
-		}
-	}
-	return newObj;
-}
-function toeStrlen(str) {
-	return str.length;
-}
-function toeLengthOfNum(n) {
-    var count=0;
-    do {n /= 10; count++} while (n >= 1);
-    return count;
-}
-
-function gmpGetGeocoder() {
-	if(!gmpGeocoder) {
-		gmpGeocoder = new google.maps.Geocoder();
-	}
-	return gmpGeocoder;
-}
-jQuery.fn.mapSearchAutocompleateGmp = function(params) {
-	params = params || {};
-    jQuery(this).keyup(function(event){
-		// Ignore tab, enter, caps, end, home, arrows
-		if(toeInArrayGmp(event.keyCode, [9, 13, 20, 35, 36, 37, 38, 39, 40])) return;
-		var address = jQuery.trim(jQuery(this).val());
-		if(address && address != '') {
-			// We should remember that we have used this functionality - so send ajax request to save usage stat
-			/*jQuery.sendFormGmp({
-				msgElID: 'noMessages'
-			,	data: {mod: 'marker', action: 'saveFindAddressStat', reqType:'ajax'}
-			});*/
-			if(typeof(params.msgEl) === 'string')
-				params.msgEl = jQuery(params.msgEl);
-			//params.msgEl.showLoaderGmp();
-			var self = this;
-			jQuery(this).autocomplete({
-				source: function(request, response) {
-					var geocoder = gmpGetGeocoder();
-					geocoder.geocode( { 'address': address}, function(results, status) {
-						//params.msgEl.html('');
-						if (status == google.maps.GeocoderStatus.OK && results.length) {
-							var autocomleateData = [];
-							for(var i in results) {
-								autocomleateData.push({
-									lat: results[i].geometry.location.lat()
-								,	lng: results[i].geometry.location.lng()
-								,	label: results[i].formatted_address
-								});
-							}
-							response(autocomleateData);
-						} else {
-							var notFoundMsg = toeLangGmp('Google can\'t find requested address coordinates, please try to modify search criterias.');
-							if(jQuery(self).parent().find('.ui-helper-hidden-accessible').size()) {
-								//jQuery(self).parent().find('.ui-helper-hidden-accessible').html( notFoundMsg );
-							} else {
-								//params.msgEl.html( notFoundMsg );
-							}
-						}
-					});
-				}
-			,	select: function(event, ui) {
-					if(params.onSelect) {
-						params.onSelect(ui.item, event, ui);
-					}
-				}
+function toeShowDialogCustomized(element, options) {
+	options = jQuery.extend({
+		resizable: false
+	,	width: 500
+	,	height: 300
+	,	closeOnEscape: true
+	,	open: function(event, ui) {
+			jQuery('.ui-dialog-titlebar').css({
+				'background-color': '#222222'
+			,	'background-image': 'none'
+			,	'border': 'none'
+			,	'margin': '0'
+			,	'padding': '0'
+			,	'border-radius': '0'
+			,	'color': '#CFCFCF'
+			,	'height': '27px'
 			});
-			// Force imidiate search right after creation
-			jQuery(this).autocomplete('search');
-		}
-	});
-};
-function gmpGetDataTableDefDisplayLen(tblId, defLen) {
-	defLen = defLen || 10;
-	var savedVal = parseInt(getCookieGmp('gmpTblLen_'+ tblId));
-	return savedVal ? savedVal : defLen;
-}
-function gmpSetDataTableDefDisplayLen(tblId, len) {
-	setCookieGmp('gmpTblLen_'+ tblId, len);
-}
-function gmpSwitchDataTablePagination(dataTbl) {
-	if((dataTbl._iRecordsTotal
-		&& dataTbl._iDisplayLength >= dataTbl._iRecordsTotal
-		&& dataTbl._iRecordsDisplay >= dataTbl._iRecordsTotal)
-		||
-		(!dataTbl._iRecordsTotal
-		&& dataTbl.aoData
-		&& dataTbl._iDisplayLength >= dataTbl.aoData.length)
-	) {
-		jQuery(dataTbl.nTableWrapper).find('.dataTables_paginate').hide();
-		if(dataTbl._iDisplayLength == 10)
-			jQuery(dataTbl.nTableWrapper).find('.dataTables_length').hide();
-	} else {
-		jQuery(dataTbl.nTableWrapper).find('.dataTables_paginate').show();
-		jQuery(dataTbl.nTableWrapper).find('.dataTables_length').show();
-	}
-}
-function gmpSortActionsByPrior(a, b) {
-	if(typeof(a.priority) == 'undefined' && typeof(b.priority) == 'undefined')
-		return 0;
-	if(typeof(a.priority) == 'undefined')
-		return -1;
-	if(typeof(b.priority) == 'undefined')
-		return 1;
-	if(a.priority > b.priority)
-		return 1;
-	if(a.priority < b.priority)
-		return -1;
-	return 0;
-}
-function gmpDoAction(tag) {
-	if(gmpEvents[ tag ]) {
-		gmpEvents[ tag ].sort( gmpSortActionsByPrior );
-		var callArgs = [];
-		for(var i in arguments) {
-			if(parseInt(i)) {
-				callArgs.push( arguments[i] );
+			jQuery('.ui-dialog-titlebar-close').css({
+				'background': 'url("'+ GMP_DATA.cssPath+ 'img/tb-close.png") no-repeat scroll 0 0 transparent'
+			,	'border': '0'
+			,	'width': '15px'
+			,	'height': '15px'
+			,	'padding': '0'
+			,	'border-radius': '0'
+			,	'margin': '7px 7px 0'
+			}).html('');
+			jQuery('.ui-dialog').css({
+				'border-radius': '3px'
+			,	'background-color': '#FFFFFF'
+			,	'background-image': 'none'
+			,	'padding': '1px'
+			,	'z-index': '300000'
+			,	'position': 'fixed'
+			,	'top': '60px'
+			});
+			jQuery('.ui-dialog-buttonpane').css({
+				'background-color': '#FFFFFF'
+			});
+			jQuery('.ui-dialog-title').css({
+				'color': '#CFCFCF'
+			,	'font': '12px sans-serif'
+			,	'padding': '6px 10px 0'
+			});
+			if(options.openCallback && typeof(options.openCallback) == 'function') {
+				options.openCallback(event, ui);
+			}
+			jQuery('.ui-widget-overlay').css({
+				'z-index': jQuery( event.target ).parents('.ui-dialog:first').css('z-index') - 1
+			,	'background-image': 'none'
+			});
+			if(options.modal && options.closeOnBg) {
+				jQuery('.ui-widget-overlay').unbind('click').bind('click', function() {
+					jQuery( element ).dialog('close');
+				});
 			}
 		}
-		for(var i in gmpEvents[ tag ]) {
-			callUserFuncArray(gmpEvents[ tag ][ i ].callback, callArgs);
-		}
-	}
+	}, options);
+	return jQuery(element).dialog(options);
 }
-function gmpAddAction(tag, callback, priority) {
-	if(typeof(gmpEvents[ tag ]) == 'undefined') {
-		gmpEvents[ tag ] = [];
-	}
-	gmpEvents[ tag ].push({
-		callback: callback
-	,	priority: priority
-	});
+/**
+ * @see html::slider();
+ **/
+function toeSliderMove(event, ui) {
+    var id = jQuery(event.target).attr('id');
+    jQuery('#toeSliderDisplay_'+ id).html( ui.value );
+    jQuery('#toeSliderInput_'+ id).val( ui.value ).change();
 }
-function gmpAdjustCloseBtnInfoPos(infoWnd, params) {
-	params = params || {};
-	var shell = jQuery('.gm-style-iw')
-	,	closeDiv = shell.next()
-	,	parent = shell.parent()
-	,	contentHtmlObj = shell.find('.gmpMarkerInfoWindow')
-	,	hasScrollBar = params.checkScrollContent ? contentHtmlObj.hasScrollBarH() : shell.hasScrollBarH();
-
-	if(!infoWnd.firstOpened) {
-		infoWnd.firstOpened = true;
-		infoWnd.parentWidth = parent.width();
-	}
-	contentHtmlObj.css({
-		'width': '100%'
-	});
-	shell.append( closeDiv );
-	shell.width(infoWnd.parentWidth - (hasScrollBar ? 15 : 0));	// 15 - for scroll bar
-	closeDiv.css({
-		'top': parseInt(closeDiv.css('top')) - 10
-	,	'right': parseInt(closeDiv.css('right')) + 10
-	});
-	parent.width(infoWnd.parentWidth);
+function setBrowserUrl(url) {
+	if (typeof (history.pushState) != 'undefined') {
+        var obj = {Title: document.title, Url: url};
+        history.pushState(obj, obj.Title, obj.Url);
+    }
 }

@@ -1,10 +1,8 @@
 <?php
 class gmapModelGmp extends modelGmp {
-	function __construct()
-	{
+	function __construct() {
 		$this->_setTbl('maps');
 	}
-
 	public function getAllMaps($d = array(), $withMarkers = false, $markersWithGroups = false){
 		if(isset($d['limitFrom']) && isset($d['limitTo']))
 			frameGmp::_()->getTable('maps')->limitFrom($d['limitFrom'])->limitTo($d['limitTo']);
@@ -45,7 +43,6 @@ class gmapModelGmp extends modelGmp {
 		}
 		$insert = array(
 			'title'			=> trim($params['title']),
-			'description'	=> isset($params['description']) ? $params['description'] : '',
 			'html_options'	=> utilsGmp::serialize($htmlOpts),
 			'params'		=> utilsGmp::serialize($mapOpts),
 			'create_date'	=> date('Y-m-d H:i:s')
@@ -87,8 +84,13 @@ class gmapModelGmp extends modelGmp {
 		return false;
 	}
 	public function remove($mapId){
-		frameGmp::_()->getModule('marker')->getModel()->removeMarkersFromMap($mapId);
-		return frameGmp::_()->getTable("maps")->delete($mapId);
+		$mapId = (int) $mapId;
+		if(!empty($mapId)) {
+			frameGmp::_()->getModule('marker')->getModel()->removeMarkersFromMap($mapId);
+			return frameGmp::_()->getTable("maps")->delete($mapId);
+		} else
+			$this->pushError (__('Invalid ID', GMP_LANG_CODE));
+		return false;
 	}
 	public function getMapByTitle($title) {
 		$map = frameGmp::_()->getTable('maps')->get('*', array('title' => $title), '', 'row');

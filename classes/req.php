@@ -4,8 +4,13 @@ class reqGmp {
     static protected $_requestMethod;
 
     static public function init() {
-        //session_start();
+		// Empty for now
     }
+	static public function startSession() {
+		if(!utilsGmp::isSessionStarted()) {
+			session_start();
+		}
+	}
 /**
  * @param string $name key in variables array
  * @param string $from from where get result = "all", "input", "get"
@@ -118,9 +123,9 @@ class reqGmp {
         return $_SERVER['REQUEST_URI'];
     }
     static public function getMode() {
-        $mode = '';
-        if(!($mod = self::getVar('mod')))  //Admin usage
-            $mod = self::getVar('page');     //Frontend usage
+        $mod = '';
+        if(!($mod = self::getVar('mod')))  //Frontend usage
+            $mod = self::getVar('page');     //Admin usage
         return $mod;
     }
 }

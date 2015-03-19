@@ -11,7 +11,16 @@ class markerControllerGmp extends controllerGmp {
 		} else {
 			$res->pushError($this->getModel()->getErrors());
 		}
-        frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('marker.save');
+        frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('marker.save');
+        return $res->ajaxExec();
+	}
+	public function updatePos() {
+		$res = new responseGmp();
+		if($this->getModel()->updatePos(reqGmp::get('post'))) {
+			//$res->addMessage(langGmp::_('Done'));	// Do nothing for now - void method
+		} else {
+			$res->pushError($this->getModel()->getErrors());
+		}
         return $res->ajaxExec();
 	}
     public function findAddress(){
@@ -23,7 +32,7 @@ class markerControllerGmp extends controllerGmp {
         } else {
 			$res->pushError($this->getModel()->getErrors());
         }
-        frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('geolocation.address.search');
+        frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('geolocation.address.search');
         return $res->ajaxExec();
     }
     public function removeMarker(){
@@ -38,7 +47,7 @@ class markerControllerGmp extends controllerGmp {
         }else{
             $res->pushError(langGmp::_("Cannot remove marker"));
         }
-        frameGmp::_()->getModule("promo")->getModel()->saveUsageStat('marker.delete');
+        frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat('marker.delete');
         return $res->ajaxExec();
     }
 	public function removeList() {
@@ -53,7 +62,7 @@ class markerControllerGmp extends controllerGmp {
         } else {
             $res->pushError(langGmp::_('Cannot remove markers'));
         }
-        frameGmp::_()->getModule("promo")->getModel()->saveUsageStat('marker.delete_list');
+        frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat('marker.delete_list');
         return $res->ajaxExec();
 	}
 	public function getMarkerForm($params){
@@ -92,6 +101,24 @@ class markerControllerGmp extends controllerGmp {
 		$res->addMessage(__('Done'));
 		return $res->ajaxExec();
 	}
+	public function getMapMarkers() {
+		$res = new responseGmp();
+		$mapId = (int) reqGmp::getVar('map_id', 'post');
+		$markers = array();
+		if($mapId) {
+			$markers = $this->getModel()->getMapMarkers( $mapId );
+		} else {
+			$addedMarkerIds = reqGmp::getVar('added_marker_ids', 'post');
+			if(!empty($addedMarkerIds)) {
+				$markers = $this->getModel()->getMarkersByIds( $addedMarkerIds );
+			}
+		}
+		if($markers !== false) {
+			$res->addData('markers', $markers);
+		} else
+			$res->pushError($this->getModel ()->getErrors());
+		return $res->ajaxExec();
+	}
 	private function _convertDataForDatatable($list) {
 		foreach($list as $i => $marker) {
 			$list[$i]['marker_check'] = htmlGmp::checkbox('marker_check['. $list[$i]['id']. ']');
@@ -118,7 +145,7 @@ class markerControllerGmp extends controllerGmp {
 		return $res->ajaxExec();
 	}
 	public function saveFindAddressStat() {
-		frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('geolocation.address.search');
+		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('geolocation.address.search');
 	}
 	/**
 	 * @see controller::getPermissions();
@@ -126,7 +153,7 @@ class markerControllerGmp extends controllerGmp {
 	public function getPermissions() {
 		return array(
 			GMP_USERLEVELS => array(
-				GMP_ADMIN => array('save', 'removeMarker', 'getMarkerForm', 'getListForTable', 'getMarker', 'removeList')
+				GMP_ADMIN => array('save', 'removeMarker', 'getMarkerForm', 'getListForTable', 'getMarker', 'removeList', 'getMapMarkers', 'updatePos')
 			),
 		);
 	}

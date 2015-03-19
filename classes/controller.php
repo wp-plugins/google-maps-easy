@@ -49,11 +49,12 @@ abstract class controllerGmp {
 	protected function _createModel($name = '') {
 		if(empty($name)) $name = $this->getCode();
 		$parentModule = frameGmp::_()->getModule( $this->getCode() );
-		$className = toeGetClassNameGmp($name. 'Model', true);
-		if(!class_exists($className)) {
-			import($parentModule->getModDir(). 'models'. DS. $name. '.php');
+		$className = '';
+		if(importGmp($parentModule->getModDir(). 'models'. DS. $name. '.php')) {
+			$className = toeGetClassNameGmp($name. 'Model');
 		}
-		if($className && class_exists($className)) {
+		
+		if($className) {
 			$model = new $className();
 			$model->setCode( $this->getCode() );
 			return $model;
@@ -63,11 +64,13 @@ abstract class controllerGmp {
 	protected function _createView($name = '') {
 		if(empty($name)) $name = $this->getCode();
 		$parentModule = frameGmp::_()->getModule( $this->getCode() );
-		$className = toeGetClassNameGmp($name. 'View', true);
-		if(!class_exists($className)) {
-			import($parentModule->getModDir(). 'views'. DS. $name. '.php');
+		$className = '';
+		
+		if(importGmp($parentModule->getModDir(). 'views'. DS. $name. '.php')) {
+			$className = toeGetClassNameGmp($name. 'View');
 		}
-		if($className && class_exists($className)) {
+		
+		if($className) {
 			$view = new $className();
 			$view->setCode( $this->getCode() );
 			return $view;
@@ -86,13 +89,13 @@ abstract class controllerGmp {
 	public function __call($name, $arguments) {
 		$model = $this->getModel();
 		if(method_exists($model, $name))
-			return $model->$name(isset($arguments[0]) ? $arguments[0] : NULL);
+			return $model->$name($arguments[0]);
 		else
 			return false;
 	}
 	/**
 	 * Retrive permissions for controller methods if exist.
-	 * If need - should be redefined in eacH controller where it required.
+	 * If need - should be redefined in each controller where it required.
 	 * @return array with permissions
 	 * @example :
 	 return array(
@@ -110,8 +113,14 @@ abstract class controllerGmp {
 	public function getPermissions() {
 		return array();
 	}
+	public function getModule() {
+		return frameGmp::_()->getModule( $this->getCode() );
+	}
 	protected function _prepareTextLikeSearch($val) {
 		return '';	 // Should be re-defined for each type
+	}
+	protected function _prepareModelBeforeListSelect($model) {
+		return $model;
 	}
 	/**
 	 * Common method for list table data
@@ -119,9 +128,8 @@ abstract class controllerGmp {
 	public function getListForTbl() {
 		$res = new responseGmp();
 		$res->ignoreShellData();
-
 		$model = $this->getModel();
-
+		
 		$page = (int) reqGmp::getVar('page');
 		$rowsLimit = (int) reqGmp::getVar('rows');
 		$orderBy = reqGmp::getVar('sidx');
@@ -155,10 +163,11 @@ abstract class controllerGmp {
 				));
 			}
 		}
+		$model = $this->_prepareModelBeforeListSelect($model);
 		// Get total pages count for current request
 		$totalCount = $model->getCount(array('clear' => array('selectFields')));
 		$totalPages = 0;
-		if($totalCount > 0 && $rowsLimit > 0) {
+		if($totalCount > 0) {
 			$totalPages = ceil($totalCount / $rowsLimit);
 		}
 		if($page > $totalPages) {
@@ -168,18 +177,19 @@ abstract class controllerGmp {
 		$limitStart = $rowsLimit * $page - $rowsLimit; // do not put $limit*($page - 1)
 		if($limitStart < 0)
 			$limitStart = 0;
-
-		$data = $model
+		
+ 		$data = $model
 			->setLimit($limitStart. ', '. $rowsLimit)
 			->setOrderBy( $this->_prepareSortOrder($orderBy) )
 			->setSortOrder( $sortOrder )
 			->getFromTbl();
-
+		
 		$data = $this->_prepareListForTbl( $data );
 		$res->addData('page', $page);
 		$res->addData('total', $totalPages);
 		$res->addData('rows', $data);
 		$res->addData('records', $model->getLastGetCount());
+		$res = dispatcherGmp::applyFilters($this->getCode(). '_getListForTblResults', $res);
 		$res->ajaxExec();
 	}
 	public function removeGroup() {

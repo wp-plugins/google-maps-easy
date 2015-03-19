@@ -1,6 +1,6 @@
 <?php
 class csvViewGmp extends viewGmp {
-	public function getSettitngsBlockHtml() {
-		return parent::getContent('csvSettitngsBlockHtml');
+	public function getTabContent() {
+		return parent::getContent('csvTabContent');
 	}
 }

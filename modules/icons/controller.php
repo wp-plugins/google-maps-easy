@@ -10,7 +10,7 @@ class iconsControllerGmp extends controllerGmp {
 		} else {
 			$res->pushError( $this->getModel()->getErrors() );
 		}
-		frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('icon.add');
+		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('icon.add');
 		return $res->ajaxExec();
 	}
 	public function downloadIconFromUrl(){
@@ -33,7 +33,7 @@ class iconsControllerGmp extends controllerGmp {
 		if(!$this->getModel()->remove(reqGmp::get('post'))) {
 			$res->pushError($this->getModel()->getErrors());
 		}
-		frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('icon.delete');
+		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('icon.delete');
 		return $res->ajaxExec();
 	}
 	/**

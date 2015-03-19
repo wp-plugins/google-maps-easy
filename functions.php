@@ -38,8 +38,8 @@ if(!function_exists('getRandName')) {
         return $res;
     }
 }
-if(!function_exists('import')) {
-    function import($path) {
+if(!function_exists('importGmp')) {
+    function importGmp($path) {
         if(file_exists($path)) {
             require($path);
             return true;
@@ -65,7 +65,7 @@ if(!function_exists('importClassGmp')) {
 				}
                 $path = GMP_CLASSES_DIR. $classFile. '.php';
 			}
-            return import($path);
+            return importGmp($path);
         } else {    //If such class already exist - let's check does this is our plugin class or someone else
             /*if(class_exists('ReflectionClass')) {   //ReflectionClass supported begining from php5
                 $reflection = new ReflectionClass($class);
@@ -95,9 +95,9 @@ if(!function_exists('importClassGmp')) {
  * @return string existing class name
  */
 if(!function_exists('toeGetClassNameGmp')) {
-    function toeGetClassNameGmp($class, $forceUniq = false) {
+    function toeGetClassNameGmp($class) {
         $className = '';
-		if(class_exists($class. strFirstUp(GMP_CODE)) || $forceUniq) 
+		if(class_exists($class. strFirstUp(GMP_CODE))) 
 			$className = $class. strFirstUp(GMP_CODE);
 		else if(class_exists(GMP_CLASS_PREFIX. $class)) 
             $className = GMP_CLASS_PREFIX. $class;
@@ -314,39 +314,3 @@ if(!function_exists('toeMultArrayMap')) {
         return $array;
     }
 }
-
-if(!function_exists('toeVarDump')) {
-	/**
-	 * Make var_dump(); with <pre> tag to display data more clear
-	 */
-	function toeVarDump() {
-		echo '<pre>';
-		call_user_func_array('var_dump', func_get_args());
-		echo '</pre>';
-	}
-}
-if(!function_exists('outGmp')) {
-	/**
-	 * Make print_r(); with <pre> tag to display data more clear
-	 */
-	function outGmp() {
-		echo '<pre>';
-			$args = func_get_args();
-			call_user_func_array('print_r',	$args );
-		echo '</pre>';
-		// $debug = debug_backtrace();
-		// echo "called from file:".$debug[2]['file'].",at line:".$debug[2]['line'];
-		echo "<hr/>";
-	}
-}
-if(!function_exists('outeGmp')) {
-	/**
-	 * Make print_r() then exit; with <pre> tag to display data more clear and then exit
-	 */
-	function outeGmp() {
-			$args = func_get_args();
-			call_user_func_array('outGmp', $args);
-		exit;
-	}
-}
-?>

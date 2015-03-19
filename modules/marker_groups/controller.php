@@ -34,7 +34,7 @@ class marker_groupsControllerGmp extends controllerGmp {
         }else{
             $res->pushError(langGmp::_("Cannot remove group"));
         }
-        frameGmp::_()->getModule("promo")->getModel()->saveUsageStat("group.delete");
+        frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat("group.delete");
         return $res->ajaxExec();
     }
 	/**

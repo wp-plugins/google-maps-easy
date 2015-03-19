@@ -25,7 +25,6 @@ class frameGmp {
     
     public function __construct() {
         $this->_res = toeCreateObjGmp('response', array());
-        load_theme_textdomain('gmp',  GMP_DIR . 'lang');
         
     }
     static public function getInstance() {
@@ -80,7 +79,6 @@ class frameGmp {
                         $moduleClass = toeGetClassNameGmp($code);
                         if(class_exists($moduleClass)) {
                             $this->_modules[$code] = new $moduleClass($m);
-                            $this->_modules[$code]->setParams((array)json_decode($m['params']));
                             if(is_dir($moduleLocationDir. $code. DS. 'tables')) {
                                 $this->_extractTables($moduleLocationDir. $code. DS. 'tables'. DS);
                             }
@@ -94,41 +92,36 @@ class frameGmp {
     protected function _initModules() {
         if(!empty($this->_modules)) {
             foreach($this->_modules as $mod) {
-                 $mod->init();                       
-               }
+                 $mod->init();
+            }
         }
     }
-	public function extractModules() {
-		return $this->_extractModules();
-	}
-	public function clearModules() {
-		$this->_modules = array();
-		$this->_allModules = array();
-	}
     public function init() {
         //$startTime = microtime(true);
-        langGmp::init();
         reqGmp::init();
-
         $this->_extractTables();
         $this->_extractModules();
 
         $this->_initModules();
-        
+
+		dispatcherGmp::doAction('afterModulesInit');
+		
 		modInstallerGmp::checkActivationMessages();
-	
+		
         $this->_execModules();
-                
+        
         add_action('init', array($this, 'addScripts'));
         add_action('init', array($this, 'addStyles'));
 
         register_activation_hook(  GMP_DIR. DS. GMP_MAIN_FILE, array('utilsGmp', 'activatePlugin')  ); //See classes/install.php file
-        register_uninstall_hook(GMP_DIR.DS.GMP_MAIN_FILE, array('installerGmp', 'delete'));
-
-        add_action('admin_notices', array('errorsGmp', 'displayOnAdmin'));
-
+        register_uninstall_hook(GMP_DIR. DS. GMP_MAIN_FILE, array('utilsGmp', 'deletePlugin'));
+        
+		add_action('init', array($this, 'connectLang'));
         //$operationTime = microtime(true) - $startTime;
     }
+	public function connectLang() {
+		load_plugin_textdomain(GMP_LANG_CODE, false, GMP_DIR. 'lang');
+	}
     /**
      * Check permissions for action in controller by $code and made corresponding action
      * @param string $code Code of controller that need to be checked
@@ -139,7 +132,7 @@ class frameGmp {
         if($this->havePermissions($code, $action))
             return true;
         else {
-            exit(langGmp::_e('You have no permissions to view this page'));
+            exit(_e('You have no permissions to view this page', GMP_LANG_CODE));
         }
     }
     /**
@@ -157,14 +150,12 @@ class frameGmp {
             if(!empty($permissions)) {  // Special permissions
                 if(isset($permissions[GMP_METHODS]) 
                     && !empty($permissions[GMP_METHODS])
-                    
                 ) {
                     foreach($permissions[GMP_METHODS] as $method => $permissions) {   // Make case-insensitive
                         $permissions[GMP_METHODS][strtolower($method)] = $permissions;
                     }
                     if(array_key_exists($action, $permissions[GMP_METHODS])) {        // Permission for this method exists
                         $currentUserPosition = frameGmp::_()->getModule('user')->getCurrentUserPosition();
-                        
                         if((is_array($permissions[ GMP_METHODS ][ $action ]) && !in_array($currentUserPosition, $permissions[ GMP_METHODS ][ $action ]))
                             || (!is_array($permissions[ GMP_METHODS ][ $action ]) && $permissions[GMP_METHODS][$action] != $currentUserPosition)
                         ) {
@@ -177,15 +168,7 @@ class frameGmp {
                 ) {
                     $currentUserPosition = frameGmp::_()->getModule('user')->getCurrentUserPosition();
 					// For multi-sites network admin role is undefined, let's do this here
-					if(is_multisite() && is_admin()) {
-						$currentUserPosition = GMP_ADMIN;
-					}
-					if($currentUserPosition != GMP_ADMIN 
-						&& $this->getModule('access') 
-						&& method_exists($this->getModule('access'), 'currentUserCanAccessPlugin') 
-						&& $this->getModule('access')->currentUserCanAccessPlugin()
-						&& $code != 'options'	// this is bad hook to prevent update options settings by not admins
-					) {
+					if(is_multisite() && is_admin() && is_super_admin()) {
 						$currentUserPosition = GMP_ADMIN;
 					}
                     foreach($permissions[GMP_USERLEVELS] as $userlevel => $methods) {
@@ -242,9 +225,7 @@ class frameGmp {
         }
     }
     protected function _extractTable($tableName, $tablesDir = GMP_TABLES_DIR) {
-		$tableClass = 'table'. strFirstUp($tableName). strFirstUp(GMP_CODE);
-		if(!class_exists($tableClass))
-			importClassGmp('noClassNameHere', $tablesDir. $tableName. '.php');
+        importClassGmp('noClassNameHere', $tablesDir. $tableName. '.php');
         $this->_tables[$tableName] = tableGmp::_($tableName);
     }
     /**
@@ -298,10 +279,7 @@ class frameGmp {
     }
     
     public function getModule($code) {
-        
-        $res = (isset($this->_modules[$code]) ? $this->_modules[$code] : NULL);
-        return $res;
-
+        return (isset($this->_modules[$code]) ? $this->_modules[$code] : NULL);
     }
     public function inPlugin() {
         return $this->_inPlugin;
@@ -326,14 +304,14 @@ class frameGmp {
         }
     }
     /**
-     * Add all scripts from _scripts array to wordpress
+     * Add all scripts from _scripts array to worgmpess
      */
     public function addScripts() {
         if(!empty($this->_scripts)) {
             foreach($this->_scripts as $s) {
                 wp_enqueue_script($s['handle'], $s['src'], $s['deps'], $s['ver'], $s['in_footer']);
                 
-                if($s['vars'] || @$this->_scriptsVars[$s['handle']]) {
+                if($s['vars'] || isset($this->_scriptsVars[$s['handle']])) {
                     $vars = array();
                     if($s['vars'])
                         $vars = $s['vars'];
@@ -357,7 +335,7 @@ class frameGmp {
         }
     }
     
-	public function addStyle($handle, $src = false, $deps = array(), $ver = false, $media = 'all') {
+    public function addStyle($handle, $src = false, $deps = array(), $ver = false, $media = 'all') {
 		$src = empty($src) ? $src : uriGmp::_($src);
 		if($this->_stylesInitialized) {
 			wp_enqueue_style($handle, $src, $deps, $ver, $media);
@@ -375,7 +353,6 @@ class frameGmp {
         if(!empty($this->_styles)) {
             foreach($this->_styles as $s) {
                 wp_enqueue_style($s['handle'], $s['src'], $s['deps'], $s['ver'], $s['media']);
-
             }
         }
 		$this->_stylesInitialized = true;
@@ -383,12 +360,13 @@ class frameGmp {
     //Very interesting thing going here.............
     public function loadPlugins() {
         require_once(ABSPATH. 'wp-includes/pluggable.php'); 
-        //require_once(ABSPATH.'wp-load.php');
-        //load_plugin_textdomain('some value');
     }
     public function loadWPSettings() {
         require_once(ABSPATH. 'wp-settings.php'); 
     }
+	public function loadLocale() {
+		require_once(ABSPATH. 'wp-includes/locale.php'); 
+	}
     public function moduleActive($code) {
         return isset($this->_modules[$code]);
     }
@@ -404,57 +382,21 @@ class frameGmp {
 	/**
 	 * This is custom method for each plugin and should be modified if you create copy from this instance.
 	 */
-	public function isAdminPlugPage() {
+	public function isAdminPlugOptsPage() {
 		$page = reqGmp::getVar('page');
-        $menu = $this->getModule('adminmenu');
-
-        if (!$menu) {
-            $slug = GMP_MAIN_SLUG;
-        } else {
-            $slug = $menu->getMainSlug();
-        }
-
-        return $page === $slug;
+		if(is_admin() && strpos($page, frameGmp::_()->getModule('adminmenu')->getMainSlug()) !== false)
+			return true;
+		return false;
 	}
-
-    /**
-     * Loads all of the UI files (CSS, JS).
-     */
-    public function loadUI() {
-        if (!$this->isAdminPlugPage()) {
-            return;
-        }
-
-        frameGmp::_()->addStyle('egm-jquery-ui', GMP_CSS_PATH. 'jquery-ui.min.css');
-        frameGmp::_()->addStyle('egm-jquery-ui.structure', GMP_CSS_PATH. 'jquery-ui.structure.min.css');
-        frameGmp::_()->addStyle('egm-jquery-ui.theme', GMP_CSS_PATH. 'jquery-ui.theme.min.css');
-
-        $this->addStyle(
-            'gmp-vendor-ui-css',
-            GMP_UI_URI . 'css/supsystic-ui.css'
-        );
-
-        $this->addScript(
-            'gmp-vendor-ui-nav-js',
-            GMP_UI_URI . 'js/libraries/bootstrap/bootstrap.min.js'
-        );
-
-        frameGmp::_()->addScript(
-            'egm_jqgrid_locale_js',
-            GMP_UI_URI . 'js/i18n/grid.locale-en.js'
-        );
-
-        frameGmp::_()->addScript(
-            'egm_jqgrid_js',
-            GMP_UI_URI . 'js/libraries/jqGrid/jquery.jqGrid.min.js'
-        );
-
-        frameGmp::_()->addStyle(
-            'egm_jqgrid_css',
-            GMP_UI_URI . 'css/libraries/jqGrid/ui.jqgrid.css'
-        );
-        $this->addScript('gmp-vendor-ui-js', GMP_UI_URI . 'js/supsystic.ui.js');
-    }
+	public function isAdminPlugPage() {
+		if($this->isAdminPlugOptsPage()) {
+			return true;
+		}
+		return false;
+	}
+	public function licenseDeactivated() {
+		return (!$this->getModule('license') && $this->moduleExists('license'));
+	}
 	public function savePluginActivationErrors() {
 		update_option(GMP_CODE. '_plugin_activation_errors',  ob_get_contents());
 	}

@@ -9,7 +9,7 @@ jQuery.fn.nextInArray = function(element) {
     if(nextId > this.length-1)
         nextId = 0;
     return this[nextId];
-};
+}
 jQuery.fn.clearForm = function() {
 	return this.each(function() {
 		var type = this.type, tag = this.tagName.toLowerCase();
@@ -22,17 +22,30 @@ jQuery.fn.clearForm = function() {
 		else if (tag == 'select') 
 			this.selectedIndex = -1;
 	});
-};
+}
 jQuery.fn.tagName = function() {
     return this.get(0).tagName;
-};
+}
 jQuery.fn.exists = function(){
     return (jQuery(this).size() > 0 ? true : false);
-};
+}
 function isNumber(val) {
     return /^\d+/.test(val);
 }
-jQuery.fn.serializeAnything = function(addData) {
+function pushDataToParam(data, pref) {
+	pref = pref ? pref : '';
+	var res = [];
+	for(var key in data) {
+		var name = pref && pref != '' ? pref+ '['+ key+ ']' : key;
+		if(typeof(data[key]) === 'array' || typeof(data[key]) === 'object') {
+			res = jQuery.merge(res, pushDataToParam(data[key], name));
+		} else {
+			res.push(name+ "="+ data[key]);
+		}
+	}
+	return res;
+}
+jQuery.fn.serializeAnythingGmp = function(addData) {
     var toReturn    = [];
     var els         = jQuery(this).find(':input').get();
     jQuery.each(els, function() {
@@ -42,17 +55,43 @@ jQuery.fn.serializeAnything = function(addData) {
         }
     });
     if(typeof(addData) != 'undefined') {
-        for(var key in addData)
-            toReturn.push(key + "=" + addData[key]);
+		toReturn = jQuery.merge(toReturn, pushDataToParam(addData));
     }
     return toReturn.join("&").replace(/%20/g, "+");
 };
-jQuery.fn.hasScrollBarH = function() {
-	return this.get(0).scrollHeight > this.height();
-};
-jQuery.fn.hasScrollBarV = function() {
-	console.log(this.get(0).scrollWidth, this.width(), this.get(0).scrollHeight, this.height());
-	return this.get(0).scrollWidth > this.width();
+jQuery.fn.serializeAssoc = function() {
+	var data = [ ];
+	jQuery.each( this.serializeArray(), function( key, obj ) {
+	  var a = obj.name.match(/(.*?)\[(.*?)\]/);
+	  if(a !== null)
+	  {
+		var subName = a[1];
+		var subKey = a[2];
+		if( !data[subName] ) data[subName] = [ ];
+		  if( data[subName][subKey] ) {
+			if( jQuery.isArray( data[subName][subKey] ) ) {
+			  data[subName][subKey].push( obj.value );
+			} else {
+			  data[subName][subKey] = [ ];
+			  data[subName][subKey].push( obj.value );
+			};
+		  } else {
+			data[subName][subKey] = obj.value;
+		  };  
+		} else {
+		  if( data[obj.name] ) {
+			if( jQuery.isArray( data[obj.name] ) ) {
+			  data[obj.name].push( obj.value );
+			} else {
+			  data[obj.name] = [ ];
+			  data[obj.name].push( obj.value );
+			};
+		  } else {
+			data[obj.name] = obj.value;
+		  };
+		};
+	});
+	return data;
 };
 function str_replace(haystack, needle, replacement) { 
 	var temp = haystack.split(needle); 
@@ -81,7 +120,9 @@ function extend(Child, Parent) {
 function toeRedirect(url) {
     document.location.href = url;
 }
-function toeReload() {
+function toeReload(url) {
+	if(url)
+		toeRedirect(url);
     document.location.reload();
 }
 jQuery.fn.toeRebuildSelect = function(data, useIdAsValue, val) {
@@ -268,7 +309,7 @@ function parseStr (str, array) {
 	return array;
 }
 
-function toeListable(params) {
+function toeListableGmp(params) {
 	this.params			= jQuery.extend({}, params);
 	this.table			= jQuery(this.params.table);
 	this.paging			= jQuery(this.params.paging);
@@ -318,32 +359,45 @@ function toeListable(params) {
 					}
 					newElement.addClass('toePagingElement').html(i);
 					this.paging.append(newElement);
+					if(i%20 == 0 && i)
+						this.paging.append('<br />');
 				}
 			}
 		}
-	}
-	
+	};
 	if(this.list)
 		this.draw(this.list, this.count);
 }
 
 function setCookieGmp(c_name, value, exdays) {
-	var exdate=new Date();
+	var exdate = new Date();
 	exdate.setDate(exdate.getDate() + exdays);
-	var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-	document.cookie=c_name + "=" + c_value;
+	var value_prepared = '';
+	if(typeof(value) == 'array' || typeof(value) == 'object') {
+		value_prepared = '_JSON:'+ JSON.stringify( value );
+	} else {
+		value_prepared = value;
+	}
+	var c_value = escape(value_prepared)+ ((exdays==null) ? "" : "; expires="+exdate.toUTCString())+ '; path=/';
+	document.cookie = c_name+ "="+ c_value;
 }
 
 function getCookieGmp(name) {
-  var parts = document.cookie.split(name + "=");
-  if (parts.length == 2) return parts.pop().split(";").shift();
-  return null;
+	var parts = document.cookie.split(name + "=");
+	if (parts.length == 2) {
+		var value = unescape(parts.pop().split(";").shift());
+		if(value.indexOf('_JSON:') === 0) {
+			value = JSON.parse(value.split("_JSON:").pop());
+		}
+		return value;
+	}
+	return null;
 }
-function getImgSize(url, callback) {
-	jQuery('<img/>').attr('src', url).load(function(){
-		callback({w: this.width, h: this.height});
-	});
+
+function delCookieGmp( name ) {
+  document.cookie = name+ '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
+
 function callUserFuncArray(cb, parameters) {
 	// http://kevin.vanzonneveld.net
 	// +   original by: Thiago Mata (http://thiagomata.blog.com)
@@ -366,9 +420,163 @@ function callUserFuncArray(cb, parameters) {
 	else if (typeof cb === 'function') {
 		func = cb;
 	}
+
 	if (typeof func !== 'function') {
 		throw new Error(func + ' is not a valid function');
 	}
 
 	return (typeof cb[0] === 'string') ? func.apply(eval(cb[0]), parameters) : (typeof cb[0] !== 'object') ? func.apply(null, parameters) : func.apply(cb[0], parameters);
 }
+jQuery.fn.zoom = function(level) {
+	jQuery(this).data('zoom', level);
+	return jQuery(this).css({
+	/*	'zoom': level	// Didn't worked correctly for mobiles
+	,*/	'-moz-transform': 'scale('+ level+ ')'
+	,	'-moz-transform-origin': 'center center'
+	,	'-o-transform': 'scale('+ level+ ')'
+	,	'-o-transform-origin': 'center center'
+	,	'-webkit-transform': 'scale('+ level+ ')'
+	,	'-webkit-transform-origin': 'center center'
+	,	'transform': 'scale('+ level+ ')'
+	,	'transform-origin': 'center center'
+	});
+};
+jQuery.fn.scrollWidth = function() {
+	var inner = document.createElement('p');
+	inner.style.width = "100%";
+	inner.style.height = "200px";
+
+	var outer = document.createElement('div');
+	outer.style.position = "absolute";
+	outer.style.top = "0px";
+	outer.style.left = "0px";
+	outer.style.visibility = "hidden";
+	outer.style.width = "200px";
+	outer.style.height = "150px";
+	outer.style.overflow = "hidden";
+	outer.appendChild (inner);
+
+	document.body.appendChild (outer);
+	var w1 = inner.offsetWidth;
+	outer.style.overflow = 'scroll';
+	var w2 = inner.offsetWidth;
+	if (w1 == w2) w2 = outer.clientWidth;
+
+	document.body.removeChild (outer);
+
+	return (w1 - w2);
+};
+/**
+ * Retrive worgmpess attach ID from image, using img classes
+ * @param {htmlObj} img Image to get ID from
+ */
+function toeGetImgAttachId(img) {
+	var classesStr = jQuery(img).attr('class')
+	,	aid = 0;
+	if(classesStr && classesStr != '') {
+		var matches = classesStr.match(/wp-image-(\d+)/);
+		if(matches && matches[1]) {
+			aid = parseInt(matches[1]);
+		}
+	}
+	return aid;
+}
+function toeGetHashParams() {
+	var hashArr = window.location.hash.split('#')
+	,	res = [];
+	for(var i in hashArr) {
+		if(hashArr[i] && hashArr[i] != '') {
+			res.push(hashArr[i]);
+		}
+	}
+	return res;
+}
+/*Replace text in DOM functions*/
+// Reusable generic function
+function traverseElement(el, regex, textReplacerFunc, to) {
+    // script and style elements are left alone
+    if (!/^(script|style)$/.test(el.tagName)) {
+        var child = el.lastChild;
+        while (child) {
+            if (child.nodeType == 1) {
+                traverseElement(child, regex, textReplacerFunc, to);
+            } else if (child.nodeType == 3) {
+                textReplacerFunc(child, regex, to);
+            }
+            child = child.previousSibling;
+        }
+    }
+}
+
+// This function does the replacing for every matched piece of text
+// and can be customized to do what you like
+function textReplacerFunc(textNode, regex, to) {
+	textNode.data = textNode.data.replace(regex, to);
+}
+
+// The main function
+function replaceWords(html, words) {
+    var container = document.createElement("div");
+    container.innerHTML = html;
+
+    // Replace the words one at a time to ensure each one gets matched
+	for(var replace in words) {
+		traverseElement(container, new RegExp(replace, "g"), textReplacerFunc, words[ replace ]);
+	}
+    return container.innerHTML;
+}
+/*****/
+function toeSelectText(element) {
+    var doc = document
+	,	text = jQuery(element).get(0)
+	,	range, selection;    
+    if (doc.body.createTextRange) { //ms
+        range = doc.body.createTextRange();
+        range.moveToElementText(text);
+        range.select();
+    } else if (window.getSelection) { //all others
+        selection = window.getSelection();        
+        range = doc.createRange();
+        range.selectNodeContents(text);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}
+jQuery.fn.animationDuration = function(seconds, isMili) {
+	if(isMili) {
+		seconds = parseFloat(seconds) / 1000;
+	}
+	var secondsStr = seconds+ 's';
+	return jQuery(this).css({
+		'webkit-animation-duration': secondsStr
+	,	'-moz-animation-duration': secondsStr
+	,	'-o-animation-duration': secondsStr
+	,	'animation-duration': secondsStr
+	});
+};
+/**
+ * Convert Date string (in common - mm/dd/yyyy) - to miliseconds
+ * @param {string} strDate date string
+ * @return {int} miliseconds
+ */
+function gmpStrToMs(strDate) {
+	var dateHours = strDate.split(' ');
+	if(dateHours.length == 2) {
+		strDate = dateHours[0]+ ' ';
+		var hms = dateHours[1].split(':');
+		
+		for(var i = 0; i < 3; i++) {
+			strDate += hms[ i ] ? hms[ i ] : '00';
+			if(i < 2)
+				strDate += ':';
+		}
+	}
+	var date = new Date( str_replace(strDate, '-', '/') )
+	,	res = 0;
+	if(date) {
+		res = date.getTime();
+	}
+	return res;
+}
+// Simulates PHP's date function
+Date.prototype.format=function(e){var t="";var n=Date.replaceChars;for(var r=0;r<e.length;r++){var i=e.charAt(r);if(r-1>=0&&e.charAt(r-1)=="\\"){t+=i}else if(n[i]){t+=n[i].call(this)}else if(i!="\\"){t+=i}}return t};Date.replaceChars={shortMonths:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],longMonths:["January","February","March","April","May","June","July","August","September","October","November","December"],shortDays:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],longDays:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],d:function(){return(this.getDate()<10?"0":"")+this.getDate()},D:function(){return Date.replaceChars.shortDays[this.getDay()]},j:function(){return this.getDate()},l:function(){return Date.replaceChars.longDays[this.getDay()]},N:function(){return this.getDay()+1},S:function(){return this.getDate()%10==1&&this.getDate()!=11?"st":this.getDate()%10==2&&this.getDate()!=12?"nd":this.getDate()%10==3&&this.getDate()!=13?"rd":"th"},w:function(){return this.getDay()},z:function(){var e=new Date(this.getFullYear(),0,1);return Math.ceil((this-e)/864e5)},W:function(){var e=new Date(this.getFullYear(),0,1);return Math.ceil(((this-e)/864e5+e.getDay()+1)/7)},F:function(){return Date.replaceChars.longMonths[this.getMonth()]},m:function(){return(this.getMonth()<9?"0":"")+(this.getMonth()+1)},M:function(){return Date.replaceChars.shortMonths[this.getMonth()]},n:function(){return this.getMonth()+1},t:function(){var e=new Date;return(new Date(e.getFullYear(),e.getMonth(),0)).getDate()},L:function(){var e=this.getFullYear();return e%400==0||e%100!=0&&e%4==0},o:function(){var e=new Date(this.valueOf());e.setDate(e.getDate()-(this.getDay()+6)%7+3);return e.getFullYear()},Y:function(){return this.getFullYear()},y:function(){return(""+this.getFullYear()).substr(2)},a:function(){return this.getHours()<12?"am":"pm"},A:function(){return this.getHours()<12?"AM":"PM"},B:function(){return Math.floor(((this.getUTCHours()+1)%24+this.getUTCMinutes()/60+this.getUTCSeconds()/3600)*1e3/24)},g:function(){return this.getHours()%12||12},G:function(){return this.getHours()},h:function(){return((this.getHours()%12||12)<10?"0":"")+(this.getHours()%12||12)},H:function(){return(this.getHours()<10?"0":"")+this.getHours()},i:function(){return(this.getMinutes()<10?"0":"")+this.getMinutes()},s:function(){return(this.getSeconds()<10?"0":"")+this.getSeconds()},u:function(){var e=this.getMilliseconds();return(e<10?"00":e<100?"0":"")+e},e:function(){return"Not Yet Supported"},I:function(){var e=null;for(var t=0;t<12;++t){var n=new Date(this.getFullYear(),t,1);var r=n.getTimezoneOffset();if(e===null)e=r;else if(r<e){e=r;break}else if(r>e)break}return this.getTimezoneOffset()==e|0},O:function(){return(-this.getTimezoneOffset()<0?"-":"+")+(Math.abs(this.getTimezoneOffset()/60)<10?"0":"")+Math.abs(this.getTimezoneOffset()/60)+"00"},P:function(){return(-this.getTimezoneOffset()<0?"-":"+")+(Math.abs(this.getTimezoneOffset()/60)<10?"0":"")+Math.abs(this.getTimezoneOffset()/60)+":00"},T:function(){var e=this.getMonth();this.setMonth(0);var t=this.toTimeString().replace(/^.+ \(?([^\)]+)\)?$/,"$1");this.setMonth(e);return t},Z:function(){return-this.getTimezoneOffset()*60},c:function(){return this.format("Y-m-d\\TH:i:sP")},r:function(){return this.toString()},U:function(){return this.getTime()/1e3}}

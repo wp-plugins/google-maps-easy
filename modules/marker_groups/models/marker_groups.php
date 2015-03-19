@@ -36,14 +36,14 @@ class marker_groupsModelGmp extends modelGmp {
             unset($params['mode']);
             $id = $params['id'];
             unset($params['id']);
-            frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('group.edit');
+            frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('group.edit');
 			if(frameGmp::_()->getTable('marker_groups')->update($params, array('id' => $id))) {
 				return $id;
 			} else
 				$this->pushError (frameGmp::_()->getTable('marker_groups')->getErrors());
         } else {
             unset($params['mode']);      
-            frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('group.save');
+            frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('group.save');
             return frameGmp::_()->getTable('marker_groups')->insert($params);
         }
 		return false;

@@ -36,22 +36,24 @@ abstract class tableGmp {
      * Table errors data
      */
     protected $_errors = array();
-    /**
-     * Escape data before action
-     */
-    protected $_escape = false;
-
-    protected $_limitFrom = '';
-    protected $_limitTo = '';
-
+	/**
+	 * Escape data before action
+	 */
+	protected $_escape = false;
+	
+	protected $_limitFrom = '';
+	protected $_limitTo = '';
+	
     static public function getInstance($table = '') {
         static $instances = array();
-        if(!$table) $table = $this->_table;
+		if(!$table) {
+			throw new Exception('Unknown table ['. $table. ']');
+		}
         if(!isset($instances[$table])) {
             $class = 'table'. strFirstUp($table). strFirstUp(GMP_CODE);
-            if(class_exists($class))
+            if(class_exists($class)) 
                 $instances[$table] = new $class();
-            else
+            else 
                 $instances[$table] = NULL;  /*throw error must be here*/
         }
         return $instances[$table];
@@ -84,13 +86,13 @@ abstract class tableGmp {
     }
     public function fillFromDB($id = 0, $where = '') {
         $res = $this;
-        if($id)
+        if($id) 
             $data = $this->getById($id);
-        elseif($where)
+         elseif($where)
             $data = $this->get('*', $where);
-        else
+         else
             $data = $this->getAll();
-
+        
         if($data) {
             if($id) {
                 foreach($data as $k => $v) {
@@ -104,14 +106,14 @@ abstract class tableGmp {
                     foreach($field as $k => $v) {
                         if(isset($this->_fields[$k])) {
                             $row[$k] = toeCreateObjGmp('fieldGmp', array(
-                                $this->_fields[$k]->name,
-                                $this->_fields[$k]->html,
-                                $this->_fields[$k]->type,
-                                $this->_fields[$k]->default,
-                                $this->_fields[$k]->label,
-                                $this->_fields[$k]->maxlen,
-                                $this->_fields[$k]->description
-                            ));
+                                    $this->_fields[$k]->name,
+                                    $this->_fields[$k]->html,
+                                    $this->_fields[$k]->type,
+                                    $this->_fields[$k]->default,
+                                    $this->_fields[$k]->label,
+                                    $this->_fields[$k]->maxlen,
+                                    $this->_fields[$k]->description
+                                    ));
                             $row[$k]->setValue($v, true);
                         }
                     }
@@ -145,7 +147,7 @@ abstract class tableGmp {
     }
     public function setID($id) {
         $this->_id = $id;
-    }
+    } 
     public function getAll($fields = '*') {
         return $this->get($fields);
     }
@@ -170,26 +172,26 @@ abstract class tableGmp {
         } else {
             $this->_limit = '';
         }
-        return $this;
+		return $this;
     }
-    public function setLimit($limit = '') {
+	public function setLimit($limit = '') {
         $this->_limit = $limit;
-        return $this;
+		return $this;
     }
-    public function limitFrom($limit = '') {
-        if (is_numeric($limit))
+	public function limitFrom($limit = '') {
+        if (is_numeric($limit)) 
             $this->_limitFrom = (int)$limit;
-        return $this;
+		return $this;
     }
-    public function limitTo($limit = '') {
-        if (is_numeric($limit))
+	public function limitTo($limit = '') {
+        if (is_numeric($limit)) 
             $this->_limitTo = (int)$limit;
-        return $this;
+		return $this;
     }
     /**
      * Add ORDER BY to SQL
-     *
-     * @param mixed $fields
+     * 
+     * @param mixed $fields 
      */
     public function orderBy($fields){
         if (is_array($fields)) {
@@ -198,12 +200,12 @@ abstract class tableGmp {
             $order = $fields;
         }
         $this->_order = $order;
-        return $this;
+		return $this;
     }
     /**
      * Add GROUP BY to SQL
-     *
-     * @param mixed $fields
+     * 
+     * @param mixed $fields 
      */
     public function groupBy($fields){
         if (is_array($fields)) {
@@ -212,7 +214,7 @@ abstract class tableGmp {
             $group = $fields;
         }
         $this->_group = $group;
-        return $this;
+		return $this;
     }
     public function get($fields = '*', $where = '', $tables = '', $return = 'all') {
         if(!$tables) $tables = $this->_table. ' '. $this->_alias;
@@ -237,26 +239,26 @@ abstract class tableGmp {
             $this->_order = '';
         }
         if ($this->_limit != '') {
-            if(is_numeric($this->_limit)) {
-                $query .= ' LIMIT 0,'. $this->_limit;
-            } else {
-                $query .= ' LIMIT '. $this->_limit;
-            }
-
+			if(is_numeric($this->_limit)) {
+				$query .= ' LIMIT 0,'. $this->_limit;
+			} else {
+				$query .= ' LIMIT '. $this->_limit;
+			}
+            
             $this->_limit = '';
         } elseif($this->_limitFrom !== '' &&  $this->_limitTo !== '') {
-            $query .= ' LIMIT '. $this->_limitFrom. ','. $this->_limitTo;
+			$query .= ' LIMIT '. $this->_limitFrom. ','. $this->_limitTo;
             $this->_limitFrom = '';
-            $this->_limitTo = '';
-        }
+			$this->_limitTo = '';
+		}
         return dbGmp::get($query, $return);
     }
     public function store($data, $method = 'INSERT', $where = '') {
-        $this->_clearErrors();
+		$this->_clearErrors();
         $method = strtoupper($method);
-        if($this->_escape) {
-            $data = dbGmp::escape($data);
-        }
+		if($this->_escape) {
+			$data = dbGmp::escape($data);
+		}
         $query = '';
         switch($method) {
             case 'INSERT':
@@ -268,40 +270,40 @@ abstract class tableGmp {
                 $query = 'UPDATE ';
                 break;
         }
-
+		
         $fields = $this->_getQueryString($data, ',', true);
 
         if(empty($fields)) {
             $this->_addError(__('Nothig to update', GMP_LANG_CODE));
             return false;
         }
-
+        
         $query .= $this->_table. ' SET '. $fields;
 
         if(!empty($this->_errors))
             return false;
         if($method == 'UPDATE' && !empty($where))
-            $query .= ' WHERE '. $this->_getQueryString($where, 'AND');
+            $query .= ' WHERE '. $this->_getQueryString($where, 'AND'); 
         if(dbGmp::query($query)) {
             if($method == 'INSERT')
                 return dbGmp::lastID();
             else
                 return true;
         } else
-            $this->_addError(__('Database error. Please contact your developer.', GMP_LANG_CODE));
+			$this->_addError(GMP_TEST_MODE ? dbGmp::getError() : __('Database error. Please contact your developer.', GMP_LANG_CODE));
         return false;
     }
     public function insert($data) {
         return $this->store($data);
     }
     public function update($data, $where) {
-        /* if(is_array($where)) {
-             foreach($where as $key => $val) {
-                 if(array_key_exists($key, $data)) {
-                     unset($data[$key]);
-                 }
-             }
-         } else*/if(is_numeric($where)) {
+       /* if(is_array($where)) {
+            foreach($where as $key => $val) {
+                if(array_key_exists($key, $data)) {
+                    unset($data[$key]);
+                }
+            }
+        } else*/if(is_numeric($where)) {
             $where = array($this->_id => $where);
         }
         return $this->store($data, 'UPDATE', $where);
@@ -338,7 +340,7 @@ abstract class tableGmp {
             foreach($data as $k => $v) {
                 if(array_key_exists($k, $this->_fields) || $k == $this->_id) {
                     $val = $v;
-                    if($this->_fields[$k]->adapt['dbTo'])
+                    if(isset($this->_fields[$k]) && $this->_fields[$k]->adapt['dbTo']) 
                         $val = fieldAdapterGmp::_($val, $this->_fields[$k]->adapt['dbTo'], fieldAdapterGmp::DB);
                     if($validate) {
                         if (is_object($this->_fields[$k])) {
@@ -349,26 +351,28 @@ abstract class tableGmp {
                             }
                         }
                     }
-                    /*if(empty($val))
-                        $val = $this->_fields[$k]->default;*/
-                    switch($this->_fields[$k]->type) {
-                        case 'int':
-                        case 'tinyint':
-                            $res .= $k. ' = '. (int)$val. ' '. $delim. ' ';
-                            break;
-                        case 'float':
-                            $res .= $k. ' = '. (float)$val. ' '. $delim. ' ';
-                            break;
-                        case 'decimal':
-                            $res .= $k. ' = '. (double)$val. ' '. $delim. ' ';
-                            break;
-                        case 'free':    //Just set it as it is
-                            $res .= $k. ' = '. $val. ' '. $delim. ' ';
-                            break;
-                        default:
-                            $res .= $k. ' = \''. $val. '\' '. $delim. ' ';
-                            break;
-                    }
+					if(isset($this->_fields[$k])) {
+						switch($this->_fields[$k]->type) {
+							case 'int':
+							case 'tinyint':
+								$res .= $k. ' = '. (int)$val. ' '. $delim. ' ';
+								break;
+							case 'float':
+								$res .= $k. ' = '. (float)$val. ' '. $delim. ' ';
+								break;
+							case 'decimal':
+								$res .= $k. ' = '. (double)$val. ' '. $delim. ' ';
+								break;
+							case 'free':    //Just set it as it is
+								$res .= $k. ' = '. $val. ' '. $delim. ' ';
+								break;
+							default:
+								$res .= $k. ' = \''. $val. '\' '. $delim. ' ';
+								break;
+						}
+					} else {
+						$res .= $k. ' = \''. $val. '\' '. $delim. ' ';
+					}
                 } elseif($k == 'additionalCondition') {    //just add some string to query
                     $res .= $v. ' '. $delim. ' ';
                 }
@@ -391,6 +395,13 @@ abstract class tableGmp {
         $this->_fields[$name] = toeCreateObjGmp('fieldGmp', array($name, $html, $type, $default, $label, $maxlen, $dbAdapt, $htmlAdapt, $description));
         return $this;
     }
+	/**
+	 * Public alias for _addField() method
+	 */
+	public function addField() {
+		$args = func_get_args();
+		return call_user_func_array(array($this, '_addField'), $args);
+	}
     public function getFields() {
         return $this->_fields;
     }
@@ -403,7 +414,7 @@ abstract class tableGmp {
         return dbGmp::get('SELECT '. $this->_id. ' FROM '. $this->_table. ' WHERE '. $field. ' = "'. $value. '"', 'one');
     }
     protected function _addError($error) {
-        if(is_array($error))
+        if(is_array($error)) 
             $this->_errors = array_merge($this->_errors, $error);
         else
             $this->_errors[] = $error;
@@ -411,9 +422,9 @@ abstract class tableGmp {
     public function getErrors() {
         return $this->_errors;
     }
-    protected function _clearErrors() {
-        $this->_errors = array();
-    }
+	protected function _clearErrors() {
+		$this->_errors = array();
+	}
     /**
      * Prepare data before send it to database
      */
@@ -459,7 +470,7 @@ abstract class tableGmp {
                     if($d[$key] == 'false')
                         $d[$key] = 0;
                     $d[$key] = (int) $d[$key];
-
+                    
                     break;
             }
         }
@@ -467,14 +478,14 @@ abstract class tableGmp {
         return $d;
     }
     public function install($d = array()) {
-
+        
     }
     public function uninstall($d = array()) {
-
+        
     }
-    public function activate() {
-
-    }
+	public function activate() {
+		
+	}
     public function getLastInsertID() {
         return dbGmp::get('SELECT MAX('. $this->_id. ') FROM '. $this->_table, 'one');
     }

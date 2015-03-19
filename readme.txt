@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin/
 Tags: google map, google map plugin, google maps wordpress plugin, google maps, google maps plugin, directions,  map, maps, location, direction, map marker, marker, geocoder, post map, widget map, widget, google map widget, custom marker icons and text, custom marker text, geo, google map short code,  google map styles, openstreetmap, latitude, longitude, placemarker, pronamic, reverse geocode, wp map, wp maps, supsystic
 Tested up to: 4.1.1
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers or locations. Display any data on the map: text, images, videos. Custom map marker icons
@@ -53,11 +53,81 @@ Important! Short code must be inserted in a text editor page, and not in the vis
 5. Paste the plug-ins folder in the folder
 6. Go to admin panel => open item "Plugins" => activate plugin you need
 
+== Other notes ==
+
+= How to Create a Google Map in WordPress =
+
+= Step 1: Creating/Editing Google Map with Google Maps Easy WordPress plugin =
+
+1. On the left navigation menu click “Add Map”.
+2. Enter the name of map.
+3. Click "Save Map" button.
+
+Here you can change default options of google map:
+
+* set the map width in pixels or percent;
+* set the map height in pixels;
+* choose the map stylization **(PRO feature)** - click "Choose style" button and select your map style, click "Apply" button on style that you like;
+* set the map zoom - simply using the mouse wheel or zoom buttons on the map;
+* delete the map
+
+Don't forget to press the "Save map" button.
+
+= Step 2: Creating/Editing Markers for the Google Maps by Supsystic =
+
+1. Click "Add New Marker" button - in the center of the map will appear a marker.
+2. Set the name of marker.
+3. Set the address of the marker by using the address field or fields with marker coordinates. Or you can just click on a point on the map.
+4. Click "Save marker" button.
+
+At this point you have the ability to set marker configuration:
+
+* add marker description - besides text, you can attach images, links and videos;
+* select the icon for the marker - you can choose it from the list of icons or upload your own icon;
+* choose_icon
+* set the address of the marker - enter the address by yourself or start typing and then choose the address from the list
+
+Also Google Maps Easy allows you:
+
+* Create multiple markers for one map
+* Edit the marker
+* Remove the marker from the map
+
+Important! One marker may be used on a single map. You can not use 1 marker on two different maps.
+
+After every your action - with google maps easy wordpress plugin, you can immediately see the result in a live preview in the right top corner.
+
+= Step 3: Export/Import Option =
+
+On the left navigation menu click “Settings”. Here you can export or import maps and markers.
+
+1. To export maps or markers - click "Export" button and "Maps.csv" or "Markers.csv" file will be downloaded on your computer.
+2. To import maps or markers - you need to click "Import" button and choose the .csv file.
+
+= Step 4: Displaying Google Map on the website =
+
+Under the map you can see shortcode of the map.
+
+Copy and paste the shortcode into your post or page and Google Maps Easy will automatically create the map on your page using the settings you chose above. Important! Shortcode must be inserted in a text editor page, and not in the visual.
+
+*Check other WordPress plugins:*
+
+* [Backup by Supsystic](https://wordpress.org/plugins/backup-by-supsystic/ "Backup and Restoration plugin")
+* [Grid Gallery](https://wordpress.org/plugins/gallery-by-supsystic/ "Grid Gallery plugin")
+* [Slider by Supsystic](https://wordpress.org/plugins/slider-by-supsystic/ "Slider plugin")
+* [Popup plugin](https://wordpress.org/plugins/popup-by-supsystic/ "Popup plugin")
+* [Security and Firewall](https://wordpress.org/plugins/security-by-supsystic/ "Security solution")
+
 == Screenshots ==
 
 1. Google Maps Easy WordPress plugin admin area
 
 == Changelog ==
+
+= 1.0.7 / 19.03.2015 =
+ * Code refactoring - around 90% of code was refactored for further additional developments
+ * Admin area fixes
+ * Overview tab added
 
 = 1.0.6 =
 * Fixed google maps errors throwing in WordPress debug mode

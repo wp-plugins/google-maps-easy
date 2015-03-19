@@ -15,6 +15,9 @@ jQuery(document).ready(function(){
 		}));
 		return false;
 	});
+	jQuery('#gmpCsvImportMarkersBtn').on('click', function () {
+		jQuery('input[name="csv_import_file"]').click();
+	});
 });
 function gmpCsvImportOnSubmit() {
     //jQuery('#gmpCsvImportMsg').showLoaderGmp();
@@ -24,10 +27,4 @@ function gmpCsvImportOnSubmit() {
 }
 function gmpCsvImportOnComplete(file, res) {
 	toeProcessAjaxResponseGmp(res, 'gmpCsvImportMsg');
-	if(!res.error) {
-		//getMapsList();
-		//gmpRefreshMarkerList();
-		EasyGoogleMaps.GridController.refresh();
-		EasyGoogleMaps.TabsController.show('gmpAllMaps');
-	}
 }

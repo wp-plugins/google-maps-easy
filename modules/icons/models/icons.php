@@ -11,8 +11,9 @@ class iconsModelGmp extends modelGmp {
 			$this->setDefaultIcons();
 		}
 	}
-    public function getIcons(){
-        $icons = frameGmp::_()->getTable('icons')->get('*');
+    public function getIcons($params = array()) {
+		$fields = isset($params['fields']) ? $params['fields'] : '*';
+        $icons = frameGmp::_()->getTable('icons')->get( $fields );
         if(empty($icons) ){
 			return $icons ;
         }
@@ -41,15 +42,17 @@ class iconsModelGmp extends modelGmp {
         return 'icons_files/def_icons/';
     }
     public function getIconsFullDir(){
-        $uplDir = wp_upload_dir();
+        static $uplDir = '';
+		if(empty($uplDir))
+			$uplDir = wp_upload_dir();
         $modPath = $this->getModule()->getModPath();
-        $path  = $modPath.$this->getIconsPath();
+        $path  = $modPath. $this->getIconsPath();
         return $path;
     }
     
     public function getIconsFullPath(){
         $uplDir = wp_upload_dir();
-        $path = $uplDir['basedir'].$this->getIconsPath();
+        $path = $uplDir['basedir']. $this->getIconsPath();
         return $path;
     }
     public function setDefaultIcons(){
@@ -116,8 +119,8 @@ class iconsModelGmp extends modelGmp {
 		}
 		return $icon;
 	}
-	public function iconExists($iconId){
-		return self::$tableObj->exists($iconId,'id');
+	public function iconExists($iconId) {
+		return self::$tableObj->exists($iconId, 'id');
 	}
 	public function remove($d = array()) {
 		$d['id'] = isset($d['id']) ? (int) $d['id'] : 0;

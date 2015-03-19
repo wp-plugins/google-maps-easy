@@ -3,12 +3,18 @@
  * Plugin Name: Google Maps Easy
  * Plugin URI: http://supsystic.com/plugins/google-maps-plugin/
  * Description: The easiest way to create Google Map with markers or locations. Display any data on the map: text, images, videos. Custom map marker icons
- * Version: 1.0.6
+ * Version: 1.0.7
  * Author: supsystic.com
  * Author URI: http://supsystic.com
  **/
+	/**
+	 * Base config constants and functions
+	 */
     require_once(dirname(__FILE__). DIRECTORY_SEPARATOR. 'config.php');
     require_once(dirname(__FILE__). DIRECTORY_SEPARATOR. 'functions.php');
+	/**
+	 * Connect all required core classes
+	 */
     importClassGmp('dbGmp');
     importClassGmp('installerGmp');
     importClassGmp('baseObjectGmp');
@@ -17,11 +23,13 @@
     importClassGmp('viewGmp');
     importClassGmp('controllerGmp');
     importClassGmp('helperGmp');
-    importClassGmp('tabGmp');
     importClassGmp('dispatcherGmp');
     importClassGmp('fieldGmp');
     importClassGmp('tableGmp');
     importClassGmp('frameGmp');
+	/**
+	 * @deprecated since version 1.0.1
+	 */
     importClassGmp('langGmp');
     importClassGmp('reqGmp');
     importClassGmp('uriGmp');
@@ -32,21 +40,16 @@
     importClassGmp('errorsGmp');
     importClassGmp('utilsGmp');
     importClassGmp('modInstallerGmp');
-    importClassGmp('wpUpdaterGmp');
 	importClassGmp('installerDbUpdaterGmp');
-
+	importClassGmp('dateGmp');
+	/**
+	 * Check plugin version - maybe we need to update database, and check global errors in request
+	 */
     installerGmp::update();
     errorsGmp::init();
-
-    dispatcherGmp::doAction('onBeforeRoute');
+    /**
+	 * Start application
+	 */
     frameGmp::_()->parseRoute();
-    dispatcherGmp::doAction('onAfterRoute');
-
-    dispatcherGmp::doAction('onBeforeInit');
     frameGmp::_()->init();
-    dispatcherGmp::doAction('onAfterInit');
-
-    dispatcherGmp::doAction('onBeforeExec');
     frameGmp::_()->exec();
-
-    dispatcherGmp::doAction('onAfterExec');

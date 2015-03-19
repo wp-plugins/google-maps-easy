@@ -1,97 +1,122 @@
-var gmpAdminFormChanged = []
-,	gmpDefaultOpenTab = '';
-window.onbeforeunload = function() {
-	if (window.EasyGoogleMaps && window.EasyGoogleMaps.EditMapController) {
-		if (window.EasyGoogleMaps.EditMapController.Form.isDirty()) {
-			return 'You have not saved your changes after editing map. ' +
-				'Do you want to leave this page without saving?';
-		}
-	}
+var gmpAdminFormChanged = [];
+window.onbeforeunload = function(){
+	// If there are at lease one unsaved form - show message for confirnation for page leave
+	if(gmpAdminFormChanged.length)
+		return 'Some changes were not-saved. Are you sure you want to leave?';
 };
 jQuery(document).ready(function(){
-	jQuery('#gmpAdminOptionsTabs').tabs({
-		beforeActivate: function( event, ui ) {
-		   if(!checkAdminFormSaved())
-			   return false;
-		}
-	});
-    jQuery('#gmpAdminOptionsTabs li').removeClass('ui-corner-top').addClass('ui-corner-left');
-	//jQuery('#gmpAdminOptionsTabs li a[href="#gmpAllMaps"]').click(function(){
-	//	if(checkAdminFormSaved()) {
-	//		gmpOpenMapLists();
-	//		// Mark tab as active, as we marked it as deactivated when went to edit map form
-	//		jQuery(this).parents('li:first').addClass('ui-tabs-active');
-	//	}
-	//});
-	jQuery('#gmpAdminOptionsTabs li a[href="#gmpMarkerList"]').click(function(){
-		if(checkAdminFormSaved()) {
-			jQuery('.gmpCancelMarkerEditing').trigger('click');
-		}
-	});
-	jQuery('#gmpAdminOptionsSaveMsg').submit(function(){
-		return false;
-	});
-	jQuery('.gmpOptTip').live('mouseover',function(event){
-		if(!jQuery('#gmpOptDescription').attr('toeFixTip')) {
-			var pageY = event.pageY - jQuery(window).scrollTop();
-			var pageX = event.pageX;
-			var tipMsg = jQuery(this).attr('tip');
-			var moveToLeft = jQuery(this).hasClass('toeTipToLeft');	// Move message to left of the tip link
-			if(typeof(tipMsg) == 'undefined' || tipMsg == '') {
-				tipMsg = jQuery(this).attr('title');
+	if(typeof(gmpActiveTab) != 'undefined' && gmpActiveTab != 'main_page' && jQuery('#toplevel_page_'+ gmpMainSlug).hasClass('wp-has-current-submenu')) {
+		var subMenus = jQuery('#toplevel_page_'+ gmpMainSlug).find('.wp-submenu li');
+		subMenus.removeClass('current').each(function(){
+			if(jQuery(this).find('a[href$="&tab='+ gmpActiveTab+ '"]').size()) {
+				jQuery(this).addClass('current');
 			}
-			toeOptShowDescriptionGmp( tipMsg, pageX, pageY, moveToLeft );
-			jQuery('#gmpOptDescription').attr('toeFixTip', 1);
-		}
-		return false;
-    });
-    jQuery('.gmpOptTip').live('mouseout',function(){
-		toeOptTimeoutHideDescriptionGmp();
-        return false;
-    });
-	jQuery('#gmpOptDescription').live('mouseover',function(e){
-		jQuery(this).attr('toeFixTip', 1);
-		return false;
-    });
-	jQuery('#gmpOptDescription').live('mouseout',function(e){
-		toeOptTimeoutHideDescriptionGmp();
-		return false;
-    });
-	// If some changes was made in those forms and they were not saved - show message for confirnation before page reload
-	var formsPreventLeave = ['gmpAddMarkerToEditMap', 'gmpEditMapForm'];
-	jQuery('#'+ formsPreventLeave.join(', #')).find('input,select').change(function(e){
-		if(e.originalEvent) {
-			var formId = jQuery(this).parents('form:first').attr('id');
-			changeAdminFormGmp(formId);
-		}
-	});
-	jQuery('#'+ formsPreventLeave.join(', #')).find('input[type=text],textarea').keyup(function(e){
-		if(e.originalEvent) {
-			var formId = jQuery(this).parents('form:first').attr('id');
-			changeAdminFormGmp(formId);
-		}
-	});
-	if(gmpDefaultOpenTab && gmpDefaultOpenTab != '') {
-		// Call after all initialization will compleate
-		setTimeout(function(){
-			switch(gmpDefaultOpenTab) {
-				case 'gmpAddNewMap':
-					// Wait until tiny wp editor will be fully loaded
-					setTimeout(gmpShowAddMap, 2000);
-					break;
-				case 'gmpMarkerList':
-					selectTabMainGmp('gmpMarkerList');
-					break;
-				case 'gmpMarkerGroups':
-					selectTabMainGmp('gmpMarkerGroups');
-					break;
-				case 'gmpPluginSettings':
-					selectTabMainGmp('gmpPluginSettings');
-					break;
-			}
-		}, 500);
+		});
 	}
+	
+	// Timeout - is to count only user changes, because some changes can be done auto when form is loaded
+	setTimeout(function() {
+		// If some changes was made in those forms and they were not saved - show message for confirnation before page reload
+		var formsPreventLeave = [];
+		if(formsPreventLeave && formsPreventLeave.length) {
+			jQuery('#'+ formsPreventLeave.join(', #')).find('input,select').change(function(){
+				var formId = jQuery(this).parents('form:first').attr('id');
+				changeAdminFormGmp(formId);
+			});
+			jQuery('#'+ formsPreventLeave.join(', #')).find('input[type=text],textarea').keyup(function(){
+				var formId = jQuery(this).parents('form:first').attr('id');
+				changeAdminFormGmp(formId);
+			});
+			jQuery('#'+ formsPreventLeave.join(', #')).submit(function(){
+				adminFormSavedGmp( jQuery(this).attr('id') );
+			});
+		}
+	}, 1000);
+
+	if(jQuery('.gmpInputsWithDescrForm').size()) {
+		jQuery('.gmpInputsWithDescrForm').find('input[type=checkbox][data-optkey]').change(function(){
+			var optKey = jQuery(this).data('optkey')
+			,	descShell = jQuery('#gmpFormOptDetails_'+ optKey);
+			if(descShell.size()) {
+				if(jQuery(this).attr('checked')) {
+					descShell.slideDown( 300 );
+				} else {
+					descShell.slideUp( 300 );
+				}
+			}
+		}).trigger('change');
+	}
+	gmpInitStickyItem();
+	gmpInitCustomCheckRadio();
+	//gmpInitCustomSelect();
+	
+	jQuery('.gmpFieldsetToggled').each(function(){
+		var self = this;
+		jQuery(self).find('.gmpFieldsetContent').hide();
+		jQuery(self).find('.gmpFieldsetToggleBtn').click(function(){
+			var icon = jQuery(this).find('i')
+			,	show = icon.hasClass('fa-plus');
+			show ? icon.removeClass('fa-plus').addClass('fa-minus') : icon.removeClass('fa-minus').addClass('fa-plus');
+			jQuery(self).find('.gmpFieldsetContent').slideToggle( 300, function(){
+				if(show) {
+					jQuery(this).find('textarea').each(function(i, el){
+						if(typeof(this.CodeMirrorEditor) !== 'undefined') {
+							this.CodeMirrorEditor.refresh();
+						}
+					});
+				}
+			} );
+			return false;
+		});
+	});
+	// Go to Top button init
+	if(jQuery('#gmpPopupGoToTopBtn').size()) {
+		jQuery('#gmpPopupGoToTopBtn').click(function(){
+			jQuery('html, body').animate({
+				scrollTop: 0
+			}, 1000);
+			jQuery(this).parents('#gmpPopupGoToTop:first').hide();
+			return false;
+		});
+	}
+	// Tooltipster initialization
+	tooltipsterize();
+	// Shortcodes and other "code-elements" auto-selection - not working with insert to visual editor for now
+	/*if(jQuery('.sup-shortcode').size()) {
+		jQuery('.sup-shortcode').click(function(){
+			toeSelectText( this );
+		});
+	}*/
 });
+function tooltipsterize(shell) {
+	var tooltipsterSettings = {
+		contentAsHTML: true
+	,	interactive: true
+	,	speed: 250
+	,	delay: 0
+	,	animation: 'swing'
+	,	maxWidth: 450
+	}
+	,	classToPos = {
+		'.supsystic-tooltip': 'top-left'
+	,	'.supsystic-tooltip-bottom': 'bottom-left'
+	,	'.supsystic-tooltip-left': 'left'
+	,	'.supsystic-tooltip-right': 'right'
+	};
+	for(var className in classToPos) {
+		if(shell) {
+			if(jQuery(shell).find( className ).size()) {
+				tooltipsterSettings.position = classToPos[ className ];
+				jQuery(shell).find( className ).tooltipster( tooltipsterSettings );
+			}
+		} else {
+			if(jQuery( className ).size()) {
+				tooltipsterSettings.position = classToPos[ className ];
+				jQuery( className ).tooltipster( tooltipsterSettings );
+			}
+		}
+	}
+}
 function changeAdminFormGmp(formId) {
 	if(jQuery.inArray(formId, gmpAdminFormChanged) == -1)
 		gmpAdminFormChanged.push(formId);
@@ -124,71 +149,226 @@ function isAdminFormChanged(formId) {
 	}
 	return false;
 }
-function toeShowDialogCustomized(element, options) {
-	options = jQuery.extend({
-		resizable: false
-	,	width: 500
-	,	height: 300
-	,	closeOnEscape: true
-	,	open: function(event, ui) {
-			jQuery('.ui-dialog-titlebar').css({
-				'background-color': '#222222'
-			,	'background-image': 'none'
-			,	'border': 'none'
-			,	'margin': '0'
-			,	'padding': '0'
-			,	'border-radius': '0'
-			,	'color': '#CFCFCF'
-			,	'height': '27px'
+/*Some items should be always on users screen*/
+function gmpInitStickyItem() {
+	jQuery(window).scroll(function(){
+		var stickiItemsSelectors = [/*'.ui-jqgrid-hdiv', */'.supsystic-sticky']
+		,	elementsUsePaddingNext = [/*'.ui-jqgrid-hdiv', */'.supsystic-bar']	// For example - if we stick row - then all other should not offest to top after we will place element as fixed
+		,	wpTollbarHeight = 32
+		,	wndScrollTop = jQuery(window).scrollTop() + wpTollbarHeight
+		,	footer = jQuery('.gmpAdminFooterShell')
+		,	footerHeight = footer && footer.size() ? footer.height() : 0
+		,	docHeight = jQuery(document).height()
+		,	wasSticking = false
+		,	wasUnSticking = false;
+		/*if(jQuery('#wpbody-content .update-nag').size()) {	// Not used for now
+			wpTollbarHeight += parseInt(jQuery('#wpbody-content .update-nag').outerHeight());
+		}*/
+		for(var i = 0; i < stickiItemsSelectors.length; i++) {
+			jQuery(stickiItemsSelectors[ i ]).each(function(){
+				var element = jQuery(this);
+				if(element && element.size() && !element.hasClass('sticky-ignore')) {
+					var scrollMinPos = element.offset().top
+					,	prevScrollMinPos = parseInt(element.data('scrollMinPos'))
+					,	useNextElementPadding = toeInArray(stickiItemsSelectors[ i ], elementsUsePaddingNext) !== -1 || element.hasClass('sticky-padd-next')
+					,	currentScrollTop = wndScrollTop
+					,	calcPrevHeight = element.data('prev-height')
+					,	currentBorderHeight = wpTollbarHeight
+					,	usePrevHeight = 0;
+					if(calcPrevHeight) {
+						usePrevHeight = jQuery(calcPrevHeight).outerHeight();
+						
+						currentBorderHeight += usePrevHeight;
+					}
+					if(currentScrollTop > scrollMinPos && !element.hasClass('supsystic-sticky-active')) {	// Start sticking
+						element.addClass('supsystic-sticky-active').data('scrollMinPos', scrollMinPos).css({
+							'top': currentBorderHeight
+						});
+						if(element.hasClass('sticky-save-width')) {
+							element.addClass('sticky-full-width');
+						}
+						if(useNextElementPadding) {
+							//element.addClass('supsystic-sticky-active-bordered');
+							var nextElement = element.next();
+							if(nextElement && nextElement.size()) {
+								nextElement.data('prevPaddingTop', nextElement.css('padding-top'));
+								var addToNextPadding = parseInt(element.data('next-padding-add'));
+								addToNextPadding = addToNextPadding ? addToNextPadding : 0;
+								nextElement.css({
+									'padding-top': element.height() + usePrevHeight  + addToNextPadding
+								});
+							}
+						}
+						wasSticking = true;
+						element.trigger('startSticky');
+					} else if(!isNaN(prevScrollMinPos) && currentScrollTop <= prevScrollMinPos) {	// Stop sticking
+						element.removeClass('supsystic-sticky-active').data('scrollMinPos', 0).css({
+							//'top': 0
+						});
+						if(element.hasClass('sticky-save-width')) {
+							element.removeClass('sticky-full-width');
+						}
+						if(useNextElementPadding) {
+							//element.removeClass('supsystic-sticky-active-bordered');
+							var nextElement = element.next();
+							if(nextElement && nextElement.size()) {
+								var nextPrevPaddingTop = parseInt(nextElement.data('prevPaddingTop'));
+								if(isNaN(nextPrevPaddingTop))
+									nextPrevPaddingTop = 0;
+								nextElement.css({
+									'padding-top': nextPrevPaddingTop
+								});
+							}
+						}
+						element.trigger('stopSticky');
+						wasUnSticking = true;
+					} else {	// Check new stick position
+						if(element.hasClass('supsystic-sticky-active')) {
+							if(footerHeight) {
+								var elementHeight = element.height()
+								,	heightCorrection = 32
+								,	topDiff = docHeight - footerHeight - (currentScrollTop + elementHeight + heightCorrection);
+								if(topDiff < 0) {
+									element.css({
+										'top': currentBorderHeight + topDiff
+									});
+								} else {
+									element.css({
+										'top': currentBorderHeight
+									});
+								}
+							}
+							// If at least on element is still sticking - count it as all is working
+							wasSticking = wasUnSticking = false;
+						}
+					}
+				}
 			});
-			jQuery('.ui-dialog-titlebar-close').css({
-				'background': 'url("'+ GMP_DATA.cssPath+ 'img/tb-close.png") no-repeat scroll 0 0 transparent'
-			,	'border': '0'
-			,	'width': '15px'
-			,	'height': '15px'
-			,	'padding': '0'
-			,	'border-radius': '0'
-			,	'margin': '6px 6px 0'
-			,	'float': 'right'
-			}).html('').removeClass('ui-dialog-titlebar-close');
-			jQuery('.ui-dialog').css({
-				'border-radius': '3px'
-			,	'background-color': '#FFFFFF'
-			,	'background-image': 'none'
-			,	'padding': '1px'
-			,	'z-index': '300000'
-			});
-			jQuery('.ui-dialog-buttonpane').css({
-				'background-color': '#FFFFFF'
-			});
-			jQuery('.ui-dialog-title').css({
-				'color': '#CFCFCF'
-			,	'font': '12px sans-serif'
-			,	'padding': '6px 10px 0'
-			});
-			if(options.openCallback && typeof(options.openCallback) == 'function') {
-				options.openCallback(event, ui);
-			}
-			jQuery('.ui-widget-overlay').css({
-				'z-index': jQuery( event.target ).parents('.ui-dialog:first').css('z-index') - 1
-			,	'background-image': 'none'
-			});
-			if(options.modal && options.closeOnBg) {
-				jQuery('.ui-widget-overlay').unbind('click').bind('click', function() {
-					jQuery( element ).dialog('close');
-				});
+		}
+		if(wasSticking) {
+			if(jQuery('#gmpPopupGoToTop').size())
+				jQuery('#gmpPopupGoToTop').show();
+		} else if(wasUnSticking) {
+			if(jQuery('#gmpPopupGoToTop').size())
+				jQuery('#gmpPopupGoToTop').hide();
+		}
+	});
+}
+function gmpInitCustomCheckRadio(selector) {
+	if(!selector)
+		selector = document;
+	jQuery(selector).find('input').iCheck('destroy').iCheck({
+		checkboxClass: 'icheckbox_minimal'
+	,	radioClass: 'iradio_minimal'
+	}).on('ifChanged', function(e){
+		// for checkboxHiddenVal type, see class htmlGmp
+		jQuery(this).trigger('change');
+		if(jQuery(this).hasClass('cbox')) {
+			var parentRow = jQuery(this).parents('.jqgrow:first');
+			if(parentRow && parentRow.size()) {
+				jQuery(this).parents('td:first').trigger('click');
+			} else {
+				var checkId = jQuery(this).attr('id');
+				if(checkId && checkId != '' && strpos(checkId, 'cb_') === 0) {
+					var parentTblId = str_replace(checkId, 'cb_', '');
+					if(parentTblId && parentTblId != '' && jQuery('#'+ parentTblId).size()) {
+						jQuery('#'+ parentTblId).find('input[type=checkbox]').iCheck('update');
+					}
+				}
 			}
 		}
-	}, options);
-	return jQuery(element).dialog(options);
+	}).on('ifClicked', function(e){
+		jQuery(this).trigger('click');
+	});
 }
-function selectTabMainGmp(id) {
-	/*var index = jQuery('#gmpAdminOptionsTabs a[href="#'+ id+ '"]').parent().index();
-	jQuery('#gmpAdminOptionsTabs').tabs('option', 'active', index);*/
-	selectTab(id, 'gmpAdminOptionsTabs');
+function gmpCheckUpdate(checkbox) {
+	jQuery(checkbox).iCheck('update');
 }
-function selectTab(id, tabsElementId) {
-	var tabsSelector = '#'+ tabsElementId
-	,	index = jQuery(tabsSelector+ ' a[href="#'+ id+ '"]').parent().index();
-	jQuery(tabsSelector).tabs('option', 'active', index);
+function gmpCheckUpdateArea(selector) {
+	jQuery(selector).find('input[type=checkbox]').iCheck('update');
+}
+function gmpGetTxtEditorVal(id) {
+	if(typeof(tinyMCE) !== 'undefined' && tinyMCE.get( id ) && !jQuery('#'+ id).is(':visible'))
+		return tinyMCE.get( id ).getContent();
+	else
+		return jQuery('#'+ id).val();
+}
+function gmpSetTxtEditorVal(id, content) {
+	if(typeof(tinyMCE) !== 'undefined' && tinyMCE && tinyMCE.get( id ) && !jQuery('#'+ id).is(':visible'))
+		tinyMCE.get( id ).setContent(content);
+	else
+		jQuery('#'+ id).val( content );
+}
+/**
+ * Add data to jqGrid object post params search
+ * @param {object} param Search params to set
+ * @param {string} gridSelectorId ID of grid table html element
+ */
+function gmpGridSetListSearch(param, gridSelectorId) {
+	jQuery('#'+ gridSelectorId).setGridParam({
+		postData: {
+			search: param
+		}
+	});
+}
+/**
+ * Set data to jqGrid object post params search and trigger search
+ * @param {object} param Search params to set
+ * @param {string} gridSelectorId ID of grid table html element
+ */
+function gmpGridDoListSearch(param, gridSelectorId) {
+	gmpGridSetListSearch(param, gridSelectorId);
+	jQuery('#'+ gridSelectorId).trigger( 'reloadGrid' );
+}
+/**
+ * Get row data from jqGrid
+ * @param {number} id Item ID (from database for example)
+ * @param {string} gridSelectorId ID of grid table html element
+ * @return {object} Row data
+ */
+function gmpGetGridDataById(id, gridSelectorId) {
+	var rowId = getGridRowId(id, gridSelectorId);
+	if(rowId) {
+		return jQuery('#'+ gridSelectorId).jqGrid ('getRowData', rowId);
+	}
+	return false;
+}
+/**
+ * Get cell data from jqGrid
+ * @param {number} id Item ID (from database for example)
+ * @param {string} column Column name
+ * @param {string} gridSelectorId ID of grid table html element
+ * @return {string} Cell data
+ */
+function gmpGetGridColDataById(id, column, gridSelectorId) {
+	var rowId = getGridRowId(id, gridSelectorId);
+	if(rowId) {
+		return jQuery('#'+ gridSelectorId).jqGrid ('getCell', rowId, column);
+	}
+	return false;
+}
+/**
+ * Get grid row ID (ID of table row) from item ID (from database ID for example)
+ * @param {number} id Item ID (from database for example)
+ * @param {string} gridSelectorId ID of grid table html element
+ * @return {number} Table row ID
+ */
+function getGridRowId(id, gridSelectorId) {
+	var rowId = parseInt(jQuery('#'+ gridSelectorId).find('[aria-describedby='+ gridSelectorId+ '_id][title='+ id+ ']').parent('tr:first').index());
+	if(!rowId) {
+		console.log('CAN NOT FIND ITEM WITH ID  '+ id);
+		return false;
+	}
+	return rowId;
+}
+function prepareToPlotDate(data) {
+	if(typeof(data) === 'string') {
+		if(data) {
+			
+			data = str_replace(data, '/', '-');
+			console.log(data, new Date(data));
+			return (new Date(data)).getTime();
+		}
+	}
+	return data;
 }

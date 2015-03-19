@@ -1,0 +1,77 @@
+.form-table label {
+	font-weight: normal;
+}
+.form-table label.label-big {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+.supsystic-plugin table.form-table tr {
+	border-bottom: medium none !important;
+}
+#gmpMarkerForm .form-table {
+	border-top: 1px solid #e9edee;
+	margin-top: 25px;
+}
+/* Map shortcode */
+.shortcode-wrap {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: rgba(241, 196, 15, .3);
+    border: 1px solid rgba(241, 196, 15, .3);
+}
+#shortcodeCode {
+    font-family: Consolas, Monaco, "Lucida Console", monospace;
+}
+/* Marker add/save btns */
+#gmpAddNewMarkerBtn {
+	float: left; 
+	width: 100%; 
+	text-align: center;
+}
+#gmpSaveMarkerBtn {
+	float: right;
+	display: none;
+}
+.iconsList {
+	list-style: none;
+}
+.previewIcon {
+	float: left;
+	cursor: pointer;
+	min-height: 65px;
+	padding: 0 8px;
+}
+/* Markers list on edit page */
+#markerList {
+    margin: 15px 0;
+    border-top: 1px solid #e9edee;
+    padding-top: 15px;
+}
+.egm-marker {
+    padding: 10px 5px;
+}
+.egm-marker:hover {
+    background-color: #f6f7f7;
+}
+.egm-marker .egm-marker-icon img {
+    height: 22px;
+    margin-top: -2px;
+}
+.egm-marker .egm-marker-latlng {
+    color: #bdc3c7;
+}
+.egm-marker .egm-marker-actions {
+    text-align: right;
+}
+.gmpMapShortCodeShell {
+	background: none;
+	font-family: Consolas, Monaco, monospace;
+	float: right;
+	color: #a4aaac;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 13px;
+}
+#gmpGmapTbl_cb {
+	min-width: 21px;
+}

@@ -1,71 +1,54 @@
 <?php
 class adminmenuGmp extends moduleGmp {
-	protected $_mainSlug = null;
-	
+	protected $_mainSlug = 'google-maps-easy';
+	private $_mainCap = 'manage_options';
     public function init() {
         parent::init();
-        //$this->getController()->getView('adminmenu')->init();
+		add_action('admin_menu', array($this, 'initMenu'), 9);
 		$plugName = plugin_basename(GMP_DIR. GMP_MAIN_FILE);
 		add_filter('plugin_action_links_'. $plugName, array($this, 'addSettingsLinkForPlug') );
-		add_action('admin_menu', array($this, 'initMenu'), 9);
-
-		$this->_mainSlug = GMP_MAIN_SLUG;
     }
 	public function addSettingsLinkForPlug($links) {
-		array_unshift($links, '<a href="'. uriGmp::_(array('baseUrl' => admin_url('admin.php'), 'page' => $this->getMainSlug())). '">'. langGmp::_('Settings'). '</a>');
+		array_unshift($links, '<a href="'. $this->getMainLink(). '">'. __('Settings', GMP_LANG_CODE). '</a>');
 		return $links;
 	}
 	public function initMenu() {
-		$accessCap = 'manage_options';
-		$accessCap = dispatcherGmp::applyFilters('adminMenuAccessCap', $accessCap);
-
-		$options = array(
-			'add_new_map'     => array(
-				'title'      => langGmp::_('Add New Map'),
-				'capability' => $accessCap,
-				'menu_slug'  => $this->_mainSlug . '#gmpAddMap',
-				'function'   => array(
-					frameGmp::_()->getModule('gmap')->getController(),
-					'getAllMaps'
-				)
-			),
-			'all_maps'        => array(
-				'title'      => langGmp::_('All Maps'),
-				'capability' => $accessCap,
-				'menu_slug'  => $this->_mainSlug . '#gmpAllMaps',
-				'function'   => array(
-					frameGmp::_()->getModule('gmap')->getController(),
-					'getAllMaps'
-				)
-			),
-			'plugin_settings' => array(
-				'title'      => langGmp::_(
-					'Plugin Settings'
-				),
-				'capability' => $accessCap,
-				'menu_slug'  => $this->_mainSlug . '#gmpPluginSettings',
-				'function'   => array(
-					frameGmp::_()->getModule('gmap')->getController(),
-					'getAllMaps'
-				)
-			),
-		);
-
-		$options = dispatcherGmp::applyFilters('adminMenuOptions', $options);
-		$mainSlug = dispatcherGmp::applyFilters('adminMenuMainSlug', $this->_mainSlug);	
-		add_menu_page(langGmp::_('Google Maps Easy'), langGmp::_('Google Maps Easy'), $accessCap, $this->_mainSlug, array(frameGmp::_()->getModule('options')->getView(), 'getAdminPage'), 'dashicons-admin-site');
-		foreach($options as $opt) {
-			add_submenu_page($mainSlug, langGmp::_($opt['title']), langGmp::_($opt['title']), $opt['capability'], $opt['menu_slug'], $opt['function']);
+		$mainCap = $this->getMainCap();
+		$mainSlug = dispatcherGmp::applyFilters('adminMenuMainSlug', $this->_mainSlug);
+		$mainMenuPageOptions = array(
+			'page_title' => GMP_WP_PLUGIN_NAME, 
+			'menu_title' => GMP_WP_PLUGIN_NAME, 
+			'capability' => $mainCap,
+			'menu_slug' => $mainSlug,
+			'function' => array(frameGmp::_()->getModule('options'), 'getAdminPage'));
+		$mainMenuPageOptions = dispatcherGmp::applyFilters('adminMenuMainOption', $mainMenuPageOptions);
+        add_menu_page($mainMenuPageOptions['page_title'], $mainMenuPageOptions['menu_title'], $mainMenuPageOptions['capability'], $mainMenuPageOptions['menu_slug'], $mainMenuPageOptions['function']/*, 'dashicons-format-gallery'*/);
+		//remove duplicated WP menu item
+		//add_submenu_page($mainMenuPageOptions['menu_slug'], '', '', $mainMenuPageOptions['capability'], $mainMenuPageOptions['menu_slug'], $mainMenuPageOptions['function']);
+		$tabs = frameGmp::_()->getModule('options')->getTabs();
+		$subMenus = array();
+		foreach($tabs as $tKey => $tab) {
+			if($tKey == 'main_page') continue;	// Top level menu item - is main page, avoid place it 2 times
+			if((isset($tab['hidden']) && $tab['hidden'])
+				|| (isset($tab['hidden_for_main']) && $tab['hidden_for_main'])	// Hidden for WP main
+				|| (isset($tab['is_main']) && $tab['is_main'])) continue;
+			$subMenus[] = array(
+				'title' => $tab['label'], 'capability' => $mainCap, 'menu_slug' => 'admin.php?page='. $mainSlug. '&tab='. $tKey, 'function' => '',
+			);
+		}
+		$subMenus = dispatcherGmp::applyFilters('adminMenuOptions', $subMenus);
+		foreach($subMenus as $opt) {
+			add_submenu_page($mainSlug, $opt['title'], $opt['title'], $opt['capability'], $opt['menu_slug'], $opt['function']);
 		}
 	}
-
-	/**
-	 * Returns MainSlug.
-	 * @return string
-	 */
-	public function getMainSlug()
-	{
+	public function getMainLink() {
+		return uriGmp::_(array('baseUrl' => admin_url('admin.php'), 'page' => $this->getMainSlug()));
+	}
+	public function getMainSlug() {
 		return $this->_mainSlug;
+	}
+	public function getMainCap() {
+		return $this->_mainCap;
 	}
 }
 

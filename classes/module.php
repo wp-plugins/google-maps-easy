@@ -4,11 +4,10 @@ abstract class moduleGmp extends baseObjectGmp {
 	protected $_helper = NULL;
 	protected $_code = '';
 	protected $_onAdmin = false;
-	protected $_params = array();
+	//protected $_params = array();
 	protected $_typeID = 0;
 	protected $_type = '';
 	protected $_label = '';
-	protected $_description = '';
 	/*
 	 * ID in modules table
 	 */
@@ -20,13 +19,12 @@ abstract class moduleGmp extends baseObjectGmp {
 	protected $_externalPath = '';
 	protected $_isExternal = false;
 
-	public function __construct($d, $params = array()) {
+	public function __construct($d/*, $params = array()*/) {
 		$this->setTypeID($d['type_id']);
 		$this->setType($d['type_name']);
 		$this->setCode($d['code']);
 		$this->setLabel($d['label']);
-		$this->setDescription($d['description']);
-		$this->setParams($d['params']);
+		//$this->setParams($d['params']);
 		$this->_setID($d['id']);
 		if(isset($d['ex_plug_dir']) && !empty($d['ex_plug_dir'])) {
 			$this->isExternal(true);
@@ -99,12 +97,6 @@ abstract class moduleGmp extends baseObjectGmp {
 	public function setLabel($label) {
 		$this->_label = $label;
 	}
-	public function getDescription() {
-		return $this->_description;
-	}
-	public function setDescription($desc) {
-		$this->_description = $desc;
-	}
 	public function init() {
 
 	}
@@ -128,12 +120,11 @@ abstract class moduleGmp extends baseObjectGmp {
 		}
 		if($this->_controller) return true;
 		if(file_exists($this->getModDir(). 'controller.php')) {
-			$className = toeGetClassNameGmp($this->getCode(). 'Controller', true);
-			if(!class_exists($className)) {
-				import($this->getModDir(). 'controller.php');
+			$className = '';
+			if(importGmp($this->getModDir(). 'controller.php')) {
+				$className = toeGetClassNameGmp($this->getCode(). 'Controller');
 			}
-			//var_dump($className, class_exists($className), $this->getModDir(). 'controller.php');
-			if(!empty($className) && class_exists($className)) {
+			if(!empty($className)) {
 				$this->_controller = new $className($this->getCode());
 				$this->_controller->init();
 				return true;
@@ -175,33 +166,13 @@ abstract class moduleGmp extends baseObjectGmp {
 	public function onAdmin() {
 		return $this->_onAdmin;
 	}
-	public function __call($name, $arguments) {
-		$controller = $this->getController();
-		if(method_exists($controller, $name)) {     //try to find this method in controller
-			return $this->getController()->$name(
-						isset($arguments[0]) ? $arguments[0] : NULL,
-						isset($arguments[0]) ? $arguments[0] : NULL,
-						isset($arguments[0]) ? $arguments[0] : NULL
-					);
-		} elseif($controller) {                                    //try to find this method in model
-			$model = $controller->getModel();
-			if(method_exists($model, $name)) {
-				return $this->getController()->$name(
-						isset($arguments[0]) ? $arguments[0] : NULL,
-						isset($arguments[0]) ? $arguments[0] : NULL,
-						isset($arguments[0]) ? $arguments[0] : NULL
-					);
-			}
-		}
-		errorsGmp::push(langGmp::_(array('Module', $this->_code, 'method', $name, 'undefined')), errorsGmp::FATAL);
-	}
 	public function getModel($modelName = '') {
 		return $this->getController()->getModel($modelName);
 	}
 	public function getView($viewName = '') {
 		return $this->getController()->getView($viewName);
 	}
-	public function setParams($params) {
+	/*public function setParams($params) {
 		if(!is_array($params)) {
 			if(empty($params))
 				$params = array();
@@ -210,8 +181,8 @@ abstract class moduleGmp extends baseObjectGmp {
 			}
 		}
 		$this->_params = $params;
-	}
-	public function getParams($key = NULL) {
+	}*/
+	/*public function getParams($key = NULL) {
 		if(is_null($key))
 			return $this->_params;
 		else if(is_numeric($key) && isset($this->_params[ $key ])) {
@@ -223,13 +194,13 @@ abstract class moduleGmp extends baseObjectGmp {
 			}
 			return false;
 		}
-	}
+	}*/
 	/**
 	 * Retrive one parameter using it's key, alias for getParams() method
 	 */
-	public function getParam($key) {
+	/*public function getParam($key) {
 		return $this->getParams($key);
-	}
+	}*/
 	public function install() {
 
 	}
@@ -250,4 +221,6 @@ abstract class moduleGmp extends baseObjectGmp {
 		$thisClassRefl = new ReflectionObject($this);
 		return $thisClassRefl->getConstant($name);
 	}
+	public function loadAssets() {}
+	public function loadAdminAssets() {}
 }

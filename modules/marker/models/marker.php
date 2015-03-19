@@ -53,10 +53,10 @@ class markerModelGmp extends modelGmp {
 		if(!empty($marker)) {
 			$marker['icon_data'] = frameGmp::_()->getModule('icons')->getModel()->getIconFromId($marker['icon']);
 			$marker['params'] = utilsGmp::unserialize($marker['params']);
-			$marker['position'] = array(
+			/*$marker['position'] = array(
 				'coord_x' => $marker['coord_x'],
 				'coord_y' => $marker['coord_y'],
-			);
+			);*/
 			if(isset($marker['params']['marker_title_link']) 
 				&& !empty($marker['params']['marker_title_link']) 
 				&& strpos($marker['params']['marker_title_link'], 'http') !== 0
@@ -140,17 +140,32 @@ class markerModelGmp extends modelGmp {
 		return self::$tableObj->update($insert," `id`='".$marker['id']."'");
     }*/
     public function getMapMarkers($mapId, $withGroup = false) {
-        $markers = frameGmp::_()->getTable('marker')->get('*',array('map_id'=>$mapId));
-        $iconsModel =  frameGmp::_()->getModule('icons')->getModel();
-		$groupModel = frameGmp::_()->getModule('marker_groups')->getModel();
-        foreach($markers as $i => $m) {
-			$markers[$i] = $this->_afterGet($markers[$i]);
-			if($withGroup) {
-				$markers[$i]['groupObj'] = $groupModel->getGroupById($markers[$i]['marker_group_id']);
+		$mapId = (int) $mapId;
+        $markers = frameGmp::_()->getTable('marker')->get('*', array('map_id' => $mapId));
+       // $iconsModel =  frameGmp::_()->getModule('icons')->getModel();
+		//$groupModel = frameGmp::_()->getModule('marker_groups')->getModel();
+		if(!empty($markers)) {
+			foreach($markers as $i => $m) {
+				$markers[$i] = $this->_afterGet($markers[$i]);
+				/*if($withGroup) {
+					$markers[$i]['groupObj'] = $groupModel->getGroupById($markers[$i]['marker_group_id']);
+				}*/
 			}
-        }
+		}
         return $markers;
     }
+	public function getMarkersByIds($ids) {
+		if(!is_array($ids))
+			$ids = array( $ids );
+		$ids = array_map('intval', $ids);
+		$markers = frameGmp::_()->getTable('marker')->get('*', array('additionalCondition' => 'id IN ('. implode(',', $ids). ')'));
+		if(!empty($markers)) {
+			foreach($markers as $i => $m) {
+				$markers[$i] = $this->_afterGet($markers[$i]);
+			}
+		}
+		return $markers;
+	}
     public function constructMarkerOptions(){
         $params = array();
         $params['groups'] =  frameGmp::_()->getModule('marker_groups')->getModel()->getMarkerGroups();
@@ -214,5 +229,18 @@ class markerModelGmp extends modelGmp {
 	}
 	public function getCount($d = array()) {
 		return frameGmp::_()->getTable('marker')->get('COUNT(*)', $d, '', 'one');
+	}
+	public function updatePos($d = array()) {
+		$d['id'] = isset($d['id']) ? (int) $d['id'] : 0;
+		if($d['id']) {
+			return frameGmp::_()->getTable('marker')->update(array(
+				'coord_x' => $d['lat'],
+				'coord_y' => $d['lng'],
+			), array(
+				'id' => $d['id'],
+			));
+		} else
+			$this->pushError (__('Invalid Marker ID'));
+		return false;
 	}
 }

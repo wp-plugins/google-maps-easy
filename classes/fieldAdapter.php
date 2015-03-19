@@ -90,20 +90,20 @@ class fieldAdapterGmp {
                     'checked' => in_array($b->term_taxonomy_id, $field->value['brands']));
             }
         }
-        return '<div>'. langGmp::_('Apply To'). '
+        return '<div>'. __('Apply To', GMP_LANG_CODE). '
             <div id="tax_address">
-                <b>'. langGmp::_('Address'). '</b><br />
-                '. langGmp::_('Destination'). ':'. htmlGmp::checkboxlist('params[dest]', array('optionsGmp' => $listOfDest)). '<br />
-                '. langGmp::_('Country'). ':'. htmlGmp::countryList('params[country]', array('notSelected' => true, 'value' => $field->value['country'])). '<br />
+                <b>'. __('Address', GMP_LANG_CODE). '</b><br />
+                '. __('Destination', GMP_LANG_CODE). ':'. htmlGmp::checkboxlist('params[dest]', array('optionsGmp' => $listOfDest)). '<br />
+                '. __('Country', GMP_LANG_CODE). ':'. htmlGmp::countryList('params[country]', array('notSelected' => true, 'value' => $field->value['country'])). '<br />
             </div>
             <div id="tax_category">
-                <b>'. langGmp::_('Categories'). '</b><br />
-                '. (empty($cOptions) ? langGmp::_('You have no categories') : htmlGmp::checkboxlist('params[categories][]', array('optionsGmp' => $cOptions))). '<br />
-                    <b>'. langGmp::_('Brands'). '</b><br />
-                '. (empty($bOptions) ? langGmp::_('You have no brands') : htmlGmp::checkboxlist('params[brands][]', array('optionsGmp' => $bOptions))). '<br />
+                <b>'. __('Categories', GMP_LANG_CODE). '</b><br />
+                '. (empty($cOptions) ? __('You have no categories', GMP_LANG_CODE) : htmlGmp::checkboxlist('params[categories][]', array('optionsGmp' => $cOptions))). '<br />
+                    <b>'. __('Brands', GMP_LANG_CODE). '</b><br />
+                '. (empty($bOptions) ? __('You have no brands', GMP_LANG_CODE) : htmlGmp::checkboxlist('params[brands][]', array('optionsGmp' => $bOptions))). '<br />
             </div>
-            <div>'. langGmp::_('Tax Rate').': '. htmlGmp::text('params[rate]', array('value' => $field->value['rate'])).'</div>
-            <div>'. langGmp::_('Absolute').': '. htmlGmp::checkbox('params[absolute]', array('checked' => $field->value['absolute'])).'</div>
+            <div>'. __('Tax Rate', GMP_LANG_CODE).': '. htmlGmp::text('params[rate]', array('value' => $field->value['rate'])).'</div>
+            <div>'. __('Absolute', GMP_LANG_CODE).': '. htmlGmp::checkbox('params[absolute]', array('checked' => $field->value['absolute'])).'</div>
         </div>';
     }
     static public function displayCountry($cid, $key = 'name') {
@@ -131,7 +131,7 @@ class fieldAdapterGmp {
             if(empty(self::$countries))
                 self::$countries = self::getCachedCountries();
             if($notSelected) {
-				$options[ $notSelected ][0] = is_bool($notSelected) ? langGmp::_('Not selected') : langGmp::_($notSelected);
+				$options[ $notSelected ][0] = is_bool($notSelected) ? __('Not selected', GMP_LANG_CODE) : __($notSelected);
 			}
             foreach(self::$countries as $c) $options[ $notSelected ][$c['id']] = $c['name'];
         }
@@ -145,7 +145,7 @@ class fieldAdapterGmp {
                 self::$states = self::getCachedStates();
             if($notSelected) {
 				$notSelectedLabel = is_bool($notSelected) ? 'Not selected' : $notSelected;
-				$options[ $notSelected ][0] = array('name' => langGmp::_( $notSelectedLabel ), 'country_id' => NULL);
+				$options[ $notSelected ][0] = array('name' => __( $notSelectedLabel ), 'country_id' => NULL);
 			}
             foreach(self::$states as $s) $options[ $notSelected ][$s['id']] = $s;
         }
@@ -177,13 +177,13 @@ class fieldAdapterGmp {
         $output = '';
         if (!empty($params->attr)) {
             foreach ($params->attr as $key=>$value) {
-                $output .= langGmp::_($key).':<br />';
+                $output .= __($key).':<br />';
                 $output .= htmlGmp::text('params[attr]['.$key.']',array('value'=>$value)).'<br />';
             }
         } else {
-                $output .= langGmp::_('class').':<br />';
+                $output .= __('class', GMP_LANG_CODE).':<br />';
                 $output .= htmlGmp::text('params[attr][class]',array('value'=>'')).'<br />';
-                $output .= langGmp::_('id').':<br />';
+                $output .= __('id', GMP_LANG_CODE).':<br />';
                 $output .= htmlGmp::text('params[attr][id]',array('value'=>'')).'<br />';
         }
         return $output;
@@ -202,7 +202,7 @@ class fieldAdapterGmp {
         if(!empty($categories)) {
             if(!is_array($field->value['categories']))
                     $field->value['categories'] = array();
-            $field->htmlParams['optionsGmp'][0] = in_array(0,$field->value['categories'])?langGmp::_('Deselect All'):langGmp::_('Select All');
+            $field->htmlParams['optionsGmp'][0] = in_array(0,$field->value['categories'])?__('Deselect All'):__('Select All', GMP_LANG_CODE);
             foreach($categories as $c) {
                 $field->htmlParams['optionsGmp'][$c->term_taxonomy_id] = $c->cat_name;
             }

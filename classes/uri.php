@@ -53,18 +53,17 @@ class uriGmp {
         }
         return $res;
     }
-    static public function mod($name, $view = '', $action = '', $data = NULL) {
-        if(is_admin())
-            $params = array('page' => $name);
-        else
-            $params = array('mod' => $name);
-        if($view)
-            $params['viewGmp'] = $view;
+    static public function mod($name, $action = '', $data = NULL) {
+        $params = array('mod' => $name);
         if($action)
             $params['action'] = $action;
+		$params['pl'] = GMP_CODE;
         if($data) {
             if(is_array($data)) {
                 $params = array_merge($params, $data);
+				if(isset($data['reqType']) && $data['reqType'] == 'ajax') {
+					$params['baseUrl'] = admin_url('admin-ajax.php');
+				}
             } elseif(is_string($data)) {
                 $params = http_build_query($params);
                 $params .= '&'. $data;
@@ -93,6 +92,11 @@ class uriGmp {
             return 'http://'. $_SERVER['HTTP_HOST']. $_SERVER['SCRIPT_NAME'];
         }
     }
+	static public function getFullUrl() {
+		$url = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https://' : 'http://';
+		$url .= $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'];
+		return $url;
+	}
 	/**
 	 * Replace symbols to special html caracters in one output
 	 */

@@ -128,7 +128,7 @@ class fieldGmp {
 			if ($this->name == 'default_value') {
 				$optionsFromDb = frameGmp::_()->getModule('optionsGmp')->getHelper()->getOptions($id);
 				if (!empty($optionsFromDb)) {
-					$options = array(0 => langGmp::_('Select'));
+					$options = array(0 => __('Select', GMP_LANG_CODE));
 					foreach($optionsFromDb as $k => $v)
 						$options[$k] = $v;
 					$method = 'selectbox';
@@ -167,7 +167,7 @@ class fieldGmp {
 					}
 				}
 				if(empty($value))
-					$value = langGmp::_('N/A');
+					$value = __('N/A', GMP_LANG_CODE);
 				else
 					$value = implode('<br />', $value);
 				break;
@@ -176,12 +176,12 @@ class fieldGmp {
 				if(!empty($options) && !empty($options[ $this->value ])) {
 					$value = $options[ $this->value ];
 				} else {
-					$value = langGmp::_('N/A');
+					$value = __('N/A', GMP_LANG_CODE);
 				}
 				break;
 			default:
 				if ($this->value == '') {
-					$value = langGmp::_('N/A');
+					$value = __('N/A', GMP_LANG_CODE);
 				} else {
 					if(is_array($this->value)) {
 						$options = $this->getHtmlParam('optionsGmp');
@@ -274,23 +274,23 @@ class fieldGmp {
 			$add_option = '';
 			switch ($tag) {
 				case 5: 
-					$add_option = langGmp::_('Add Checkbox');
+					$add_option = __('Add Checkbox', GMP_LANG_CODE);
 					$options_tag = '';
 					$image_tag = ' style="display:none"';
 				break;
 				case 9: 
-					$add_option = langGmp::_('Add Item');
+					$add_option = __('Add Item', GMP_LANG_CODE);
 					$options_tag = '';
 					$image_tag = ' style="display:none"';
 				break;
 				case 12:
-					$add_option = langGmp::_('Add Item');
+					$add_option = __('Add Item', GMP_LANG_CODE);
 					$options_tag = '';
 					$image_tag = ' style="display:none"';
 				break;
 				case 10:
 					$options_tag = '';
-					$add_option = langGmp::_('Add Radio Button');
+					$add_option = __('Add Radio Button', GMP_LANG_CODE);
 					$image_tag = ' style="display:none"';
 				break;
 				case 8:
@@ -308,20 +308,20 @@ class fieldGmp {
 					$output .= fieldAdapterGmp::_($id,'getExtraFieldOptions',fieldAdapterGmp::STR);
 				$output .= '</div>';
 
-				$output .= '<div class="options image_tag"'.$image_tag.'>'.langGmp::_('Dimensions').':<br />';
+				$output .= '<div class="options image_tag"'.$image_tag.'>'.__('Dimensions', GMP_LANG_CODE).':<br />';
 					$params->width?$width = $params->width:'';
 					$params->height?$height = $params->height:'';
-					$output .= langGmp::_('width').':<br />';
+					$output .= __('width', GMP_LANG_CODE).':<br />';
 					$output .= htmlGmp::text('params[width]',array('value'=>$width)).'<br />';
-					$output .= langGmp::_('height').':<br />';
+					$output .= __('height', GMP_LANG_CODE).':<br />';
 					$output .= htmlGmp::text('params[height]',array('value'=>$height)).'<br />';
 				$output .= '</div>';
 			}
 			if($this->adapt['htmlParams']) {
 				$output .= fieldAdapterGmp::_($this, $this->adapt['htmlParams'], fieldAdapterGmp::STR);
 			} else {
-				$output .= '<a href="javascript:void(0);" class="set_properties">'.langGmp::_('Click to set field "id" and "class"').'</a>';
-				$output .= '<div class="attributes" style="display:none;">'.langGmp::_('Attributes').':<br />';
+				$output .= '<a href="javascript:void(0);" class="set_properties">'.__('Click to set field "id" and "class"', GMP_LANG_CODE).'</a>';
+				$output .= '<div class="attributes" style="display:none;">'.__('Attributes', GMP_LANG_CODE).':<br />';
 				$output .= fieldAdapterGmp::_($params,'getFieldAttributes',  fieldAdapterGmp::STR);
 				$output .= '</div>';
 			}
@@ -399,7 +399,7 @@ class fieldGmp {
 
 	   if (!file_exists($config_xml)) {
 		   // if there is no configuration file for this $module
-		   return langGmp::_('There are no configuration options for this module');
+		   return __('There are no configuration options for this module', GMP_LANG_CODE);
 	   }
 	   $output = '';
 	   // reading params structure
@@ -475,9 +475,9 @@ class fieldGmp {
 						 $htmlParams = array_merge($htmlParams, $configOptions[$key]['htmlParams']);
 					 }
 				  // output label and html element
-					 $output .= '<label>'.langGmp::_($configOptions[$key]['label']);
+					 $output .= '<label>'.__($configOptions[$key]['label']);
 					 if ($configOptions[$key]['description'] != '') {
-						 $output .= '<a class="toeOptTip" tip="'.langGmp::_($configOptions[$key]['description']).'"></a>';
+						 $output .= '<a class="toeOptTip" tip="'.__($configOptions[$key]['description']).'"></a>';
 					 }
 					 $output .= '</label><br />';
 					 $output .= htmlGmp::$method($name,$htmlParams).'<br />';

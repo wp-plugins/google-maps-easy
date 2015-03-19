@@ -2,23 +2,3 @@
 	display: inline;
 	float: right;
 }
-
-.ui-dialog-titlebar-close:before {
-	line-height: normal;
-}
-
-.ui-dialog-content {
-	float: left;
-}
-
-.ui-dialog-content button {
-	width: 100%;
-}
-
-.ui-dialog-titlebar {
-	padding-bottom: 45px !important;
-}
-
-.ui-dialog-titlebar .button {
-	margin-top: 5px;
-}

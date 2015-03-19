@@ -4,43 +4,9 @@ class installerGmp {
 	static public function init() {
 		global $wpdb;
 		$wpPrefix = $wpdb->prefix; /* add to 0.0.3 Versiom */
-		//$start = microtime(true);					// Speed debug info
-		//$queriesCountStart = $wpdb->num_queries;	// Speed debug info
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		$current_version = get_option($wpPrefix. GMP_DB_PREF. 'db_version', 0);
 		$installed = (int) get_option($wpPrefix. GMP_DB_PREF. 'db_installed', 0);
-		/**
-		 * htmltype 
-		 */
-		if (!dbGmp::exist($wpPrefix.GMP_DB_PREF."htmltype")) {
-			dbDelta("CREATE TABLE IF NOT EXISTS `".$wpPrefix.GMP_DB_PREF."htmltype` (
-			  `id` int(11) NOT NULL AUTO_INCREMENT,
-			  `label` varchar(32) NOT NULL,
-			  `description` varchar(255) NOT NULL,
-			  PRIMARY KEY (`id`),
-			  UNIQUE INDEX `label` (`label`)
-			) DEFAULT CHARSET=utf8");
-		
-			dbGmp::query("INSERT INTO `".$wpPrefix.GMP_DB_PREF."htmltype` VALUES
-				(1, 'text', 'Text'),
-				(2, 'password', 'Password'),
-				(3, 'hidden', 'Hidden'),
-				(4, 'checkbox', 'Checkbox'),
-				(5, 'checkboxlist', 'Checkboxes'),
-				(6, 'datepicker', 'Date Picker'),
-				(7, 'submit', 'Button'),
-				(8, 'img', 'Image'),
-				(9, 'selectbox', 'Drop Down'),
-				(10, 'radiobuttons', 'Radio Buttons'),
-				(11, 'countryList', 'Countries List'),
-				(12, 'selectlist', 'List'),
-				(13, 'countryListMultiple', 'Country List with posibility to select multiple countries'),
-				(14, 'block', 'Will show only value as text'),
-				(15, 'statesList', 'States List'),
-				(16, 'textFieldsDynamicTable', 'Dynamic table - multiple text options set'),
-				(17, 'textarea', 'Textarea'),
-				(18, 'checkboxHiddenVal', 'Checkbox with Hidden field')");
-		}
 		/**
 		 * modules 
 		 */
@@ -69,8 +35,16 @@ class installerGmp {
 				(NULL, 'gmap', 1, 1, '',1, 'Gmap', 'Gmap'),
 				(NULL, 'marker', 1, 1, '', 0, 'Markers', 'Google Maps Markers'),
 				(NULL, 'marker_groups', 1, 1, '', 0, 'Marker Gropus', 'Marker Groups'),                  
-				(NULL, 'promo', 1, 1, '', 0, 'Promo', 'Promo'),
-				(NULL, 'icons', 1, 1, '', 1, 'Marker Icons', 'Marker Icons');");
+				(NULL, 'supsystic_promo', 1, 1, '', 0, 'Promo', 'Promo'),
+				(NULL, 'icons', 1, 1, '', 1, 'Marker Icons', 'Marker Icons'),
+				(NULL, 'mail', 1, 1, '', 1, 'mail', 'mail');");
+		}
+		if(dbGmp::exist('@__modules', 'code', 'promo')) {
+			dbGmp::query('UPDATE @__modules SET code = "supsystic_promo" WHERE code = "promo"');
+		}
+		if(!dbGmp::exist('@__modules', 'code', 'mail')) {
+			dbGmp::query("INSERT INTO `".$wpPrefix.GMP_DB_PREF."modules` (id, code, active, type_id, params, has_tab, label, description) VALUES
+				(NULL, 'mail', 1, 1, '', 1, 'mail', 'mail');");
 		}
 		/**
 		 *  modules_type 
@@ -112,8 +86,6 @@ class installerGmp {
 			dbGmp::query("insert into `@__options` (`code`,`value`,`label`) VALUES
 			('infowindow_size','". utilsGmp::serialize(array('width'=>'100','height'=>'100')). "','Info Window Size')");
 		}
-		$eol = "\n";
-		
 		/* options categories */
 		if(!dbGmp::exist($wpPrefix.GMP_DB_PREF."options_categories")) {
 			dbDelta("CREATE TABLE IF NOT EXISTS `".$wpPrefix.GMP_DB_PREF."options_categories` (
@@ -127,7 +99,6 @@ class installerGmp {
 				(2, 'Template'),
 				(3, 'Subscribe'),
 				(4, 'Social');");
-		
 		}
 		/*
 		* Create table for map
@@ -189,12 +160,6 @@ class installerGmp {
 				  )");
 			dbGmp::query("INSERT INTO `".$wpPrefix.GMP_DB_PREF."marker_groups` VALUES('null', 'Default Group','Default Group');");
 		}     
-
-		/*
-		 * Create table for statistic
-		 * 
-		 */
-
 		/**
 		* Plugin usage statistics
 		*/
@@ -212,10 +177,8 @@ class installerGmp {
 		}
         update_option($wpPrefix. GMP_DB_PREF. 'db_version', GMP_VERSION);
 		add_option($wpPrefix. GMP_DB_PREF. 'db_installed', 1);
-		dbGmp::query("UPDATE `".$wpPrefix.GMP_DB_PREF."options` SET value = '". GMP_VERSION. "' WHERE code = 'version' LIMIT 1");
-                  
+		
         installerDbUpdaterGmp::runUpdate();
-		//$time = microtime(true) - $start;	// Speed debug info
 	}
 	static public function setUsed() {
 		update_option(GMP_DB_PREF. 'plug_was_used', 1);

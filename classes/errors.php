@@ -39,10 +39,23 @@ class errorsGmp {
             $gmpErrors = array_map('htmlspecialchars', array_map('stripslashes', array_map('trim', $gmpErrors)));
             if(!empty($gmpErrors)) {
                 self::$current = $gmpErrors;
-                add_filter('the_content', array('errorsGmp', 'appendErrorsContent'), 99999);
+				if(is_admin()) {
+					add_action('admin_notices', array('errorsGmp', 'showAdminErrors'));
+				} else {
+					add_filter('the_content', array('errorsGmp', 'appendErrorsContent'), 99999);
+				}
             }
         }
     }
+	static public function showAdminErrors() {
+		if(self::$current) {
+			$html = '';
+			foreach(self::$current as $error) {
+				$html .= '<div class="error"><p><strong style="font-size: 15px;">'. $error. '</strong></p></div>';
+			}
+			echo $html;
+		}
+	}
     static public function appendErrorsContent($content) {
         if(!self::$displayed && !empty(self::$current)) {
             $content = '<div class="toeErrorMsg">'. implode('<br />', self::$current). '</div>'. $content;
@@ -75,28 +88,6 @@ class errorsGmp {
             return self::$haveErrors;
         else
             return isset(self::$errors[$type]);
-    }
-    static public function pushCritical($msg) {
-        
-    }
-    static public function displayOnAdmin() {
-        $common = @self::$errors['common'];
-        if(empty($common))
-            $common = array();
-        $ses = self::getSession();
-        if(empty($ses))
-            $ses = array();
-        self::clearSession();    //Clear current session errors
-        $errors = array_merge( $common, $ses );
-        if(!empty( $errors )) {
-            $str = '';
-            foreach($errors as $error) { 
-                $str .= '<div class="error">';
-                $str .= $error;
-                $str .= '</div>';
-            }
-            echo $str;
-        }
     }
 }
 

@@ -73,7 +73,7 @@ class csvControllerGmp extends controllerGmp {
 			}
 		}
 		$csvGenerator->generate();
-		frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('csv.export.maps');
+		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('csv.export.maps');
 		exit();
 	}
 	private function _prepareValueToExport($val) {
@@ -119,7 +119,7 @@ class csvControllerGmp extends controllerGmp {
 			$r++;
 		}
 		$csvGenerator->generate();
-		frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('csv.export.markers');
+		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('csv.export.markers');
 		exit();
 	}
 	public function import() {
@@ -165,7 +165,7 @@ class csvControllerGmp extends controllerGmp {
 			} else
 				$res->pushError (langGmp::_('Empty data in file'));
 		}
-		frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('csv.import');
+		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('csv.import');
 		$res->ajaxExec();
 	}
 	private function _toYesNo($val) {

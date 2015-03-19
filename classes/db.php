@@ -60,7 +60,7 @@ class dbGmp {
     }
     /**
      * Replace prefixes in custom query. Suported next prefixes:
-     * #__  Wordpress prefix
+     * #__  Worgmpess prefix
      * ^__  Store plugin tables prefix (@see GMP_DB_PREF if config.php)
      * @__  Compared of WP table prefix + Store plugin prefix (@example wp_s_)
      * @param string $query query to be executed
@@ -74,7 +74,7 @@ class dbGmp {
     }
     static public function getError() {
         global $wpdb;
-        return $wpdb->show_errors();
+        return $wpdb->last_error;
     }
     static public function lastID() {
         global $wpdb;        
@@ -96,7 +96,6 @@ class dbGmp {
         return dateToTimestampGmp($arr[2]. GMP_DATE_DL. $arr[1]. GMP_DATE_DL. $arr[0]);
     }
     static public function exist($table, $column = '', $value = '') {
-        global $wpdb;
         if(empty($column) && empty($value)) {       //Check if table exist
             $res = self::get('SHOW TABLES LIKE "'. $table. '"', 'one');
         } elseif(empty($value)) {                   //Check if column exist
@@ -119,5 +118,14 @@ class dbGmp {
 	static public function escape($data) {
 		global $wpdb;
 		return $wpdb->_escape($data);
+	}
+	static public function getAutoIncrement($table) {
+		return (int) self::get('SELECT AUTO_INCREMENT
+			FROM information_schema.tables
+			WHERE table_name = "'. $table. '"
+			AND table_schema = DATABASE( );', 'one');
+	}
+	static public function setAutoIncrement($table, $autoIncrement) {
+		return self::query("ALTER TABLE `". $table. "` AUTO_INCREMENT = ". $autoIncrement. ";");
 	}
 }

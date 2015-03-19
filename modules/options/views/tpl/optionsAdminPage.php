@@ -1,20 +1,29 @@
-<!-- File: <?php echo __FILE__; ?> -->
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?&sensor=false"></script>
-
 <div class="wrap">
     <div class="supsystic-plugin">
         <section class="supsystic-content">
-            <?php include dirname(__FILE__) . '/block/navigation.php'; ?>
-            <?php include dirname(__FILE__) . '/block/container.php'; ?>
-            <div class="clear"></div>
+            <nav class="supsystic-navigation supsystic-sticky <?php dispatcherGmp::doAction('adminMainNavClassAdd')?>">
+                <ul class="supsystic-main-navigation-list">
+					<?php foreach($this->tabs as $tabKey => $tab) { ?>
+						<?php if(isset($tab['hidden']) && $tab['hidden']) continue;?>
+						<li class="<?php echo (($this->activeTab == $tabKey || in_array($tabKey, $this->activeParentTabs)) ? 'active' : '')?>" data-tab-key="<?php echo $tabKey?>">
+							<a href="<?php echo $tab['url']?>">
+								<?php if(isset($tab['fa_icon'])) { ?>
+									<i class="fa <?php echo $tab['fa_icon']?>"></i>	
+								<?php } elseif(isset($tab['wp_icon'])) { ?>
+									<i class="dashicons-before <?php echo $tab['wp_icon']?>"></i>	
+								<?php } elseif(isset($tab['icon'])) { ?>
+									<i class="<?php echo $tab['icon']?>"></i>	
+								<?php }?>
+								<?php echo $tab['label']?>
+							</a>
+						</li>
+					<?php }?>
+                </ul>
+            </nav>
+            <div class="supsystic-container supsystic-<?php echo $this->activeTab?>">
+				<?php echo $this->content?>
+                <div class="clear"></div>
+            </div>
         </section>
-        <!-- /.supsystic-content -->
-        <div class="clear"></div>
     </div>
-    <!-- /.supsystic-plugin -->
-
-    <div class="clear"></div>
 </div>
-<!-- /.wrap -->
-
-<!-- End of File: <?php echo __FILE__; ?> -->

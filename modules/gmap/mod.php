@@ -1,79 +1,45 @@
 <?php
 class  gmapGmp extends moduleGmp {
 	public function init() {
-		if (frameGmp::_()->isAdminPlugPage()) {
-			frameGmp::_()->addScript(
-				'gmp',
-				GMP_JS_PATH . 'gmp.js',
-				array(),
-				false,
-				false
-			);
-
-			frameGmp::_()->addScript(
-				'mutal_opts',
-				GMP_JS_PATH . 'mutal.js',
-				array(),
-				false,
-				false
-			);
-
-			frameGmp::_()->addScript(
-				'egm_admin_map_js',
-				$this->getModPath() . 'js/admin.map.js'
-			);
-
-			frameGmp::_()->addScript(
-				'egm_admin_edit_map_js',
-				$this->getModPath() . 'js/admin.editmap.js'
-			);
-
-			frameGmp::_()->addScript(
-				'egm_admin_edit_marker_js',
-				$this->getModPath() . 'js/admin.map_markers.js'
-			);
-
-			frameGmp::_()->addScript('egm_admin_maps_list_js', $this->getModPath() . 'js/admin.mapsList.js');
-
-			frameGmp::_()->addStyle('map_std', $this->getModPath(). 'css/map.css');
-
-		}
-
-		dispatcherGmp::addFilter('adminOptionsTabs', array($this, 'addOptionsTab'));
-		dispatcherGmp::addAction('tplHeaderBegin',array($this, 'showFavico'));
-		dispatcherGmp::addAction('tplBodyEnd',array($this, 'GoogleAnalitics'));
-
+		dispatcherGmp::addFilter('mainAdminTabs', array($this, 'addAdminTab'));
         add_action('wp_footer', array($this, 'addMapDataToJs'));
+		add_shortcode(GMP_SHORTCODE, array($this, 'drawMapFromShortcode'));
 	}
-
-	public function addOptionsTab($tabs) {
-		if(frameGmp::_()->isAdminPlugPage()){
-			frameGmp::_()->addScript('mapOptions', $this->getModPath(). 'js/admin.maps.options.js');
-			frameGmp::_()->addScript('bootstrap', GMP_JS_PATH .'bootstrap.min.js');
-		}
+	public function addAdminTab($tabs) {
+		$tabs[ $this->getCode(). '_add_new' ] = array(
+			'label' => __('Add Map', GMP_LANG_CODE), 'callback' => array($this, 'getAddNewTabContent'), 'fa_icon' => 'fa-plus-circle', 'sort_order' => 10, 'add_bread' => $this->getCode(),
+		);
+		$tabs[ $this->getCode(). '_edit' ] = array(
+			'label' => __('Edit', GMP_LANG_CODE), 'callback' => array($this, 'getEditTabContent'), 'sort_order' => 20, 'child_of' => $this->getCode(), 'hidden' => 1, 'add_bread' => $this->getCode(),
+		);
+		$tabs[ $this->getCode() ] = array(
+			'label' => __('All Maps', GMP_LANG_CODE), 'callback' => array($this, 'getTabContent'), 'fa_icon' => 'fa-list', 'sort_order' => 20, //'is_main' => true,
+		);
 		return $tabs;
+	}
+	public function getAddNewTabContent() {
+		return $this->getView()->getEditMap();
+	}
+	public function getEditTabContent() {
+		$id = (int) reqGmp::getVar('id', 'get');
+		if(!$id)
+			return __('No Map Found', GMP_LANG_CODE);
+		return $this->getView()->getEditMap( $id );
+	}
+	public function getTabContent() {
+		return $this->getView()->getTabContent();
 	}
     public function drawMapFromShortcode($params = null) {
 		frameGmp::_()->addScript('commonGmp', GMP_JS_PATH. 'common.js', array('jquery'));
-		frameGmp::_()->addScript('coreGmp', GMP_JS_PATH. 'core.js');
-		frameGmp::_()->addScript('mutal_opts', GMP_JS_PATH. 'mutal.js');
+		frameGmp::_()->addScript('coreGmp', GMP_JS_PATH. 'core.js', array('jquery'));
         if(!isset($params['id'])) {
-            return $this->getController()->getDefaultMap();
+            return __('Empty or Invalid Map ID', GMP_LANG_CODE);
         }
         return $this->getController()->getView()->drawMap($params);
     }
     public function addMapDataToJs(){
         $this->getView()->addMapDataToJs();
     }
-	public function getMapsTab() {
-		return $this->getView()->getMapsTab();
-	}
-
-	public function getEditMapForm()
-	{
-		return $this->getView()->getEditMapForm();
-	}
-
 	public function generateShortcode($map) {
 		$shortcodeParams = array();
 		$shortcodeParams['id'] = $map['id'];
@@ -82,7 +48,7 @@ class  gmapGmp extends moduleGmp {
 		foreach($shortcodeParams as $k => $v) {
 			$shortcodeParamsArr[] = $k. "='". $v. "'";
 		}
-		return '[google_map_easy '. implode(' ', $shortcodeParamsArr). ']';
+		return '['. GMP_SHORTCODE. ' '. implode(' ', $shortcodeParamsArr). ']';
 	}
 	public function getControlsPositions() {
 		return array(
@@ -99,5 +65,8 @@ class  gmapGmp extends moduleGmp {
 			'BOTTOM_LEFT' => langGmp::_('Bottom Left'),
 			'BOTTOM_RIGHT' => langGmp::_('Bottom Right'),
 		);
+	}
+	public function getEditMapLink($id) {
+		return frameGmp::_()->getModule('options')->getTabUrl('gmap_edit'). '&id='. $id;
 	}
 }

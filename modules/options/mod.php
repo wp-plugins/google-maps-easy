@@ -1,93 +1,108 @@
 <?php
 class optionsGmp extends moduleGmp {
-	public static $saveStatistic = null;
-	public static $statLimit = 20;
-		
-	/**
-	 * Method to trigger the database update
-	 */
-	// Really - don't know what prev. developer tryed to say in this code, 
-	// there are no "find_us" code in options page, and there are no checkStatistic() function
-	/*public function init(){
-		parent::init();
-		if(!self::$saveStatistic){
-			$data = frameGmp::_()->getTable('options')->get('*', " `code`='find_us' "); 
-			$params = utilsGmp::jsonDecode($data[0]['params']);
-			self::$saveStatistic = $params['save_statistic'];
-		}
-		$this->checkStatistic();
-	}*/
-	/**
-	 * Returns the available tabs
-	 * 
-	 * @return array of tab 
-	 */
-	public function getTabs(){
-		$tabs = array();
-		$tab = new tabGmp(langGmp::_('General'), $this->getCode());
-		$tab->setView('optionTab');
-		$tab->setSortOrder(-99);
-		$tabs[] = $tab;
-		return $tabs;
-	}
-	/**
-	 * This method provides fast access to options model method get
-	 * @see optionsModel::get($d)
-	 */
-	public function get($d = array()) {
-		return $this->getController()->getModel()->get($d);
-	}
-	/**
-	 * This method provides fast access to options model method get
-	 * @see optionsModel::get($d)
-	 */
-	public function isEmpty($d = array()) {
-		return $this->getController()->getModel()->isEmpty($d);
-	}
+	private $_tabs = array();
+	private $_options = array();
+	private $_optionsToCategoires = array();	// For faster search
 	
-	public function getUploadDir() {
-		return $this->_uploadDir;
+	public function init() {
+		dispatcherGmp::addAction('afterModulesInit', array($this, 'initAllOptValues'));
 	}
-
+	public function initAllOptValues() {
+		// Just to make sure - that we loaded all default options values
+		$this->getAll();
+	}
+    /**
+     * This method provides fast access to options model method get
+     * @see optionsModel::get($d)
+     */
+    public function get($code) {
+        return $this->getModel()->get($code);
+    }
+	/**
+     * This method provides fast access to options model method get
+     * @see optionsModel::get($d)
+     */
+	public function isEmpty($code) {
+		return $this->getModel()->isEmpty($code);
+	}
 	public function getAllowedPublicOptions() {
-		$res = array();
-		$alowedForPublic = array('mode', 'template');
-		$allOptions = $this->getModel()->getByCode();
-		foreach($alowedForPublic as $code) {
-			if(isset($allOptions[ $code ]))
-				$res[ $code ] = $allOptions[ $code ];
-		}
-		return $res;
+		// empty for now
+		return array();
 	}
-	public function getFindOptions(){
-			return array(
-			1 => array('label' => 'Google'),
-			2 => array('label' => 'Wordpress.org'),
-			3 => array('label' => 'Refer a friend'),
-			4 => array('label' => 'Find on the web'),
-			5 => array('label' => 'Other way...'),
-		);
-	}
-
-	public function init()
-	{
-		parent::init();
-
-		if (!frameGmp::_()->isAdminPlugPage()) {
-			return;
+	public function getAdminPage() {
+		if(installerGmp::isUsed()) {
+			return $this->getView()->getAdminPage();
+		} else {
+			return frameGmp::_()->getModule('supsystic_promo')->showWelcomePage();
 		}
-
-		frameGmp::_()->loadUI();
-
-		frameGmp::_()->addScript(
-			'egm_admin_tabs_js',
-			$this->getModPath() . 'js/admin.tabs.js'
-		);
-
-		frameGmp::_()->addScript(
-			'egm_admin_hash_parser_js',
-			$this->getModPath() . 'js/admin.hash_parser.js'
-		);
+	}
+	public function getTabs() {
+		if(empty($this->_tabs)) {
+			$this->_tabs = dispatcherGmp::applyFilters('mainAdminTabs', array(
+				//'main_page' => array('label' => __('Main Page', GMP_LANG_CODE), 'callback' => array($this, 'getTabContent'), 'wp_icon' => 'dashicons-admin-home', 'sort_order' => 0), 
+			));
+			foreach($this->_tabs as $tabKey => $tab) {
+				if(!isset($this->_tabs[ $tabKey ]['url'])) {
+					$this->_tabs[ $tabKey ]['url'] = $this->getTabUrl( $tabKey );
+				}
+			}
+			uasort($this->_tabs, array($this, 'sortTabsClb'));
+		}
+		return $this->_tabs;
+	}
+	public function sortTabsClb($a, $b) {
+		if(isset($a['sort_order']) && isset($b['sort_order'])) {
+			if($a['sort_order'] > $b['sort_order'])
+				return 1;
+			if($a['sort_order'] < $b['sort_order'])
+				return -1;
+		}
+		return 0;
+	}
+	public function getTab($tabKey) {
+		$this->getTabs();
+		return isset($this->_tabs[ $tabKey ]) ? $this->_tabs[ $tabKey ] : false;
+	}
+	public function getTabContent() {
+		return $this->getView()->getTabContent();
+	}
+	public function getActiveTab() {
+		$reqTab = reqGmp::getVar('tab');
+		return empty($reqTab) ? 'gmap' : $reqTab;
+	}
+	public function getTabUrl($tab = '') {
+		static $mainUrl;
+		if(empty($mainUrl)) {
+			$mainUrl = frameGmp::_()->getModule('adminmenu')->getMainLink();
+		}
+		return empty($tab) ? $mainUrl : $mainUrl. '&tab='. $tab;
+	}
+	public function getAll() {
+		if(empty($this->_options)) {
+			$this->_options = dispatcherGmp::applyFilters('optionsDefine', array(
+				'general' => array(
+					'label' => __('General', GMP_LANG_CODE),
+					'opts' => array(
+						'send_stats' => array('label' => __('Send usage statistics', GMP_LANG_CODE), 'desc' => '', 'def' => '1', 'html' => 'checkboxHiddenVal'),
+					),
+				),
+			));
+			foreach($this->_options as $catKey => $cData) {
+				foreach($cData['opts'] as $optKey => $opt) {
+					$this->_optionsToCategoires[ $optKey ] = $catKey;
+				}
+			}
+			$this->getModel()->fillInValues( $this->_options );
+		}
+		return $this->_options;
+	}
+	public function getFullCat($cat) {
+		$this->getAll();
+		return isset($this->_options[ $cat ]) ? $this->_options[ $cat ] : false;
+	}
+	public function getCatOpts($cat) {
+		$opts = $this->getFullCat($cat);
+		return $opts ? $opts['opts'] : false;
 	}
 }
 

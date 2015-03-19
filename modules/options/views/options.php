@@ -1,66 +1,79 @@
 <?php
 class optionsViewGmp extends viewGmp {
-	public function getAdminPage() {
-		if(!installerGmp::isUsed()){
-			frameGmp::_()->getModule('promo')->showWelcomePage();
-			return;
+	private $_news = array();
+	public function getNewFeatures() {
+		$res = array();
+		$readmePath = GMP_DIR. 'readme.txt';
+		if(file_exists($readmePath)) {
+			$readmeContent = @file_get_contents($readmePath);
+			if(!empty($readmeContent)) {
+				$matchedData = '';
+				if(preg_match('/= '. GMP_VERSION. ' =(.+)=.+=/isU', $readmeContent, $matches)) {
+					$matchedData = $matches[1];
+				} elseif(preg_match('/= '. GMP_VERSION. ' =(.+)/is', $readmeContent, $matches)) {
+					$matchedData = $matches[1];
+				}
+				$matchedData = trim($matchedData);
+				if(!empty($matchedData)) {
+					$res = array_map('trim', explode("\n", $matchedData));
+				}
+			}
 		}
-
-		$tabsData = array(
-			'gmpAddMap'         => array(
-				'title'   => langGmp::_('Add Map'),
-				'content' => frameGmp::_()->getModule('gmap')->getEditMapForm(),
-				'icon'    => 'fa fa-plus-circle',
-			),
-			'gmpAllMaps'        => array(
-				'title'   => 'All Maps',
-				'content' => frameGmp::_()->getModule('gmap')->getMapsTab(),
-				'icon'    => 'fa fa-list',
-			),
-//			'gmpMarkerList'     => array(
-//				'title'   => 'Markers',
-//				'content' => frameGmp::_()->getModule('marker')->getView()->showAllMarkers()
-//			),
-//			'gmpMarkerGroups'   => array(
-//				'title'   => 'Marker Groups',
-//				'content' => $this->getMarkersGroupsTab()
-//			),
-			'gmpPluginSettings' => array(
-				'title'   => 'Settings',
-				'content' => $this->getPluginSettingsTab(),
-				'icon'    => 'fa fa-cog',
-			)
-		);
-
-		$tabsData = dispatcherGmp::applyFilters('adminOptionsTabs', $tabsData);
+		return $res;
+	}
+    public function getAdminPage() {
+		$tabs = $this->getModule()->getTabs();
+		$activeTab = $this->getModule()->getActiveTab();
+		$content = 'No tab content found - ERROR';
+		if(isset($tabs[ $activeTab ]) && isset($tabs[ $activeTab ]['callback'])) {
+			frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('tab.'. $activeTab);
+			$content = call_user_func($tabs[ $activeTab ]['callback']);
+		}
+		$activeParentTabs = array();
+		foreach($tabs as $tabKey => $tab) {
+			if($tabKey == $activeTab && isset($tab['child_of'])) {
+				$activeTab = $tab['child_of'];
+				//$activeParentTabs[] = $tab['child_of'];
+			}
+		}
+		frameGmp::_()->addJSVar('adminOptionsGmp', 'gmpActiveTab', $activeTab);
+		frameGmp::_()->addJSVar('adminOptionsGmp', 'gmpMainSlug', frameGmp::_()->getModule('adminmenu')->getMainSlug());
+		$this->assign('tabs', $tabs);
+		$this->assign('activeTab', $activeTab);
+		$this->assign('content', $content);
+		$this->assign('mainUrl', $this->getModule()->getTabUrl());
+		$this->assign('activeParentTabs', $activeParentTabs);
 		
-		$defaultOpenTab = reqGmp::getVar('tab', 'get');
-
-		frameGmp::_()->addScript('admin.settings', $this->getModule()->getModPath(). 'js/admin.settings.js');
-		
-		$this->assign('indoWindowSize', $this->getModel()->get('infowindow_size'));
-		$this->assign('tabsData', $tabsData);
-		$this->assign('defaultOpenTab', $defaultOpenTab);
-
-		parent::display('optionsAdminPage');
+        parent::display('optionsAdminPage');
+    }
+	public function sortOptsSet($a, $b) {
+		if($a['weight'] > $b['weight'])
+			return -1;
+		if($a['weight'] < $b['weight'])
+			return 1;
+		return 0;
 	}
-	
-	public function getPluginSettingsTab() {
-		$optModel = $this->getModel();
-		$this->assign('indoWindowSize', $this->getModel()->get('infowindow_size'));
-		$this->assign('additionalOptions', dispatcherGmp::applyFilters('additionalOptions', array()));
-		$this->assign('additionalGlobalSettings', dispatcherGmp::applyFilters('additionalGlobalSettings', array()));
-		$this->assign('optModel', $optModel);
-		return parent::getContent('settingsTab');
+	public function getTabContent() {
+		frameGmp::_()->addScript('admin.mainoptions', $this->getModule()->getModPath(). 'js/admin.mainoptions.js');
+		return parent::getContent('optionsAdminMain');
 	}
-	public function getMarkersGroupsTab(){
-		return  frameGmp::_()->getModule('marker_groups')->getModel()->showAllGroups();
-	}
-	public function displayDeactivatePage(){
-		$this->assign('GET', reqGmp::get('get'));
-		$this->assign('POST',reqGmp::get('post'));
-		$this->assign('REQUEST_METHOD', strtoupper(reqGmp::getVar('REQUEST_METHOD', 'server')));
-		$this->assign('REQUEST_URI', basename(reqGmp::getVar('REQUEST_URI', 'server')));
-		parent::display('deactivatePage');
+	public function serverSettings() {
+		$this->assign('systemInfo', array(
+            'Operating System' => array('value' => PHP_OS),
+            'PHP Version' => array('value' => PHP_VERSION),
+            'Server Software' => array('value' => $_SERVER['SERVER_SOFTWARE']),
+            'MySQL' => array('value' => mysql_get_server_info()),
+            'PHP Safe Mode' => array('value' => ini_get('safe_mode') ? 'Yes' : 'No', 'error' => ini_get('safe_mode')),
+            'PHP Allow URL Fopen' => array('value' => ini_get('allow_url_fopen') ? 'Yes' : 'No'),
+            'PHP Memory Limit' => array('value' => ini_get('memory_limit')),
+            'PHP Max Post Size' => array('value' => ini_get('post_max_size')),
+            'PHP Max Upload Filesize' => array('value' => ini_get('upload_max_filesize')),
+            'PHP Max Script Execute Time' => array('value' => ini_get('max_execution_time')),
+            'PHP EXIF Support' => array('value' => extension_loaded('exif') ? 'Yes' : 'No'),
+            'PHP EXIF Version' => array('value' => phpversion('exif')),
+            'PHP XML Support' => array('value' => extension_loaded('libxml') ? 'Yes' : 'No', 'error' => !extension_loaded('libxml')),
+            'PHP CURL Support' => array('value' => extension_loaded('curl') ? 'Yes' : 'No', 'error' => !extension_loaded('curl')),
+        ));
+		return parent::display('_serverSettings');
 	}
 }

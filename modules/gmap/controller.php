@@ -1,12 +1,11 @@
 <?php
 class gmapControllerGmp extends controllerGmp {
-	public function getAllMaps($withMarkers = false){
+	/*public function getAllMaps($withMarkers = false){
 	   $maps = $this->getModel()->getAllMaps($withMarkers);
+	   var_dump($maps);
 	   return $maps;
-	}
-
-	protected function _prepareTextLikeSearch($val)
-	{
+	}*/
+	protected function _prepareTextLikeSearch($val) {
 		$query = '(title LIKE "%'. $val. '%"';
 		if(is_numeric($val)) {
 			$query .= ' OR id LIKE "%'. (int) $val. '%"';
@@ -14,13 +13,12 @@ class gmapControllerGmp extends controllerGmp {
 		$query .= ')';
 		return $query;
 	}
-
-
 	public function save() {
 		$saveRes = false;
 		$data = reqGmp::get('post');
 		$res = new responseGmp();
 		$mapId = 0;
+		$edit = true;
 		if(!isset($data['map_opts'])) {
 			$res->pushError(langGmp::_('Map data not found'));
 			return $res->ajaxExec();
@@ -31,6 +29,7 @@ class gmapControllerGmp extends controllerGmp {
 		} else {
 			$saveRes = $this->getModel()->saveNewMap($data['map_opts']);
 			$mapId = $saveRes;
+			$edit = false;
 		}
 		if($saveRes) {
 			$addMarkerIds = reqGmp::getVar('add_marker_ids');
@@ -39,14 +38,27 @@ class gmapControllerGmp extends controllerGmp {
 			}
 			$res->addMessage(langGmp::_('Done'));
 			$res->addData('map_id', $mapId);
-			//$res->addData('updateMarkers', $updateMarkers);
+			$res->addData('map', $this->getModel()->getMapById( $mapId ));
+			if(!$edit) {	// For new maps
+				$fullEditUrl = $this->getModule()->getEditMapLink( $mapId );
+				$editUrlParts = explode('/', $fullEditUrl);
+				$res->addData('edit_url', $editUrlParts[ count($editUrlParts) - 1 ]);
+			}
 		} else {
 			$res->pushError( $this->getModel()->getErrors() );
 		}
-		frameGmp::_()->getModule('promo')->getModel()->saveUsageStat('map.edit');
+		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('map.edit');
 		return $res->ajaxExec();
 	}
-	public function removeMap(){
+	public function remove() {
+		$res = new responseGmp();
+		if($this->getModel()->remove(reqGmp::getVar('id', 'post'))) {
+			$res->addMessage(__('Done', GMP_LANG_CODE));
+		} else
+			$res->pushError($this->getModel()->getErrors());
+		$res->ajaxExec();
+	}
+	/*public function removeMap(){
 		$data=  reqGmp::get('post');
 		$res = new responseGmp();
 		if(!isset($data['map_id']) || empty($data['map_id'])){
@@ -59,11 +71,11 @@ class gmapControllerGmp extends controllerGmp {
 		}else{
 			$res->pushError($this->getModel()->getErrors());
 		}
-		frameGmp::_()->getModule("promo")->getModel()->saveUsageStat("map.delete");
+		frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat("map.delete");
 		return $res->ajaxExec();
-	}
+	}*/
 
-	public function getListForTable() {
+	/*public function getListForTable() {
 		$res = new responseGmp();
 		$res->ignoreShellData();
 		
@@ -95,9 +107,9 @@ class gmapControllerGmp extends controllerGmp {
 		$res->addData('sEcho', reqGmp::getVar('sEcho'));
 		$res->addMessage(__('Done'));
 		return $res->ajaxExec();
-	}
+	}*/
 
-	public function getMapById()
+	/*public function getMapById()
 	{
 		$res = new responseGmp();
 
@@ -108,10 +120,6 @@ class gmapControllerGmp extends controllerGmp {
 
 			return $res->ajaxExec();
 		}
-
-		/**
-		 * @var gmapModelGmp $model
-		 */
 		$model = $this->getModel();
 		$map = $model->getMapById($req['id']);
 
@@ -124,7 +132,7 @@ class gmapControllerGmp extends controllerGmp {
 		$res->addData('map', (array)$map);
 
 		return $res->ajaxExec();
-	}
+	}*/
 
 	protected function _prepareListForTbl($data) {
 		if (!empty($data)) {
@@ -168,7 +176,7 @@ class gmapControllerGmp extends controllerGmp {
 //	}
 
 
-	private function _convertDataForDatatable($list, $single = false) {
+	/*private function _convertDataForDatatable($list, $single = false) {
 		$returnList = array();
 		if($single) {
 			$list = array($list);
@@ -183,14 +191,14 @@ class gmapControllerGmp extends controllerGmp {
 			return $returnList[0];
 		}
 		return $returnList;
-	}
+	}*/
 	/**
 	 * @see controller::getPermissions();
 	 */
 	public function getPermissions() {
 		return array(
 			GMP_USERLEVELS => array(
-				GMP_ADMIN => array('getListForTbl', 'getAllMaps', 'save', 'tt')
+				GMP_ADMIN => array('getListForTbl', 'getAllMaps', 'save', 'clear', 'remove', 'removeGroup')
 			),
 		);
 	}

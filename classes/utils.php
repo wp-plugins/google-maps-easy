@@ -272,10 +272,12 @@ class utilsGmp {
     static public function getFileExt($path) {
         return strtolower( pathinfo($path, PATHINFO_EXTENSION) );
     }
-    static public function getRandStr($length = 10, $allowedChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890') {
+    static public function getRandStr($length = 10, $allowedChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', $params = array()) {
         $result = '';
         $allowedCharsLen = strlen($allowedChars);
-
+		if(isset($params['only_lowercase']) && $params['only_lowercase']) {
+			$allowedChars = strtolower($allowedChars);
+		}
         while(strlen($result) < $length) {
           $result .= substr($allowedChars, rand(0, $allowedCharsLen), 1);
         }
@@ -320,17 +322,16 @@ class utilsGmp {
         }
         return $res;
     }
-
     /**
-     * Activate all GMP Plugins
+     * Activate all CSP Plugins
      * 
      * @return NULL Check if it's site or multisite and activate.
      */
     static public function activatePlugin() {
+        global $wpdb;
 		if(GMP_TEST_MODE) {
 			add_action('activated_plugin', array(frameGmp::_(), 'savePluginActivationErrors'));
 		}
-        global $wpdb;
         if (function_exists('is_multisite') && is_multisite()) {
             $orig_id = $wpdb->blogid;
             $blog_id = $wpdb->get_col("SELECT blog_id FROM $wpdb->blogs");
@@ -347,11 +348,11 @@ class utilsGmp {
     }
 
     /**
-     * Deactivate All GMP Plugins
+     * Delete All CSP Plugins
      * 
      * @return NULL Check if it's site or multisite and decativate it.
      */
-    static public function deactivatePlugin() {
+    static public function deletePlugin() {
         global $wpdb;
         if (function_exists('is_multisite') && is_multisite()) {
             $orig_id = $wpdb->blogid;
@@ -367,6 +368,7 @@ class utilsGmp {
             installerGmp::delete();
         }
     }
+	
 	static public function isWritable($filename) {
 		return is_writable($filename);
 	}
@@ -378,46 +380,178 @@ class utilsGmp {
 	static public function fileExists($filename) {
 		return file_exists($filename);
 	}
-	public static function listToJson($array){
-		return str_replace("'","\'", str_replace('\\','\\\\',utilsGmp::jsonEncode($array)));
+	static public function isPluginsPage() {
+		return (basename(reqGmp::getVar('SCRIPT_NAME', 'server')) === 'plugins.php');
 	}
-	static public function getMaxUploadFileSize($returnFormat = '') {
-		static $upload_size;
-        if (!$upload_size) {
-            $max_upload = (int) self::returnBytes((@ini_get('upload_max_filesize')));
-            $max_post = (int) self::returnBytes((@ini_get('post_max_size')));
-            $memory_limit = (int) self::returnBytes((@ini_get('memory_limit')));
-            $upload_size = min($max_upload, $max_post, $memory_limit);
-        }
-		if(!empty($returnFormat)) {
-			return self::returnBytesFormatted($upload_size, $returnFormat);
+	static public function isSessionStarted() {
+		if(version_compare(PHP_VERSION, '5.4.0') >= 0 && function_exists('session_status')) {
+			return !(session_status() == PHP_SESSION_NONE);
+		} else {
+			return !(session_id() == '');
 		}
-        return $upload_size;
 	}
-	static public function returnBytes($val) {
-        $val = trim($val);
-        $last = strtolower($val[strlen($val) - 1]);
-        switch ($last) {
-            // The 'G' modifier is available since PHP 5.1.0
-            case 'g':
-                $val *= 1024;
-            case 'm':
-                $val *= 1024;
-            case 'k':
-                $val *= 1024;
-        }
-        return $val;
-    }
-	static public function returnBytesFormatted($val, $format) {
-		$format = strtolower($format);
-		switch($format) {
-			case 'g':
-                $val /= 1024;
-            case 'm':
-                $val /= 1024;
-            case 'k':
-                $val /= 1024;
+	static public function generateBgStyle($data) {
+		$stageBgStyles = array();
+		$stageBgStyle = '';
+		switch($data['type']) {
+			case 'color':
+				$stageBgStyles[] = 'background-color: '. $data['color'];
+				$stageBgStyles[] = 'opacity: '. $data['opacity'];
+				break;
+			case 'img':
+				$stageBgStyles[] = 'background-image: url('. $data['img']. ')';
+				switch($data['img_pos']) {
+					case 'center':
+						$stageBgStyles[] = 'background-repeat: no-repeat';
+						$stageBgStyles[] = 'background-position: center center';
+						break;
+					case 'tile':
+						$stageBgStyles[] = 'background-repeat: repeat';
+						break;
+					case 'stretch':
+						$stageBgStyles[] = 'background-repeat: no-repeat';
+						$stageBgStyles[] = '-moz-background-size: 100% 100%';
+						$stageBgStyles[] = '-webkit-background-size: 100% 100%';
+						$stageBgStyles[] = '-o-background-size: 100% 100%';
+						$stageBgStyles[] = 'background-size: 100% 100%';
+						break;
+				}
+				break;
 		}
-		return $val;
+		if(!empty($stageBgStyles)) {
+			$stageBgStyle = implode(';', $stageBgStyles);
+		}
+		return $stageBgStyle;
+	}
+	/**
+	 * Parse worgmpess post/page/custom post type content for images and return it's IDs if there are images
+	 * @param string $content Post/page/custom post type content
+	 * @return array List of images IDs from content
+	 */
+	static public function parseImgIds($content) {
+		$res = array();
+		preg_match_all('/wp-image-(?<ID>\d+)/', $content, $matches);
+		if($matches && isset($matches['ID']) && !empty($matches['ID'])) {
+			$res = $matches['ID'];
+		}
+		return $res;
+	}
+	/**
+	 * Retrive file path in file system from provided URL, it should be in wp-content/uploads
+	 * @param string $url File url path, should be in wp-content/uploads
+	 * @return string Path in file system to file
+	 */
+	static public function getUploadFilePathFromUrl($url) {
+		$uploadsPath = self::getUploadsPath();
+		$uploadsDir = self::getUploadsDir();
+		return str_replace($uploadsPath, $uploadsDir, $url);
+	}
+	/**
+	 * Retrive file URL from provided file system path, it should be in wp-content/uploads
+	 * @param string $path File path, should be in wp-content/uploads
+	 * @return string URL to file
+	 */
+	static public function getUploadUrlFromFilePath($path) {
+		$uploadsPath = self::getUploadsPath();
+		$uploadsDir = self::getUploadsDir();
+		return str_replace($uploadsDir, $uploadsPath, $path);
+	}
+	static public function getUserBrowserString() {
+		return isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : false;
+	}
+	static public function getBrowser() {
+		$u_agent = self::getUserBrowserString();
+		$bname = 'Unknown';
+		$platform = 'Unknown';
+		$version = '';
+		$pattern = '';
+		
+		if($u_agent) {
+			//First get the platform?
+			if (preg_match('/linux/i', $u_agent)) {
+				$platform = 'linux';
+			}
+			elseif (preg_match('/macintosh|mac os x/i', $u_agent)) {
+				$platform = 'mac';
+			}
+			elseif (preg_match('/windows|win32/i', $u_agent)) {
+				$platform = 'windows';
+			}
+			// Next get the name of the useragent yes seperately and for good reason
+			if((preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent)) || (strpos($u_agent, 'Trident/7.0; rv:11.0') !== false))
+			{
+				$bname = 'Internet Explorer';
+				$ub = "MSIE";
+			}
+			elseif(preg_match('/Firefox/i',$u_agent))
+			{
+				$bname = 'Mozilla Firefox';
+				$ub = "Firefox";
+			}
+			elseif(preg_match('/Chrome/i',$u_agent))
+			{
+				$bname = 'Google Chrome';
+				$ub = "Chrome";
+			}
+			elseif(preg_match('/Safari/i',$u_agent))
+			{
+				$bname = 'Apple Safari';
+				$ub = "Safari";
+			}
+			elseif(preg_match('/Opera/i',$u_agent))
+			{
+				$bname = 'Opera';
+				$ub = "Opera";
+			}
+			elseif(preg_match('/Netscape/i',$u_agent))
+			{
+				$bname = 'Netscape';
+				$ub = "Netscape";
+			}
+
+			// finally get the correct version number
+			$known = array('Version', $ub, 'other');
+			$pattern = '#(?<browser>' . join('|', $known) .
+			')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
+			if (!preg_match_all($pattern, $u_agent, $matches)) {
+				// we have no matching number just continue
+			}
+
+			// see how many we have
+			$i = count($matches['browser']);
+			if ($i != 1) {
+				//we will have two since we are not using 'other' argument yet
+				//see if version is before or after the name
+				if (strripos($u_agent,"Version") < strripos($u_agent,$ub)){
+					$version= $matches['version'][0];
+				}
+				else {
+					$version= $matches['version'][1];
+				}
+			}
+			else {
+				$version= $matches['version'][0];
+			}
+		}
+
+		// check if we have a number
+		if ($version==null || $version=="") {$version="?";}
+
+		return array(
+			'userAgent' => $u_agent,
+			'name'      => $bname,
+			'version'   => $version,
+			'platform'  => $platform,
+			'pattern'    => $pattern
+		);
+	}
+	static public function getBrowsersList() {
+		return array(
+			'Unknown', 'Internet Explorer', 'Mozilla Firefox', 'Google Chrome', 'Apple Safari', 
+			'Opera', 'Netscape',
+		);
+	}
+	static public function getLangCode2Letter() {
+		return strlen(GMP_WPLANG) > 2 ? substr(GMP_WPLANG, 0, 2) : GMP_WPLANG;
 	}
 }

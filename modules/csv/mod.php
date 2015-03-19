@@ -4,13 +4,23 @@ class  csvGmp extends moduleGmp {
 	private $_mapHeaders = array();
 	
 	public function init() {
-		dispatcherGmp::addFilter('additionalGlobalSettings', array($this, 'addSettingsBlock'));
+		dispatcherGmp::addFilter('mainAdminTabs', array($this, 'addAdminTab'));
 	}
-	public function addSettingsBlock($bloks) {
+	public function addAdminTab($tabs) {
+		$tabs[ $this->getCode() ] = array(
+			'label' => __('CSV Import and Export', GMP_LANG_CODE), 'callback' => array($this, 'getTabContent'), 'fa_icon' => 'fa-download', 'sort_order' => 50,
+		);
+		return $tabs;
+	}
+	public function getTabContent() {
+		frameGmp::_()->addScript('admin.csv', $this->getModPath(). 'js/admin.csv.js');
+		return $this->getView()->getTabContent();
+	}
+	/*public function addSettingsBlock($bloks) {
 		frameGmp::_()->addScript('admin.csv', $this->getModPath(). 'js/admin.csv.js');
 		$bloks['csvImportExport'] = $this->getView()->getSettitngsBlockHtml();
 		return $bloks;
-	}
+	}*/
 	public function getMarkerHeadersList() {
 		if(empty($this->_markerHeaders)) {
 			$this->_markerHeaders = array(
