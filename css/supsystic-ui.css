@@ -383,6 +383,8 @@ input[type="color"] {
 /*buttons*/
 .supsystic-plugin .button, 
 .supsystic-plugin .button-primary,
+.ui-dialog .button,
+.ui-dialog .button-primary,
 .ui-button,
 .ui-button.ui-state-default {
 	font-size: 15px;
@@ -412,6 +414,8 @@ input[type="color"] {
 .supsystic-plugin .button-primary:hover,
 .supsystic-plugin .button-primary.focus,
 .supsystic-plugin .button-primary:focus,
+.ui-dialog .button:hover,
+.ui-dialog .button-primary:focus,
 .ui-button.ui-state-hover,
 .ui-button:hover, 
 .ui-button:focus {
@@ -629,6 +633,13 @@ input[type="color"] {
 	width: 50%;
 	padding-right: 1%;
 }
+@media (max-width: 800px) {
+	.supsistic-half-side-box {
+		float: none;
+		width: 100%;
+		padding: inherit;
+	}
+}
 /*datepicker*/
 .ui-datepicker {
 	border: 1px solid #000;
@@ -675,4 +686,16 @@ input[type="color"] {
 }
 #containerWrapper {
 	min-height: 308px;
+}
+.supsystic-plugin .row-pad {
+	padding: 10px 0;
+}
+.sup-medium-label {
+	font-size: 15px;
+}
+.supsystic-plugin a.sup-standard-link {
+	color: #0074a2;
+}
+.supsystic-plugin a.sup-standard-link:hover {
+	color: #2ea2cc;
 }

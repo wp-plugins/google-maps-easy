@@ -120,7 +120,7 @@ class frameGmp {
         //$operationTime = microtime(true) - $startTime;
     }
 	public function connectLang() {
-		load_plugin_textdomain(GMP_LANG_CODE, false, GMP_DIR. 'lang');
+		load_plugin_textdomain(GMP_LANG_CODE, false, GMP_PLUG_NAME. '/lang');
 	}
     /**
      * Check permissions for action in controller by $code and made corresponding action

@@ -1,5 +1,7 @@
 <?php
 class  gmapGmp extends moduleGmp {
+	private $_stylizations = array();
+	
 	public function init() {
 		dispatcherGmp::addFilter('mainAdminTabs', array($this, 'addAdminTab'));
         add_action('wp_footer', array($this, 'addMapDataToJs'));
@@ -52,21 +54,34 @@ class  gmapGmp extends moduleGmp {
 	}
 	public function getControlsPositions() {
 		return array(
-			'TOP_CENTER' => langGmp::_('Top Center'),
-			'TOP_LEFT' => langGmp::_('Top Left'),
-			'TOP_RIGHT' => langGmp::_('Top Right'),
-			'LEFT_TOP' => langGmp::_('Left Top'),
-			'RIGHT_TOP' => langGmp::_('Right Top'),
-			'LEFT_CENTER' => langGmp::_('Left Center'),
-			'RIGHT_CENTER' => langGmp::_('Right Center'),
-			'LEFT_BOTTOM' => langGmp::_('Left Bottom'),
-			'RIGHT_BOTTOM' => langGmp::_('Right Bottom'),
-			'BOTTOM_CENTER' => langGmp::_('Bottom Center'),
-			'BOTTOM_LEFT' => langGmp::_('Bottom Left'),
-			'BOTTOM_RIGHT' => langGmp::_('Bottom Right'),
+			'TOP_CENTER' => __('Top Center', GMP_LANG_CODE),
+			'TOP_LEFT' => __('Top Left', GMP_LANG_CODE),
+			'TOP_RIGHT' => __('Top Right', GMP_LANG_CODE),
+			'LEFT_TOP' => __('Left Top', GMP_LANG_CODE),
+			'RIGHT_TOP' => __('Right Top', GMP_LANG_CODE),
+			'LEFT_CENTER' => __('Left Center', GMP_LANG_CODE),
+			'RIGHT_CENTER' => __('Right Center', GMP_LANG_CODE),
+			'LEFT_BOTTOM' => __('Left Bottom', GMP_LANG_CODE),
+			'RIGHT_BOTTOM' => __('Right Bottom', GMP_LANG_CODE),
+			'BOTTOM_CENTER' => __('Bottom Center', GMP_LANG_CODE),
+			'BOTTOM_LEFT' => __('Bottom Left', GMP_LANG_CODE),
+			'BOTTOM_RIGHT' => __('Bottom Right', GMP_LANG_CODE),
 		);
 	}
 	public function getEditMapLink($id) {
 		return frameGmp::_()->getModule('options')->getTabUrl('gmap_edit'). '&id='. $id;
+	}
+	public function getStylizationsList() {
+		if(empty($this->_stylizations)) {
+			$this->_stylizations = dispatcherGmp::applyFilters('stylizationsList', require_once($this->getModDir(). 'stylezations.php'));
+			foreach($this->_stylizations as$k => $v) {
+				$this->_stylizations[ $k ] = utilsGmp::jsonDecode( $this->_stylizations[ $k ] );
+			}
+		}
+		return $this->_stylizations;
+	}
+	public function getStylizationByName($name) {
+		$this->getStylizationsList();
+		return isset($this->_stylizations[ $name ]) ? $this->_stylizations[ $name ] : false;
 	}
 }

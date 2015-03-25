@@ -10,6 +10,7 @@ jQuery(document).ready(function(){
 					newMarker.setTitle( gmpAllMapsInfo[i].markers[j].title, true );
 					newMarker.setDescription( gmpAllMapsInfo[i].markers[j].description );
 				}
+				newMap.markersRefresh();
 			}
 			g_gmlAllMaps.push( newMap );
 		}

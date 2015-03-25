@@ -12,10 +12,11 @@ class dispatcherGmp {
             $tag = self::$_pref. $tag;
         $numArgs = func_num_args();
         if($numArgs > 2) {
-            $args = array();
-            for($i = 1; $i < $numArgs; $i++) {
+			$args = array($tag);
+            for($i = 1; $i < func_num_args(); $i++) {
                 $args[] = func_get_arg($i);
             }
+            return call_user_func_array('do_action', $args);
         } elseif($numArgs == 2) {
             $args = func_get_arg(1);
         } else
@@ -30,7 +31,8 @@ class dispatcherGmp {
     static public function applyFilters($tag, $value) {
         if(strpos($tag, 'gmp_') === false)
             $tag = self::$_pref. $tag;
-        if(func_num_args() > 2) {
+		$numArgs = func_num_args();
+        if($numArgs > 2) {
             $args = array($tag);
             for($i = 1; $i < func_num_args(); $i++) {
                 $args[] = func_get_arg($i);

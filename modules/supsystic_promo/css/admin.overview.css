@@ -80,11 +80,16 @@
     margin-top: 10px;
 }
 
-.supsystic-overview form input,
-.supsystic-overview form select,
-.supsystic-overview form textarea {
+.supsystic-overview #form-settings input,
+.supsystic-overview #form-settings select,
+.supsystic-overview #form-settings textarea {
     float: left;
-    margin-left: 50px;
+    /*margin-left: 50px;*/
+	width: 100%;
+	float: right;
+}
+.supsystic-overview #form-settings th {
+	min-width: 120px;
 }
 .supsystic-overview .faq-list,
 .supsystic-overview .description,

@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin/
 Tags: google map, google map plugin, google maps wordpress plugin, google maps, google maps plugin, directions,  map, maps, location, direction, map marker, marker, geocoder, post map, widget map, widget, google map widget, custom marker icons and text, custom marker text, geo, google map short code,  google map styles, openstreetmap, latitude, longitude, placemarker, pronamic, reverse geocode, wp map, wp maps, supsystic
 Tested up to: 4.1.1
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers or locations. Display any data on the map: text, images, videos. Custom map marker icons
@@ -24,9 +24,11 @@ Ultimate solution to display google map on the contact page, routes, reale estat
 * Add markers and locations by searching or coordinates
 * 100% customizable. All map and markers options can be modified
 
+[youtube http://www.youtube.com/watch?v=Ej8EtuLcLZk]
+
 Google Map Easy plugin is an excellent way to make a beautiful map on your website and to help your clients  in discovering your location. For example, if you are an owner of  a restaurant, you will have much more possibilities of attracting visitors by using this plugin. The Google map allows you not only to mark the place of your business location, but also to show people its colored pictures. You can attach about 10 photographs to the map and make your potential visitors to feel the atmosphere inside your restaurant and outside it.
 
-= Support =
+= Google Maps Plugin Support =
 
 If you have any problem or feature request for the Google Maps by Supsystic, please [let us know](http://supsystic.com/contact-us/ "Contact Us")!
 
@@ -123,6 +125,32 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 1. Google Maps Easy WordPress plugin admin area
 
 == Changelog ==
+
+= 1.0.8 / 25.03.2015 =
+ * Map type control option added
+ * Zoom control option added
+ * Scale control option added
+ * Street View control option added
+ * Pan control option added
+ * Overview control option added
+ * Draggable map option enable/disable added
+ * Double Click to zoom enable/disable option added
+ * Mouse wheel to zoom enable/disable option added
+ * Google Map Theme option added
+ * Map Stylization - added more then 100 style for map!
+ * Marker Clusterization option added
+ * Small fix for multi language
+ * Added video tutorial
+ * Contact form in admin area - fix width of textarea field
+ * Make Overview page - responsive
+ * Small spelling issues
+ * Fix sticky map preview - stick it only after window will load all styles and scripts - to not broke it's with on scrolling
+ * Marker description dynamic update even if visual editor is disabled
+ * Small admin ares design changes
+ * Fix for case when remove new created marker - and then try to create new one in same form
+ * Mark marker info window closed - when it closed manually
+ * Update markers on map - each time markers list changed right from server
+
 
 = 1.0.7 / 19.03.2015 =
  * Code refactoring - around 90% of code was refactored for further additional developments

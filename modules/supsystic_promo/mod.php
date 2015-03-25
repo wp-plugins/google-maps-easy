@@ -120,8 +120,8 @@ class supsystic_promoGmp extends moduleGmp {
 	}
 	public function getContactFormFields() {
 		$fields = array(
-            'name' => array('label' => __('Your name', GMP_LANG_CODE), 'valid' => 'notEmpty', 'html' => 'text'),
-			'email' => array('label' => __('Your email', GMP_LANG_CODE), 'html' => 'email', 'valid' => array('notEmpty', 'email'), 'placeholder' => 'example@mail.com', 'def' => get_bloginfo('admin_email')),
+            'name' => array('label' => __('Name', GMP_LANG_CODE), 'valid' => 'notEmpty', 'html' => 'text'),
+			'email' => array('label' => __('Email', GMP_LANG_CODE), 'html' => 'email', 'valid' => array('notEmpty', 'email'), 'placeholder' => 'example@mail.com', 'def' => get_bloginfo('admin_email')),
 			'website' => array('label' => __('Website', GMP_LANG_CODE), 'html' => 'text', 'placeholder' => 'http://example.com', 'def' => get_bloginfo('url')),
 			'subject' => array('label' => __('Subject', GMP_LANG_CODE), 'valid' => 'notEmpty', 'html' => 'text'),
             'category' => array('label' => __('Topic', GMP_LANG_CODE), 'valid' => 'notEmpty', 'html' => 'selectbox', 'options' => array(
@@ -137,5 +137,8 @@ class supsystic_promoGmp extends moduleGmp {
 				$fields[ $k ]['valid'] = array( $fields[ $k ]['valid'] );
 		}
 		return $fields;
+	}
+	public function isPro() {
+		return frameGmp::_()->getModule('license') ? true : false;
 	}
 }

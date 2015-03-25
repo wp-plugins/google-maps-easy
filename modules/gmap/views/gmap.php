@@ -5,7 +5,6 @@ class gmapViewGmp extends viewGmp {
 	private static $_mapsData;
 	private $_displayColumns = array();
 	// Used to compare rand IDs and original IDs on preview
-	private $_idToRandId = array();
 	
 	public function getApiUrl() {
 		if(empty($this->_gmapApiUrl)) {
@@ -188,6 +187,14 @@ class gmapViewGmp extends viewGmp {
 		frameGmp::_()->addScript('admin.gmap.edit', $this->getModule()->getModPath(). 'js/admin.gmap.edit.js');
 		frameGmp::_()->addStyle('admin.gmap', $this->getModule()->getModPath(). 'css/admin.gmap.css');
 		frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpMapShortcode', GMP_SHORTCODE);
+		$allStylizationsList = $this->getModule()->getStylizationsList();
+		frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpAllStylizationsList', $allStylizationsList);
+		$stylizationsForSelect = array(
+			'none' => __('None', GMP_LANG_CODE),
+		);
+		foreach($allStylizationsList as $styleName => $json) {
+			$stylizationsForSelect[ $styleName ] = $styleName;	// JSON data will be attached on js side
+		}
 		$editMap = $id ? true : false;
 		if($editMap) {
 			$map = $this->getModel()->getMapById( $id );
@@ -195,15 +202,24 @@ class gmapViewGmp extends viewGmp {
 			$gMapApiParams = $map['params'];
 			frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpMainMap', $map);
 		}
-		$this->connectMapsAssets($gMapApiParams);
+		$positionsList = $this->getModule()->getControlsPositions();
+		$this->connectMapsAssets($gMapApiParams, true);
 		$this->assign('editMap', $editMap);
 		$this->assign('icons', frameGmp::_()->getModule('icons')->getModel()->getIcons(array('fields' => 'id, path, title')));
+		$this->assign('stylizationsForSelect', $stylizationsForSelect);
+		$this->assign('positionsList', $positionsList);
+		$this->assign('isPro', frameGmp::_()->getModule('supsystic_promo')->isPro());
+		$this->assign('mainLink', frameGmp::_()->getModule('supsystic_promo')->getMainLink());
 		return parent::getContent('gmapEditMap');
 	}
-	public function connectMapsAssets($params) {
+	public function connectMapsAssets($params, $forAdminArea = false) {
 		$params['language'] = isset($params['language']) && !empty($params['language']) ? $params['language'] : utilsGmp::getLangCode2Letter();
 		frameGmp::_()->addScript('google_maps_api', $this->getApiUrl(). '&language='. $params['language']);
 		frameGmp::_()->addScript('core.gmap', $this->getModule()->getModPath(). 'js/core.gmap.js');
 		frameGmp::_()->addStyle('core.gmap', $this->getModule()->getModPath(). 'css/core.gmap.css');
+		if((isset($params['marker_clasterer']) && $params['marker_clasterer'] != 'none') || $forAdminArea) {
+			frameGmp::_()->addScript('core.markerclusterer', $this->getModule()->getModPath(). 'js/core.markerclusterer.min.js');
+		}
+		dispatcherGmp::doAction('afterConnectMapAssets', $params, $forAdminArea);
 	}
 }

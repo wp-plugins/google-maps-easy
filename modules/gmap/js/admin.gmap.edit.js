@@ -17,11 +17,7 @@ jQuery(document).ready(function(){
 		gmpMainMap.markers = _gmpPrepareMarkersList(gmpMainMap.markers, {
 			dragend: _gmpMarkerDragEndClb
 		});
-		for(var i in gmpMainMap.markers) {
-			var newMarker = g_gmpMap.addMarker( gmpMainMap.markers[i] );
-			newMarker.setTitle( gmpMainMap.markers[i].title, true );
-			newMarker.setDescription( gmpMainMap.markers[i].description );
-		}
+		gmpRefreshMapMarkers(g_gmpMap, gmpMainMap.markers);
 	}
 	// Map saving form
 	jQuery('#gmpMapForm').submit(function(){
@@ -133,6 +129,13 @@ jQuery(document).ready(function(){
 			});
 		}
 	}, 500);
+	jQuery('#markerDescription').keyup(function(){
+		var marker = gmpGetCurrentMarker();
+		if(marker) {
+			marker.setDescription( gmpGetTxtEditorVal('markerDescription') );
+			marker.showInfoWnd();
+		}
+	});
 	jQuery('#gmpMarkerForm [name="marker_opts[address]"]').mapSearchAutocompleateGmp({
 		msgEl: ''
 	,	onSelect: function(item, event, ui) {
@@ -148,6 +151,116 @@ jQuery(document).ready(function(){
 			currentMarker.setPosition(jQuery('#gmpMarkerForm [name="marker_opts[coord_x]"]').val(), jQuery('#gmpMarkerForm [name="marker_opts[coord_y]"]').val());
 		}
 	});
+	// Extended options block
+	jQuery('#gmpExtendOptsBtn').click(function(){
+		jQuery('#gmpExtendOptsBtnShell').slideUp( g_gmpAnimationSpeed );
+		jQuery('#gmpExtendOptsShell').slideDown( g_gmpAnimationSpeed );
+		return false;
+	});
+	// Map type control style
+	jQuery('#gmpMapForm select[name="map_opts[type_control]"]').change(function(){
+		var newType = jQuery(this).val();
+		if(typeof(google.maps.MapTypeControlStyle[ newType ]) !== 'undefined') {
+			var mapTypeControlOptions = g_gmpMap.get('mapTypeControlOptions') || {};
+			mapTypeControlOptions.style = google.maps.MapTypeControlStyle[ newType ];
+			g_gmpMap.set('mapTypeControlOptions', mapTypeControlOptions).set('mapTypeControl', true);
+		} else {
+			g_gmpMap.set('mapTypeControl', false);
+		}
+	});
+	// Map zoom control style
+	jQuery('#gmpMapForm select[name="map_opts[zoom_control]"]').change(function(){
+		var newType = jQuery(this).val();
+		if(typeof(google.maps.ZoomControlStyle[ newType ]) !== 'undefined') {
+			var zoomControlOptions = g_gmpMap.get('zoomControlOptions') || {};
+			zoomControlOptions.style = google.maps.ZoomControlStyle[ newType ];
+			g_gmpMap.set('zoomControlOptions', zoomControlOptions).set('zoomControl', true);
+		} else {
+			g_gmpMap.set('zoomControl', false);
+		}
+	});
+	// Map street view control
+	jQuery('#gmpMapForm input[name="map_opts[street_view_control]"]').change(function(){
+		// Remember - that this is not actually checkbox, we detect hidden field value here, @see htmlGmp::checkboxHiddenVal()
+		if(parseInt(jQuery(this).val())) {
+			g_gmpMap.set('streetViewControl', true);
+		} else {
+			g_gmpMap.set('streetViewControl', false);
+		}
+	});
+	// Map pan view control
+	jQuery('#gmpMapForm input[name="map_opts[pan_control]"]').change(function(){
+		// Remember - that this is not actually checkbox, we detect hidden field value here, @see htmlGmp::checkboxHiddenVal()
+		if(parseInt(jQuery(this).val())) {
+			g_gmpMap.set('panControl', true);
+		} else {
+			g_gmpMap.set('panControl', false);
+		}
+	});
+	// Map overview control style
+	jQuery('#gmpMapForm select[name="map_opts[overview_control]"]').change(function(){
+		var newType = jQuery(this).val();
+		if(newType !== 'none') {
+			g_gmpMap.set('overviewMapControlOptions', {
+				opened: newType === 'opened' ? true : false
+			}).set('overviewMapControl', true);
+		} else {
+			g_gmpMap.set('overviewMapControl', false);
+		}
+	});
+	// Is map draggable
+	jQuery('#gmpMapForm input[name="map_opts[draggable]"]').change(function(){
+		// Remember - that this is not actually checkbox, we detect hidden field value here, @see htmlGmp::checkboxHiddenVal()
+		if(parseInt(jQuery(this).val())) {
+			g_gmpMap.set('draggable', true);
+		} else {
+			g_gmpMap.set('draggable', false);
+		}
+	});
+	// Enable Double Click to zoom
+	jQuery('#gmpMapForm input[name="map_opts[dbl_click_zoom]"]').change(function(){
+		// Remember - that this is not actually checkbox, we detect hidden field value here, @see htmlGmp::checkboxHiddenVal()
+		if(parseInt(jQuery(this).val())) {
+			g_gmpMap.set('disableDoubleClickZoom', false);
+		} else {
+			g_gmpMap.set('disableDoubleClickZoom', true);
+		}
+	});
+	// Mouse zoom enbling
+	jQuery('#gmpMapForm input[name="map_opts[mouse_wheel_zoom]"]').change(function(){
+		// Remember - that this is not actually checkbox, we detect hidden field value here, @see htmlGmp::checkboxHiddenVal()
+		if(parseInt(jQuery(this).val())) {
+			g_gmpMap.set('scrollwheel', true);
+		} else {
+			g_gmpMap.set('scrollwheel', false);
+		}
+	});
+	// Map type
+	jQuery('#gmpMapForm select[name="map_opts[map_type]"]').change(function(){
+		var newType = jQuery(this).val();
+		if(typeof(google.maps.MapTypeId[ newType ]) !== 'undefined') {
+			g_gmpMap.set('mapTypeId', google.maps.MapTypeId[ newType ]);
+		}
+	});
+	// Map stylization
+	jQuery('#gmpMapForm select[name="map_opts[map_stylization]"]').change(function(){
+		var newType = jQuery(this).val();
+		if(newType !== 'none' && typeof(gmpAllStylizationsList[ newType ]) !== 'undefined') {
+			g_gmpMap.set('styles', gmpAllStylizationsList[ newType ]);
+		} else {
+			g_gmpMap.set('styles', false);
+		}
+	});
+	// Map Clasterization
+	jQuery('#gmpMapForm select[name="map_opts[marker_clasterer]"]').change(function(){
+		var newType = jQuery(this).val();
+		if(newType !== 'none' && newType) {
+			g_gmpMap.enableClasterization( newType );
+		} else {
+			g_gmpMap.disableClasterization();
+		}
+	});
+	gmpInitChangePosWnd();
 });
 jQuery(window).load(function(){
 	jQuery('#gmpMapRightStickyBar').width( jQuery('#gmpMapRightStickyBar').width() );
@@ -217,6 +330,8 @@ function gmpRefreshMapMarkersList(fromServer) {
 	var buildListClb = function(markersList) {
 		if(gmpMainMap)
 			gmpMainMap.markers = markersList;
+		gmpRefreshMapMarkers(g_gmpMap, _gmpPrepareMarkersList(markersList));
+		//g_gmpMap.setMarkersParams( markersList );
 		shell.find('.gmpMapMarkerRow:not(#markerRowTemplate)').remove();
 		if(markersList && markersList.length) {
 			for(var i = 0; i < markersList.length; i++) {
@@ -239,6 +354,7 @@ function gmpRefreshMapMarkersList(fromServer) {
 				shell.append( newRow );
 			}
 		}
+		g_gmpMap.markersRefresh();
 	};
 	if(fromServer) {
 		shell.find('.egm-marker').css('opacity', '0.5');
@@ -295,8 +411,12 @@ function gmpRemoveMarkerFromMapTblClick(markerId, row) {
 					});
 				}
 				g_gmpMap.removeMarker( markerId );
-				gmpResetMarkerForm();
 				gmpRefreshMapMarkersList( true );
+				var currentEditMarkerId = parseInt( jQuery('#gmpMarkerForm input[name="marker_opts[id]"]').val() );
+				if(currentEditMarkerId && currentEditMarkerId == markerId) {
+					gmpResetMarkerForm();
+					gmpHideMarkerForm();
+				}
 			}
 		}
 	});
@@ -304,6 +424,16 @@ function gmpRemoveMarkerFromMapTblClick(markerId, row) {
 function gmpOpenMarkerForm() {
 	gmpShowMarkerForm();
 	gmpResetMarkerForm();
+}
+function gmpHideMarkerForm() {
+	var markerFormIsVisible = jQuery('#gmpMarkerForm').is(':visible');
+	if(markerFormIsVisible) {
+		jQuery('#gmpSaveMarkerBtn').hide( g_gmpAnimationSpeed );
+		jQuery('#gmpAddNewMarkerBtn').animate({
+			width: '100%'
+		}, g_gmpAnimationSpeed);
+		jQuery('#gmpMarkerForm').slideUp( g_gmpAnimationSpeed );
+	}
 }
 function gmpShowMarkerForm() {
 	var markerFormIsVisible = jQuery('#gmpMarkerForm').is(':visible');
@@ -350,4 +480,26 @@ function _gmpChangeMarkerForm() {
 }
 function _gmpUnchangeMarkerForm() {
 	g_gmpMarkerFormChanged = false;
+}
+function gmpInitChangePosWnd() {
+	if(!GMP_DATA.isPro) {
+		var $proOptWnd = jQuery('#gmpOptInProWnd').dialog({
+			modal:    true
+		,	autoOpen: false
+		,	width: 540
+		,	height: 200
+		});
+		jQuery('.gmpMapPosChangeSelect').change(function(){
+			$proOptWnd.dialog('open');
+		});
+	}
+}
+function gmpRefreshMapMarkers(map, markers) {
+	map.clearMarkers();
+	for(var i in markers) {
+		var newMarker = map.addMarker( markers[i] );
+		newMarker.setTitle( markers[i].title, true );
+		newMarker.setDescription( markers[i].description );
+	}
+	map.markersRefresh();
 }

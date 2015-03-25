@@ -75,3 +75,36 @@
 #gmpGmapTbl_cb {
 	min-width: 21px;
 }
+#gmpExtendOptsBtn {
+	width: 100%;
+	text-align: center;
+}
+#gmpExtendOptsShell {
+	display: none;
+}
+.gmpMapPosChangeSelect {
+	width: calc(100% - 20px);
+}
+.gmpProOptMiniLabel {
+	padding-left: 20px;
+	display: block;
+	margin-bottom: -20px;
+}
+.gmpProOptMiniLabel a {
+	font-size: 10px;
+	text-decoration: none;
+	color: #0074a2;
+}
+.gmpProOptMiniLabel a:hover {
+	color: #2ea2cc;
+}
+#gmpMapForm .form-table th,
+#gmpMarkerForm .form-table th {
+	width: 170px;
+}
+#gmpMapForm .form-table th label,
+#gmpMarkerForm .form-table th label {
+	font-size: 15px;
+	float: left;
+	max-width: 140px;
+}

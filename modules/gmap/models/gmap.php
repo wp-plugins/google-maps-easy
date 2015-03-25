@@ -17,14 +17,25 @@ class gmapModelGmp extends modelGmp {
 			if($withMarkers) {
 				$map['markers'] = $markerModule->getModel()->getMapMarkers($map['id'], $markersWithGroups);
 			}
+			$map = $this->_afterSimpleGet( $map );
 		}
 		return $maps;
 	}
+	private function _afterSimpleGet($map) {
+		if($map['params'] && isset($map['params']['map_stylization'])) {
+			$map['params']['map_stylization_data'] = $this->getModule()->getStylizationByName( $map['params']['map_stylization'] );
+		}
+		return $map;
+	}
 	public function getParamsList() {
 		$mapOptKeys = dispatcherGmp::applyFilters('mapParamsKeys', 
-				array('enable_zoom', 'enable_mouse_zoom', 'zoom', 'type', 'language', 'map_display_mode', 'map_center', 
+				array('enable_zoom', 'enable_mouse_zoom' /*we used "mouse_wheel_zoom" insted of this - as this was already nulled*/, 'zoom', 
+					'type' /*used "map_type" insted - same reason as prev. one*/, 'language', 'map_display_mode', 'map_center', 
 					'infowindow_height', 'infowindow_width', 'width_units', 'infowindow_on_mouseover',
-					'infownd_title_color', 'infownd_title_size'));
+					'infownd_title_color', 'infownd_title_size', 
+					// New parameters started here
+					'type_control', 'zoom_control', 'street_view_control', 'pan_control', 'overview_control', 'draggable',
+					'dbl_click_zoom', 'mouse_wheel_zoom', 'map_type', 'map_stylization', 'marker_clasterer'));
 		return $mapOptKeys;
 	}
 	public function getHtmlOptionsList() {
@@ -96,7 +107,8 @@ class gmapModelGmp extends modelGmp {
 		$map = frameGmp::_()->getTable('maps')->get('*', array('title' => $title), '', 'row');
 		if(!empty($map)) {
 			$map['html_options'] = utilsGmp::unserialize($map['html_options']);				
-			$map['params']= utilsGmp::unserialize($map['params']);				
+			$map['params']= utilsGmp::unserialize($map['params']);	
+			$map = $this->_afterSimpleGet( $map );
 			return $map;
 		}
 		return false;
@@ -105,14 +117,15 @@ class gmapModelGmp extends modelGmp {
 		if(!$id){
 			return false;
 		}
-		$map = frameGmp::_()->getTable('maps')->get('*', array('id' => (int)$id));
+		$map = frameGmp::_()->getTable('maps')->get('*', array('id' => (int)$id), '', 'row');
 		if(!empty($map)){
 			if($withMarkers){
-			   $map[0]['markers'] = frameGmp::_()->getModule('marker')->getModel()->getMapMarkers($map[0]['id'], $withGroups);				
+			   $map['markers'] = frameGmp::_()->getModule('marker')->getModel()->getMapMarkers($map['id'], $withGroups);				
 			}
-			$map[0]['html_options'] = utilsGmp::unserialize($map[0]['html_options']);				
-			$map[0]['params']= utilsGmp::unserialize($map[0]['params']);				
-			return $map[0];
+			$map['html_options'] = utilsGmp::unserialize($map['html_options']);				
+			$map['params']= utilsGmp::unserialize($map['params']);
+			$map = $this->_afterSimpleGet( $map );
+			return $map;
 		}
 		return false;
 	}

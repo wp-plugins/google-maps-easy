@@ -588,7 +588,7 @@ class htmlGmp {
 		$out .= '<script type="text/javascript">//<!--
 			jQuery(function(){
 				jQuery("#'. $checkId. '").change(function(){
-					jQuery("#'. $hideId. '").val( (jQuery(this).attr("checked") ? 1 : 0) );
+					jQuery("#'. $hideId. '").val( (jQuery(this).attr("checked") ? 1 : 0) ).trigger("change");
 				});
 			});
 			//--></script>';

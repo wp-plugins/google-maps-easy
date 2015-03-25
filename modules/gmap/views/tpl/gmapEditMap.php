@@ -1,3 +1,8 @@
+<?php
+	$addProElementAttrs = $this->isPro ? '' : ' title="'. esc_html(sprintf(__('This option is available in <a target="_blank" href="%s">PRO version</a> only, you can get it <a target="_blank" href="%s">here.</a>', GMP_LANG_CODE), $this->mainLink, $this->mainLink)). '"';
+	$addProElementClass = $this->isPro ? '' : 'supsystic-tooltip';
+	$addProElementBottomHtml = $this->isPro ? '' : '<span class="gmpProOptMiniLabel"><a target="_blank" href="'. $this->mainLink. '">'. __('PRO option', GMP_LANG_CODE). '</a></span>';
+?>
 <section>
 	<div class="supsystic-item supsystic-panel">
 		<div id="containerWrapper">
@@ -49,7 +54,7 @@
 									<label for="map_opts_height">
 										<?php _e('Map Height', GMP_LANG_CODE)?>:
 									</label>
-									<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Your map width', GMP_LANG_CODE)?>"></i>
+									<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Your map height', GMP_LANG_CODE)?>"></i>
 								</th>
 								<td>
 									<div class="sup-col sup-w-25">
@@ -66,6 +71,215 @@
 								</td>
 							</tr>
 						</table>
+						<div id="gmpExtendOptsBtnShell" class="row-pad">
+							<a href="#" id="gmpExtendOptsBtn" class="button"><?php _e('Extended Options', GMP_LANG_CODE)?></a>
+						</div>
+						<div id="gmpExtendOptsShell" class="row">
+							<table class="form-table">
+								<tr>
+									<th scope="row">
+										<label for="map_opts_type_control">
+											<?php _e('Map type control', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Control view for map type - you can see it in right upper corner by default', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<div class="sup-col sup-w-50">
+											<?php echo htmlGmp::selectbox('map_opts[type_control]', array(
+												'options' => array('none' => __('None', GMP_LANG_CODE), 'DROPDOWN_MENU' => __('Dropdown Menu', GMP_LANG_CODE), 'HORIZONTAL_BAR' => __('Horizontal Bar', GMP_LANG_CODE)),
+												'value' => $this->editMap && isset($this->map['params']['type_control']) ? $this->map['params']['type_control'] : 'HORIZONTAL_BAR',
+												'attrs' => 'style="width: 100%;" id="map_opts_type_control"'))?>
+										</div>
+										<div class="sup-col sup-w-50">
+											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change type control position on map', GMP_LANG_CODE)?>"></i>
+											<?php echo htmlGmp::selectbox('map_opts[type_control_position]', array(
+												'options' => $this->positionsList,
+												'value' => $this->editMap && isset($this->map['params']['type_control_position']) ? $this->map['params']['type_control_position'] : 'TOP_RIGHT',
+												'attrs' => 'data-for="mapTypeControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. $addProElementAttrs
+											))?>
+											<?php echo $addProElementBottomHtml;?>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_zoom_control">
+											<?php _e('Zoom control', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Zoom control type on your map', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<div class="sup-col sup-w-50">
+											<?php echo htmlGmp::selectbox('map_opts[zoom_control]', array(
+												'options' => array('none' => __('None', GMP_LANG_CODE), 'DEFAULT' => __('Default', GMP_LANG_CODE), 'LARGE' => __('Large', GMP_LANG_CODE), 'SMALL' => __('Small', GMP_LANG_CODE)),
+												'value' => $this->editMap && isset($this->map['params']['zoom_control']) ? $this->map['params']['zoom_control'] : 'DEFAULT',
+												'attrs' => 'style="width: 100%;" id="map_opts_zoom_control"'))?>
+										</div>
+										<div class="sup-col sup-w-50">
+											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change zoom control position on map', GMP_LANG_CODE)?>"></i>
+											<?php echo htmlGmp::selectbox('map_opts[zoom_control_position]', array(
+												'options' => $this->positionsList,
+												'value' => $this->editMap && isset($this->map['params']['zoom_control_position']) ? $this->map['params']['zoom_control_position'] : 'TOP_LEFT',
+												'attrs' => 'data-for="zoomControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. $addProElementAttrs
+											))?>
+											<?php echo $addProElementBottomHtml;?>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_optsstreet_view_control_check">
+											<?php _e('Street view control', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Street view control usually is located on left upper corner of your map', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<div class="sup-col sup-w-50">
+											<?php echo htmlGmp::checkboxHiddenVal('map_opts[street_view_control]', array(
+												'value' => $this->editMap && isset($this->map['params']['street_view_control']) ? $this->map['params']['street_view_control'] : true,
+											))?>
+										</div>
+										<div class="sup-col sup-w-50">
+											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change street view control position on map', GMP_LANG_CODE)?>"></i>
+											<?php echo htmlGmp::selectbox('map_opts[street_view_control_position]', array(
+												'options' => $this->positionsList,
+												'value' => $this->editMap && isset($this->map['params']['street_view_control_position']) ? $this->map['params']['street_view_control_position'] : 'TOP_LEFT',
+												'attrs' => 'data-for="streetViewControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. $addProElementAttrs
+											))?>
+											<?php echo $addProElementBottomHtml;?>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_optspan_control_check">
+											<?php _e('Pan control', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Pan control - allow you to pan over your map using mouse, usually is located on left upper corner of your map', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<div class="sup-col sup-w-50">
+											<?php echo htmlGmp::checkboxHiddenVal('map_opts[pan_control]', array(
+												'value' => $this->editMap && isset($this->map['params']['pan_control']) ? $this->map['params']['pan_control'] : false,
+											))?>
+										</div>
+										<div class="sup-col sup-w-50">
+											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change pan control position on map', GMP_LANG_CODE)?>"></i>
+											<?php echo htmlGmp::selectbox('map_opts[pan_control_position]', array(
+												'options' => $this->positionsList,
+												'value' => $this->editMap && isset($this->map['params']['pan_control_position']) ? $this->map['params']['pan_control_position'] : 'TOP_LEFT',
+												'attrs' => 'data-for="panControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. $addProElementAttrs
+											))?>
+											<?php echo $addProElementBottomHtml;?>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_overview_control">
+											<?php _e('Overview control', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Overview control for your map, by default is disabled, and if enabled - is located on the right bottom corner', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<div class="sup-col" style="width: 100%;">
+											<?php echo htmlGmp::selectbox('map_opts[overview_control]', array(
+												'options' => array('none' => __('None', GMP_LANG_CODE), 'opened' => __('Opened', GMP_LANG_CODE), 'collapsed' => __('Collapsed', GMP_LANG_CODE)),
+												'value' => $this->editMap && isset($this->map['params']['overview_control']) ? $this->map['params']['overview_control'] : 'none',
+												'attrs' => 'style="width: 100%;" id="map_opts_overview_control"'))?>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_optsdraggable_check">
+											<?php _e('Draggable', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Enable or disable possibility to drag your map using mouse', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[draggable]', array(
+											'value' => $this->editMap && isset($this->map['params']['draggable']) ? $this->map['params']['draggable'] : true,
+										))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_optsdbl_click_zoom_check">
+											<?php _e('Double click to zoom', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('By default double left click on map will zoom it in. But you can change this here.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[dbl_click_zoom]', array(
+											'value' => $this->editMap && isset($this->map['params']['dbl_click_zoom']) ? $this->map['params']['dbl_click_zoom'] : true,
+										))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_optsmouse_wheel_zoom_check">
+											<?php _e('Mouse wheel to zoom', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Sometimes you need to disable possibility to zoom your map using mouse wheel. This can be required for example - if you need to use your wheel for some other action, for example scroll your site even if mouse is over your map.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[mouse_wheel_zoom]', array(
+											'value' => $this->editMap && isset($this->map['params']['mouse_wheel_zoom']) ? $this->map['params']['mouse_wheel_zoom'] : true,
+										))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_map_type">
+											<?php _e('Google Map Theme', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('You can select your Google Map theme - Road Map, Hybrid, Satellite or Terrain - here. By default your map will have Road Map Google maps theme.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::selectbox('map_opts[map_type]', array(
+											'options' => array('ROADMAP' => __('Road Map', GMP_LANG_CODE), 'HYBRID' => __('Hybrid', GMP_LANG_CODE), 'SATELLITE' => __('Satellite', GMP_LANG_CODE), 'TERRAIN' => __('Terrain', GMP_LANG_CODE)),
+											'value' => $this->editMap && isset($this->map['params']['map_type']) ? $this->map['params']['map_type'] : 'ROADMAP',
+											'attrs' => 'style="width: 100%;" id="map_opts_map_type"'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_map_stylization">
+											<?php _e('Map Stylization', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Make your map unique with our Map Themes, just try to change it here - and you will see results on your Map Preview.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::selectbox('map_opts[map_stylization]', array(
+											'options' => $this->stylizationsForSelect,
+											'value' => $this->editMap && isset($this->map['params']['map_stylization']) ? $this->map['params']['map_stylization'] : 'none',
+											'attrs' => 'style="width: '. ($this->isPro ? '100%' : 'calc(100% - 150px)'). ';" id="map_opts_map_stylization"'))?>
+										<?php if(!$this->isPro) {?>
+											<a target="_blank" href="<?php echo $this->mainLink;?>" class="sup-standard-link">
+												<i class="fa fa-plus"></i>
+												<?php _e('Get 300+ Themes', GMP_LANG_CODE)?>
+											</a>
+										<?php }?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_marker_clasterer" class="sup-medium-label">
+											<?php _e('Markers Clasterization', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('If you have many markers - you can have a problems with viewing them when zoom out for example: they will just cover each-other. Marker clasterization can solve this problem by grouping your markers in groups when they are too close to each-other.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::selectbox('map_opts[marker_clasterer]', array(
+											'options' => array('none' => __('None', GMP_LANG_CODE), 'MarkerClusterer' => __('Base Clasterization', GMP_LANG_CODE)),
+											'value' => $this->editMap && isset($this->map['params']['marker_clasterer']) ? $this->map['params']['marker_clasterer'] : 'none',
+											'attrs' => 'style="width: 100%;" id="map_opts_marker_clasterer"'))?>
+									</td>
+								</tr>
+								
+							</table>
+						</div>
 						<?php echo htmlGmp::hidden('mod', array('value' => 'gmap'))?>
 						<?php echo htmlGmp::hidden('action', array('value' => 'save'))?>
 						<?php echo htmlGmp::hidden('map_opts[id]', array('value' => $this->editMap ? $this->map['id'] : ''))?>
@@ -74,6 +288,7 @@
 						<?php echo htmlGmp::hidden('map_opts[zoom]', array('value' => $this->editMap ? $this->map['params']['zoom'] : ''))?>
 					</form>
 				</div>
+				
 				<div class="row">
 					<a href="#" id="gmpAddNewMarkerBtn" class="button"><?php _e('Add New Marker', GMP_LANG_CODE)?></a>
 					<a href="#" id="gmpSaveMarkerBtn" class="button"><?php _e('Save Marker', GMP_LANG_CODE)?></a>
@@ -242,4 +457,10 @@
 		</li>
 		<?php }?>
 	</ul>
+</div>
+<!--Option available in PRO version-->
+<div id="gmpOptInProWnd" style="display: none;">
+	<p>
+		<?php printf(__('Please be advised that this option is available only in <a target="_blank" href="%s">PRO version</a>. You can <a target="_blank" href="%s" class="button">Get PRO</a> today and get this and other PRO option for your Maps!', GMP_LANG_CODE), $this->mainLink, $this->mainLink)?>
+	</p>
 </div>

@@ -47,11 +47,11 @@ class templatesGmp extends moduleGmp {
 				'loader'					=> GMP_LOADER_IMG, 
 				'close'						=> GMP_IMG_PATH. 'cross.gif', 
 				'ajaxurl'					=> $ajaxurl,
-				//'options'					=> frameGmp::_()->getModule('options')->getAllowedPublicOptions(),
 				'GMP_CODE'					=> GMP_CODE,
-				//'ball_loader'				=> GMP_IMG_PATH. 'ajax-loader-ball.gif',
-				//'ok_icon'					=> GMP_IMG_PATH. 'ok-icon.png',
 			);
+			if(is_admin()) {
+				$jsData['isPro'] = frameGmp::_()->getModule('supsystic_promo')->isPro();
+			}
 			$jsData = dispatcherGmp::applyFilters('jsInitVariables', $jsData);
 			frameGmp::_()->addJSVar('coreGmp', 'GMP_DATA', $jsData);
 			$loaded = true;
@@ -93,7 +93,7 @@ class templatesGmp extends moduleGmp {
 		static $loaded = false;
 		if(!$loaded) {
 			$this->loadJqueryUi();
-			frameGmp::_()->addScript('jq-grid', GMP_JS_PATH. 'jquery.jqGrid.min.js');
+			frameGmp::_()->addScript('jq-grid', GMP_JS_PATH. 'jquery.jqGrid.min.js', array('jquery'));
 			frameGmp::_()->addStyle('jq-grid', GMP_CSS_PATH. 'ui.jqgrid.css');
 			$langToLoad = utilsGmp::getLangCode2Letter();
 			if(!file_exists(GMP_JS_DIR. 'i18n'. DS. 'grid.locale-'. $langToLoad. '.js')) {

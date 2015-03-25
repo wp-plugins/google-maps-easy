@@ -46,7 +46,6 @@ jQuery(document).ready(function(){
 			}
 		}).trigger('change');
 	}
-	gmpInitStickyItem();
 	gmpInitCustomCheckRadio();
 	//gmpInitCustomSelect();
 	
@@ -149,6 +148,9 @@ function isAdminFormChanged(formId) {
 	}
 	return false;
 }
+jQuery(window).load(function(){
+	gmpInitStickyItem();
+});
 /*Some items should be always on users screen*/
 function gmpInitStickyItem() {
 	jQuery(window).scroll(function(){
