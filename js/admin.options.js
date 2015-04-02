@@ -1,9 +1,9 @@
 var gmpAdminFormChanged = [];
-window.onbeforeunload = function(){
+/*window.onbeforeunload = function(){
 	// If there are at lease one unsaved form - show message for confirnation for page leave
 	if(gmpAdminFormChanged.length)
 		return 'Some changes were not-saved. Are you sure you want to leave?';
-};
+};*/
 jQuery(document).ready(function(){
 	if(typeof(gmpActiveTab) != 'undefined' && gmpActiveTab != 'main_page' && jQuery('#toplevel_page_'+ gmpMainSlug).hasClass('wp-has-current-submenu')) {
 		var subMenus = jQuery('#toplevel_page_'+ gmpMainSlug).find('.wp-submenu li');
@@ -205,7 +205,7 @@ function gmpInitStickyItem() {
 						element.trigger('startSticky');
 					} else if(!isNaN(prevScrollMinPos) && currentScrollTop <= prevScrollMinPos) {	// Stop sticking
 						element.removeClass('supsystic-sticky-active').data('scrollMinPos', 0).css({
-							//'top': 0
+							'top': 0
 						});
 						if(element.hasClass('sticky-save-width')) {
 							element.removeClass('sticky-full-width');

@@ -416,6 +416,8 @@ input[type="color"] {
 .supsystic-plugin .button-primary:focus,
 .ui-dialog .button:hover,
 .ui-dialog .button-primary:focus,
+.ui-dialog .button.active,
+.ui-dialog .button-primary.active,
 .ui-button.ui-state-hover,
 .ui-button:hover, 
 .ui-button:focus {

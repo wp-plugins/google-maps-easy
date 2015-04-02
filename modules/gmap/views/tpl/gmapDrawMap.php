@@ -99,10 +99,6 @@
 		<div class="gmp_MapPreview <?php echo $classname;?>" id="<?php echo $mapHtmlId ;?>"></div>
 	</div>
 	<div class="gmpMapProControlsCon" id="gmpMapProControlsCon_<?php echo $viewId;?>">
-		<?php dispatcherGmp::doAction('addMapBottomControls', array(
-			'mapId' => $this->currentMap['id'], 
-			'markersDisplayType' => $this->markersDisplayType,
-			'display_type' => $this->markersDisplayType,
-			'map' => $this->currentMap)); ?>
+		<?php dispatcherGmp::doAction('addMapBottomControls', $this->currentMap); ?>
 	</div>
 </div>

@@ -554,4 +554,11 @@ class utilsGmp {
 	static public function getLangCode2Letter() {
 		return strlen(GMP_WPLANG) > 2 ? substr(GMP_WPLANG, 0, 2) : GMP_WPLANG;
 	}
+	static public function gmpExtractImgTags($str) {
+		preg_match_all('/<img[^>]+>/i', $str, $result);
+		if(!empty($result) && !empty($result[0])) {
+			return $result[0];
+		}
+		return false;
+	}
 }

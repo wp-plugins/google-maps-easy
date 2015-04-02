@@ -139,6 +139,7 @@ gmpGoogleMap.prototype.markersRefresh = function() {
 		this._clasterer.clearMarkers();
 		this._clasterer.addMarkers( this.getAllRawMarkers() );
 	}
+	jQuery(document).trigger('gmapAfterMarkersRefresh', this);
 };
 gmpGoogleMap.prototype._addEventListenerHandle = function(event, code, handle) {
 	if(!this._eventListeners[ event ])
@@ -230,6 +231,15 @@ gmpGoogleMap.prototype.clearMarkers = function() {
 		this._markers = [];
 	}
 };
+gmpGoogleMap.prototype.getViewId = function() {
+	return this._mapParams.view_id;
+};
+gmpGoogleMap.prototype.getViewHtmlId = function() {
+	return this._mapParams.view_html_id;
+};
+gmpGoogleMap.prototype.getId = function() {
+	return this._mapParams.id;
+};
 // Markers
 function gmpGoogleMarker(map, params) {
 	this._map = map;
@@ -260,6 +270,7 @@ gmpGoogleMarker.prototype.init = function() {
 	}
 	this._markerObj.addListener('click', jQuery.proxy(function () {
 		this.showInfoWnd();
+		jQuery(document).trigger('gmapAfterMarkerClick', this);
 	}, this));
 };
 gmpGoogleMarker.prototype.showInfoWnd = function() {
@@ -295,6 +306,9 @@ gmpGoogleMarker.prototype.setTitle = function(title, noRefresh) {
 	if(!noRefresh)
 		this._updateInfoWndContent();
 };
+gmpGoogleMarker.prototype.getTitle = function() {
+	return this._markerParams.title;
+};
 gmpGoogleMarker.prototype.getPosition = function() {
 	return this._markerObj.getPosition();
 };
@@ -317,6 +331,9 @@ gmpGoogleMarker.prototype.setDescription = function (description, noRefresh) {
 	this._markerParams.description = description;
 	if(!noRefresh)
 		this._updateInfoWndContent();
+};
+gmpGoogleMarker.prototype.getDescription = function () {
+	return this._markerParams.description;
 };
 gmpGoogleMarker.prototype._updateInfoWndContent = function() {
 	var contentStr = jQuery('<div/>', {});
@@ -358,6 +375,9 @@ gmpGoogleMarker.prototype.setMarkerParams = function(params) {
 };
 gmpGoogleMarker.prototype.setMap = function( map ) {
 	this.getRawMarkerInstance().setMap( map );
+};
+gmpGoogleMarker.prototype.getMap = function() {
+	return this._map;
 };
 // Common functions
 var g_gmpGeocoder = null;

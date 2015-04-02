@@ -2,12 +2,27 @@
 	$addProElementAttrs = $this->isPro ? '' : ' title="'. esc_html(sprintf(__('This option is available in <a target="_blank" href="%s">PRO version</a> only, you can get it <a target="_blank" href="%s">here.</a>', GMP_LANG_CODE), $this->mainLink, $this->mainLink)). '"';
 	$addProElementClass = $this->isPro ? '' : 'supsystic-tooltip';
 	$addProElementBottomHtml = $this->isPro ? '' : '<span class="gmpProOptMiniLabel"><a target="_blank" href="'. $this->mainLink. '">'. __('PRO option', GMP_LANG_CODE). '</a></span>';
+	$addProElementOptBottomHtml = $this->isPro ? '' : '<br /><span class="gmpProOptMiniLabel" style="padding-left: 0;"><a target="_blank" href="'. $this->mainLink. '">'. __('PRO option', GMP_LANG_CODE). '</a></span>';
 ?>
 <section>
 	<div class="supsystic-item supsystic-panel">
 		<div id="containerWrapper">
-			<div class="supsistic-half-side-box">
-				<div class="row">
+			<div id="gmpMapMarkerTabs" class="supsistic-half-side-box">
+				<h3 class="nav-tab-wrapper" style="margin-bottom: 0px; margin-top: 12px;">
+					<a class="nav-tab nav-tab-active" href="#gmpMapTab">
+						<p><?php _e('Map Properties', GMP_LANG_CODE)?></p>
+					</a>
+					<a class="nav-tab" href="#gmpMarkerTab">
+						<p>
+							<?php _e('Markers', GMP_LANG_CODE)?>
+							<button class="button" id="gmpAddNewMarkerBtn">
+								<i class="fa fa-map-marker"></i>
+								<?php _e('Add New Marker', GMP_LANG_CODE)?>
+							</button>
+						</p>
+					</a>
+				</h3>
+				<div id="gmpMapTab" class="gmpTabContent">
 					<form id="gmpMapForm">
 						<table class="form-table">
 							<tr>
@@ -38,10 +53,10 @@
 											'attrs' => 'style="width: 100%;" id="map_opts_width"'))?>
 									</div>
 									<div class="sup-col sup-w-75">
-										<label style="margin-right: 15px; position: relative; top: 7px;"><?php echo htmlGmp::radiobutton('map_opts[width_units]', array(
+										<label class="supsystic-tooltip" title="<?php _e('Pixels', GMP_LANG_CODE)?>" style="margin-right: 15px; position: relative; top: 7px;"><?php echo htmlGmp::radiobutton('map_opts[width_units]', array(
 											'value' => 'px',
 											'checked' => $this->editMap ? htmlGmp::checkedOpt($this->map['params'], 'width_units', 'px') : false,
-										))?>&nbsp;<?php _e('Pixels', GMP_LANG_CODE)?></label>
+										))?>&nbsp;<?php _e('Px', GMP_LANG_CODE)?></label>
 										<label style="margin-right: 15px; position: relative; top: 7px;"><?php echo htmlGmp::radiobutton('map_opts[width_units]', array(
 											'value' => '%',
 											'checked' => $this->editMap ? htmlGmp::checkedOpt($this->map['params'], 'width_units', '%') : true,
@@ -63,17 +78,17 @@
 											'attrs' => 'style="width: 100%;" id="map_opts_height"'))?>
 									</div>
 									<div class="sup-col sup-w-75">
-										<label style="margin-right: 15px; position: relative; top: 7px;"><?php echo htmlGmp::radiobutton('map_opts_height_units_is_constant', array(
+										<label class="supsystic-tooltip" title="<?php _e('Pixels', GMP_LANG_CODE)?>" style="margin-right: 15px; position: relative; top: 7px;"><?php echo htmlGmp::radiobutton('map_opts_height_units_is_constant', array(
 											'value' => 'px',
 											'checked' => true,
-										))?>&nbsp;<?php _e('Pixels', GMP_LANG_CODE)?></label>
+										))?>&nbsp;<?php _e('Px', GMP_LANG_CODE)?></label>
 									</div>
 								</td>
 							</tr>
 						</table>
-						<div id="gmpExtendOptsBtnShell" class="row-pad">
+						<?php /*?><div id="gmpExtendOptsBtnShell" class="row-pad">
 							<a href="#" id="gmpExtendOptsBtn" class="button"><?php _e('Extended Options', GMP_LANG_CODE)?></a>
-						</div>
+						</div><?php */?>
 						<div id="gmpExtendOptsShell" class="row">
 							<table class="form-table">
 								<tr>
@@ -265,6 +280,20 @@
 								</tr>
 								<tr>
 									<th scope="row">
+										<label for="map_opts_markers_list_type">
+											<?php _e('Markers List', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Display all map markers - as list bellow Your map. This will help your users get more info about your markers and find required marker more faster.', GMP_LANG_CODE)?>"></i>
+										<?php echo $addProElementOptBottomHtml;?>
+									</th>
+									<td>
+										<a id="gmpMapMarkersListBtn" href="#" class="button"><?php _e('Select Markers List type', GMP_LANG_CODE)?></a>
+										<?php echo htmlGmp::hidden('map_opts[markers_list_type]', array(
+											'value' => $this->editMap && isset($this->map['params']['markers_list_type']) ? $this->map['params']['markers_list_type'] : ''))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
 										<label for="map_opts_marker_clasterer" class="sup-medium-label">
 											<?php _e('Markers Clasterization', GMP_LANG_CODE)?>:
 										</label>
@@ -277,7 +306,6 @@
 											'attrs' => 'style="width: 100%;" id="map_opts_marker_clasterer"'))?>
 									</td>
 								</tr>
-								
 							</table>
 						</div>
 						<?php echo htmlGmp::hidden('mod', array('value' => 'gmap'))?>
@@ -288,14 +316,8 @@
 						<?php echo htmlGmp::hidden('map_opts[zoom]', array('value' => $this->editMap ? $this->map['params']['zoom'] : ''))?>
 					</form>
 				</div>
-				
-				<div class="row">
-					<a href="#" id="gmpAddNewMarkerBtn" class="button"><?php _e('Add New Marker', GMP_LANG_CODE)?></a>
-					<a href="#" id="gmpSaveMarkerBtn" class="button"><?php _e('Save Marker', GMP_LANG_CODE)?></a>
-					<div style="clear: both;"></div>
-				</div>
-				<div class="row">
-					<form id="gmpMarkerForm" style="display: none;">
+				<div id="gmpMarkerTab" class="gmpTabContent">
+					<form id="gmpMarkerForm">
 						<table class="form-table">
 							<tr>
 								<th scope="row">
@@ -393,38 +415,15 @@
 						<?php echo htmlGmp::hidden('marker_opts[path]', array('value' => ''))?>
 					</form>
 				</div>
-				<div class="row">
-					<div id="markerList">
-						<div style="display: none;" id="markerRowTemplate" class="row gmpMapMarkerRow">
-							<div class="col-xs-12 egm-marker">
-								<div class="row">
-									<div class="col-xs-2 egm-marker-icon">
-										<img alt="" src="">
-									</div>
-									<div class="col-xs-4 egm-marker-title">
-									</div>
-									<div class="col-xs-3 egm-marker-latlng">
-									</div>
-									<div class="col-xs-3 egm-marker-actions">
-										<button title="<?php _e('Edit', GMP_LANG_CODE)?>" type="button" class="button button-small egm-marker-edit">
-											<i class="fa fa-fw fa-pencil"></i>
-										</button>
-										<button title="<?php _e('Delete', GMP_LANG_CODE)?>" type="button" class="button button-small egm-marker-remove">
-											<i class="fa fa-fw fa-trash-o"></i>
-										</button>
-									</div>
-								</div>
-							</div>
-							<div style="clear: both;"></div>
-						</div>
-						
-					</div>
-				</div>
 			</div>
 			<div class="supsistic-half-side-box">
 				<div id="gmpMapRightStickyBar" class="supsystic-sticky">
 					<div id="gmpMapPreview" style="width: 100%; height: 300px;"></div>
-					<div class="row">
+					<?php /*?><div class="gmpMapProControlsCon" id="gmpMapProControlsCon_<?php echo $this->viewId;?>">
+						<?php dispatcherGmp::doAction('addMapBottomControls', array()); ?>
+					</div><?php */?>
+					<?php echo htmlGmp::hidden('rand_view_id', array('value' => $this->viewId, 'attrs' => 'id="gmpViewId"'))?>
+					<div id="gmpShortCodeRowShell" class="row">
 						<div class="shortcode-wrap">
 							<p id="shortcodeCode" style="display: none;">
 								<strong style="margin-top: 2px; font-size: 1.2em; float: left;"><?php _e('Map shortcode', GMP_LANG_CODE)?>:</strong>
@@ -434,12 +433,48 @@
 						</div>
 						<div style="clear: both;"></div>
 					</div>
-					<div class="row">
+					<div id="gmpMapMainBtns" class="row">
 						<div class="sup-col sup-w-50">
 							<button id="gmpMapSaveBtn" class="button button-primary" style="width: 100%;"><?php _e('Save Map', GMP_LANG_CODE)?></button>
 						</div>
 						<div class="sup-col sup-w-50" style="padding-right: 0;">
 							<button id="gmpMapDeleteBtn" class="button button-primary" style="width: 100%;"><?php _e('Delete Map', GMP_LANG_CODE)?></button>
+						</div>
+						<div style="clear: both;"></div>
+					</div>
+					<div id="gmpMarkerMainBtns" class="row">
+						<div class="sup-col sup-w-50">
+							<button id="gmpSaveMarkerBtn" class="button button-primary" style="width: 100%;"><?php _e('Save Marker', GMP_LANG_CODE)?></button>
+						</div>
+						<div class="sup-col sup-w-50" style="padding-right: 0;">
+							<button id="gmpMarkerDeleteBtn" class="button button-primary" style="width: 100%;"><?php _e('Delete Marker', GMP_LANG_CODE)?></button>
+						</div>
+						<div style="clear: both;"></div>
+					</div>
+					<div class="row">
+						<div id="markerList">
+							<div style="display: none;" id="markerRowTemplate" class="row gmpMapMarkerRow">
+								<div class="col-xs-12 egm-marker">
+									<div class="row">
+										<div class="col-xs-2 egm-marker-icon">
+											<img alt="" src="">
+										</div>
+										<div class="col-xs-4 egm-marker-title">
+										</div>
+										<div class="col-xs-3 egm-marker-latlng">
+										</div>
+										<div class="col-xs-3 egm-marker-actions">
+											<button title="<?php _e('Edit', GMP_LANG_CODE)?>" type="button" class="button button-small egm-marker-edit">
+												<i class="fa fa-fw fa-pencil"></i>
+											</button>
+											<button title="<?php _e('Delete', GMP_LANG_CODE)?>" type="button" class="button button-small egm-marker-remove">
+												<i class="fa fa-fw fa-trash-o"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+								<div style="clear: both;"></div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -463,4 +498,20 @@
 	<p>
 		<?php printf(__('Please be advised that this option is available only in <a target="_blank" href="%s">PRO version</a>. You can <a target="_blank" href="%s" class="button">Get PRO</a> today and get this and other PRO option for your Maps!', GMP_LANG_CODE), $this->mainLink, $this->mainLink)?>
 	</p>
+</div>
+<!--Map Markers List Wnd-->
+<div id="gmpMarkersListWnd" style="display: none;" data-promourl="<?php echo $this->mainLink?>?utm_source=plugin&utm_medium=marker_slider&utm_campaign=googlemaps" title="<?php _e('Show markers list with your map on frontend', GMP_LANG_CODE)?>">
+	<!--Mml == Map Markers List-->
+	<ul id="gmpMml">
+		<?php foreach($this->markerLists as $lKey => $lData) { ?>
+		<li class="gmpMmlElement gmpMmlElement-<?php echo $lKey?>" data-key="<?php echo $lKey?>">
+			<img src="<?php echo $this->promoModPath?>img/markers_list/<?php echo $lData['prev_img']?>" /><br />
+			<div class="gmpMmlElementBtnShell">
+				<button class="button button-primary gmpMmlApplyBtn" data-apply-label="<?php _e('Apply', GMP_LANG_CODE)?>" data-active-label="<?php _e('Selected', GMP_LANG_CODE)?>">
+					<?php $this->isPro ? _e('Apply', GMP_LANG_CODE) : _e('Available in PRO', GMP_LANG_CODE)?>
+				</button>
+			</div>
+		</li>
+		<?php }?>
+	</ul>
 </div>

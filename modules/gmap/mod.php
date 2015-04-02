@@ -1,6 +1,7 @@
 <?php
 class  gmapGmp extends moduleGmp {
 	private $_stylizations = array();
+	private $_markersLists = array();
 	
 	public function init() {
 		dispatcherGmp::addFilter('mainAdminTabs', array($this, 'addAdminTab'));
@@ -83,5 +84,17 @@ class  gmapGmp extends moduleGmp {
 	public function getStylizationByName($name) {
 		$this->getStylizationsList();
 		return isset($this->_stylizations[ $name ]) ? $this->_stylizations[ $name ] : false;
+	}
+	public function getMarkerLists() {
+		if(empty($this->_markersLists)) {
+			$this->_markersLists = array(
+				//'none' => array('label' => __('None', GMP_LANG_CODE)),
+				'slider_simple' => array('label' => __('Slider', GMP_LANG_CODE)),
+			);
+			foreach($this->_markersLists as $i => $v) {
+				$this->_markersLists[$i]['prev_img'] = isset($this->_markersLists[$i]['prev_img']) ? $this->_markersLists[$i]['prev_img'] : $i. '.jpg';
+			}
+		}
+		return $this->_markersLists;
 	}
 }

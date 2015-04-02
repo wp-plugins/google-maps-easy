@@ -1,16 +1,16 @@
 === Google Maps Easy ===
 Contributors: supsystic.com
-Donate link: http://supsystic.com/plugins/google-maps-plugin/
+Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, google maps wordpress plugin, google maps, google maps plugin, directions,  map, maps, location, direction, map marker, marker, geocoder, post map, widget map, widget, google map widget, custom marker icons and text, custom marker text, geo, google map short code,  google map styles, openstreetmap, latitude, longitude, placemarker, pronamic, reverse geocode, wp map, wp maps, supsystic
 Tested up to: 4.1.1
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers or locations. Display any data on the map: text, images, videos. Custom map marker icons
 
 == Description ==
 
-Create Google Maps in Five Clicks with with Google Maps Easy WordPress plugin. 
+Create [Google Maps](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=description&utm_campaign=maps "Google Maps WordPress plugin") in a minute with with Google Maps Easy WordPress plugin. 
 Map markers with any media, location points with video and text descriptions.
 Add map with shortcode, open it in popup or use google map widget.
 Ultimate solution to display google map on the contact page, routes, reale estates, pizzas delivery areas.
@@ -122,9 +122,20 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 
 == Screenshots ==
 
-1. Google Maps Easy WordPress plugin admin area
+1. [Google Maps Easy WordPress plugin](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=screenshots&utm_campaign=maps "Google Maps WordPress plugin") admin area
+
+2. Map Markers Clusterization
+
+3. Google Map Stylyzations
 
 == Changelog ==
+
+= 1.0.9 / 03.04.2015 =
+ * Re-design of admin area - make map creation process more comfortable for users
+ * Ask user if he try to leave page with unsaved data - do not let him lost his changes
+ * PRO - markers list slider integration
+ * Removed deprecated files and code
+ * Core code improvements
 
 = 1.0.8 / 25.03.2015 =
  * Map type control option added

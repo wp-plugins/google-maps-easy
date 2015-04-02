@@ -21,29 +21,6 @@ class gmapViewGmp extends viewGmp {
 			self::$_mapsData[] = $params;
 	}
 	public function drawMap($params){
-		/*$ajaxurl = admin_url('admin-ajax.php');
-		if(frameGmp::_()->getModule('options')->get('ssl_on_ajax')) {
-			$ajaxurl = uriGmp::makeHttps($ajaxurl);
-		}
-		$jsData = array(
-			'siteUrl'					=> GMP_SITE_URL,
-			'imgPath'					=> GMP_IMG_PATH,
-			'loader'						=> GMP_LOADER_IMG, 
-			'close'						=> GMP_IMG_PATH. 'cross.gif', 
-			'ajaxurl'					=> $ajaxurl,
-			'animationSpeed'				=> frameGmp::_()->getModule('options')->get('js_animation_speed'),
-			'siteLang'					=> langGmp::getData(),
-			'options'					=> frameGmp::_()->getModule('options')->getAllowedPublicOptions(),
-			'GMP_CODE'					=> GMP_CODE,
-			'ball_loader'				=> GMP_IMG_PATH. 'ajax-loader-ball.gif',
-			'ok_icon'					=> GMP_IMG_PATH. 'ok-icon.png',
-			'isHttps'					=> uriGmp::isHttps(),
-		);
-		frameGmp::_()->addScript('coreGmp', GMP_JS_PATH. 'core.js');
-
-		$jsData = dispatcherGmp::applyFilters('jsInitVariables', $jsData);
-		frameGmp::_()->addJSVar('coreGmp', 'GMP_DATA', $jsData);
-		frameGmp::_()->addScript('jquery', '', array('jquery'));*/
 		$mapObj = frameGmp::_()->getModule('gmap')->getModel()->getMapById($params['id']);
 		if(empty($mapObj))
 			return;
@@ -106,13 +83,6 @@ class gmapViewGmp extends viewGmp {
 		if($mapObj['params']['map_display_mode'] == 'popup') {
 			frameGmp::_()->addScript('bpopup', GMP_JS_PATH. '/bpopup.js');
 		}
-		//frameGmp::_()->addScript('google_maps_api', $this->getApiUrl(). '&language='. $mapObj['params']['language']);
-		//$this->connectMapsAssets( $mapObj['params'] );
-		//frameGmp::_()->addScript('map.options', $this->getModule()->getModPath(). 'js/map.options.js', array('jquery'), false, true);
-		
-		//frameGmp::_()->addStyle('map_params', $this->getModule()->getModPath(). 'css/map.css');
-		
-		//frameGmp::_()->getModule('marker')->connectAssets();
 		if(empty($mapObj['params']['map_display_mode'])){
 			$mapObj['params']['map_display_mode'] = 'map';
 		}
@@ -120,18 +90,15 @@ class gmapViewGmp extends viewGmp {
 		$mapObj['original_id'] = $mapObj['id'];
 		$mapObj['view_id'] = $mapObj['id']. '_'. mt_rand(1, 99999);
 		$mapObj['view_html_id'] = 'google_map_easy_'. $mapObj['view_id'];
-		/*if(isset($this->_idToRandId[ $mapObj['original_id'] ]))
-			$mapObj['id'] = $this->_idToRandId[ $mapObj['original_id'] ];
-		else
-			$this->_idToRandId[ $mapObj['original_id'] ] = $mapObj['id'] = mt_rand(1, 99999). $mapObj['id'];*/
 		
+		$mapObj['params']['view_id'] = $mapObj['view_id'];
+		$mapObj['params']['view_html_id'] = $mapObj['view_html_id'];
+		$mapObj['params']['id'] = $mapObj['id'];
 		$indoWindowSize = frameGmp::_()->getModule('options')->getModel('options')->get('infowindow_size');
 		$this->assign('indoWindowSize', $indoWindowSize);
-		$this->assign('currentMap', $mapObj);
+		
 		$markersDisplayType = '';
-		if(isset($params['display_type'])) {
-			$markersDisplayType = $params['display_type'];
-		} else if(isset($params['markers_list_type'])) {
+		if(isset($params['markers_list_type'])) {
 			$markersDisplayType = $params['markers_list_type'];
 		} else if(isset($mapObj['params']['markers_list_type']) && !empty($mapObj['params']['markers_list_type'])) {
 			$markersDisplayType = $mapObj['params']['markers_list_type'];
@@ -140,10 +107,9 @@ class gmapViewGmp extends viewGmp {
 		$this->addMapData(dispatcherGmp::applyFilters('mapDataToJs', $mapObj));
 
 		$this->assign('markersDisplayType', $markersDisplayType);
-		// This will require only in PRO, but we will make it here - to avoid code doubling
-		//$this->assign('mapCategories', frameGmp::_()->getModule('marker_groups')->getModel()->getListForMarkers(isset($mapObj['markers']) ? $mapObj['markers'] : false));
 		$this->connectMapsAssets( $mapObj['params'] );
 		frameGmp::_()->addScript('frontend.gmap', $this->getModule()->getModPath(). 'js/frontend.gmap.js', array('jquery'));
+		$this->assign('currentMap', $mapObj);
 		return parent::getInlineContent('gmapDrawMap');
 	}
 	public function addMapDataToJs(){
@@ -154,7 +120,6 @@ class gmapViewGmp extends viewGmp {
 			$this->_displayColumns = array(
 				'id'				=> array('label' => __('ID'), 'db' => 'id'),
 				'title'				=> array('label' => __('Title'), 'db' => 'title'),
-				//'description'		=> array('label' => __('Description'), 'db' => 'description'),
 				'list_html_options'	=> array('label' => __('Html options'), 'db' => 'html_options'),
 				'list_markers'		=> array('label' => __('Markers'), 'db' => 'markers'),
 				'operations'		=> array('label' => __('Operations'), 'db' => 'operations'),
@@ -183,6 +148,7 @@ class gmapViewGmp extends viewGmp {
 	}
 	public function getEditMap($id = 0) {
 		$gMapApiParams = array('language' => '');
+		frameGmp::_()->addScript('wp.tabs', GMP_JS_PATH. 'wp.tabs.js');
 		frameGmp::_()->addScript('admin.gmap', $this->getModule()->getModPath(). 'js/admin.gmap.js');
 		frameGmp::_()->addScript('admin.gmap.edit', $this->getModule()->getModPath(). 'js/admin.gmap.edit.js');
 		frameGmp::_()->addStyle('admin.gmap', $this->getModule()->getModPath(). 'css/admin.gmap.css');
@@ -202,6 +168,7 @@ class gmapViewGmp extends viewGmp {
 			$gMapApiParams = $map['params'];
 			frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpMainMap', $map);
 		}
+		$markerLists = $this->getModule()->getMarkerLists();
 		$positionsList = $this->getModule()->getControlsPositions();
 		$this->connectMapsAssets($gMapApiParams, true);
 		$this->assign('editMap', $editMap);
@@ -210,6 +177,9 @@ class gmapViewGmp extends viewGmp {
 		$this->assign('positionsList', $positionsList);
 		$this->assign('isPro', frameGmp::_()->getModule('supsystic_promo')->isPro());
 		$this->assign('mainLink', frameGmp::_()->getModule('supsystic_promo')->getMainLink());
+		$this->assign('markerLists', $markerLists);
+		$this->assign('viewId', 'gmpPreview_'. mt_rand(1, 999));
+		$this->assign('promoModPath', frameGmp::_()->getModule('supsystic_promo')->getModPath());
 		return parent::getContent('gmapEditMap');
 	}
 	public function connectMapsAssets($params, $forAdminArea = false) {

@@ -51,9 +51,16 @@ jQuery.fn.sendFormGmp = function(params) {
 		var addStrData = [];
         for(var i in params.appendData) {
 			if(dataIsString) {
-				addStrData.push(i+ '='+ params.appendData[i]);
+				if(toeInArray(typeof(params.appendData[i], ['object', 'array']))) {
+					for(var j in params.appendData[i]) {
+						addStrData.push(i+ '['+ j+ ']'+ '='+ params.appendData[i][j]);
+					}
+				} else {
+					addStrData.push(i+ '='+ params.appendData[i]);
+				}
+				
 			} else
-            data[i] = params.appendData[i];
+				data[i] = params.appendData[i];
         }
 		if(dataIsString)
 			data += '&'+ addStrData.join('&');

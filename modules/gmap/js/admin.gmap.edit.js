@@ -3,8 +3,33 @@ var g_gmpMap = null
 ,	g_gmpEditMap = false	// Adding or editing map
 ,	g_gmpCurrentEditMarker = null
 ,	g_gmpTinyMceEditorUpdateBinded = false
-,	g_gmpMarkerFormChanged = false;
+,	g_gmpMarkerFormChanged = false
+,	g_gmpMapFormChanged = false;
+window.onbeforeunload = function(){
+	// If there are at lease one unsaved form - show message for confirnation for page leave
+	if(_gmpIsMapFormChanged()) {
+		return 'You have unsaved changes in Map form. Are you sure want to leave this page?';
+	}
+	if(_gmpIsMarkerFormChanged()) {
+		return 'You have unsaved changes in Marker form. Are you sure want to leave this page?';
+	}
+};
+// Right sidebar height re-calc
+jQuery(window).bind('resize', _gmpResizeRightSidebar);
+jQuery(window).bind('orientationchange', _gmpResizeRightSidebar);
+
 jQuery(document).ready(function(){
+	jQuery('#gmpMapMarkerTabs').wpTabs({
+		change: function(selector) {
+			if(selector == '#gmpMapTab') {
+				jQuery('#gmpMarkerMainBtns').hide();
+				jQuery('#gmpMapMainBtns').show();
+			} else {
+				jQuery('#gmpMapMainBtns').hide();
+				jQuery('#gmpMarkerMainBtns').show();
+			}
+		}
+	});
 	// Preview map definition
 	gmpMainMap = typeof(gmpMainMap) === 'undefined' ? null : gmpMainMap;
 	var previewMapParams = {};
@@ -12,11 +37,12 @@ jQuery(document).ready(function(){
 		previewMapParams = gmpMainMap.params;
 		g_gmpEditMap = true;
 	}
+	previewMapParams.view_id = jQuery('#gmpViewId').val();
 	g_gmpMap = new gmpGoogleMap('#gmpMapPreview', previewMapParams);
 	if(gmpMainMap && gmpMainMap.markers) {
-		gmpMainMap.markers = _gmpPrepareMarkersList(gmpMainMap.markers, {
+		/*gmpMainMap.markers = _gmpPrepareMarkersList(gmpMainMap.markers, {
 			dragend: _gmpMarkerDragEndClb
-		});
+		});*/
 		gmpRefreshMapMarkers(g_gmpMap, gmpMainMap.markers);
 	}
 	// Map saving form
@@ -49,6 +75,7 @@ jQuery(document).ready(function(){
 					if(_gmpIsMarkerFormChanged() && jQuery('#gmpMarkerForm input[name="marker_opts[title]"]').val() != '') {
 						jQuery('#gmpMarkerForm').submit();
 					}
+					_gmpUnchangeMapForm();
 				}
 			}
 		});
@@ -64,19 +91,46 @@ jQuery(document).ready(function(){
 	jQuery('#gmpAddNewMarkerBtn').click(function(){
 		gmpOpenMarkerForm();
 		// Add new marker - right after click on "Add new"
-		var mapCenter = g_gmpMap.getCenter();
-		gmpSetCurrentMarker( g_gmpMap.addMarker({
-			position: mapCenter
-		,	icon: gmpGetIconPath()
-		,	draggable: true
-		,	dragend: _gmpMarkerDragEndClb
-		}));
-		jQuery('#gmpMarkerForm [name="marker_opts[coord_x]"]').val(mapCenter.lat());
-		jQuery('#gmpMarkerForm [name="marker_opts[coord_y]"]').val(mapCenter.lng());
+		_gmpCreateNewMapMarker();
 		return false;
 	});
 	jQuery('#gmpSaveMarkerBtn').click(function(){
 		jQuery('#gmpMarkerForm').submit();
+		return false;
+	});
+	jQuery('#gmpMarkerDeleteBtn').click(function(){
+		var markerTitle = jQuery('#gmpMarkerForm [name="marker_opts[title]"]').val();
+		if(markerTitle && markerTitle != '') {
+			markerTitle = '"'+ markerTitle+ '"';
+		} else {
+			markerTitle = 'current';
+		}
+		if(confirm('Remove "'+ markerTitle+ '" marker?')) {
+			var currentMarkerIdInForm = g_gmpCurrentEditMarker ? g_gmpCurrentEditMarker.getId() : 0;
+			var removeFinalClb = function() {
+				if(currentMarkerIdInForm) {
+					g_gmpMap.removeMarker( currentMarkerIdInForm );
+				}
+				if(g_gmpCurrentEditMarker) {
+					g_gmpCurrentEditMarker.removeFromMap();
+				}
+				gmpResetMarkerForm();
+				gmpRefreshMapMarkersList( true );
+			};
+			if(currentMarkerIdInForm) {
+				jQuery.sendFormGmp({
+					btn: this
+				,	data: {action: 'removeMarker', mod: 'marker', id: currentMarkerIdInForm}
+				,	onSuccess: function(res) {
+						if(!res.error) {
+							removeFinalClb();
+						}
+					}
+				});
+			} else {
+				removeFinalClb();
+			}
+		}
 		return false;
 	});
 	// Marker saving
@@ -88,13 +142,21 @@ jQuery(document).ready(function(){
 		}
 		jQuery('#gmpMarkerForm input[name="marker_opts[description]"]').val( gmpGetTxtEditorVal('markerDescription') );
 		
+		var coordX = jQuery('#gmpMarkerForm input[name="marker_opts[coord_x]"]').val()
+		,	coordY = jQuery('#gmpMarkerForm input[name="marker_opts[coord_y]"]').val();
+		if(coordX == '' && coordY == '') {
+			_gmpCreateNewMapMarker();
+		}
 		jQuery(this).sendFormGmp({
 			btn: jQuery('#gmpSaveMarkerBtn')
 		,	onSuccess: function(res) {
 				if(!res.error) {
 					if(!res.data.update) {
 						jQuery('#gmpMarkerForm input[name="marker_opts[id]"]').val( res.data.marker.id );
-						gmpGetCurrentMarker().setId( res.data.marker.id );
+						var marker = gmpGetCurrentMarker();
+						if(marker) {
+							marker.setId( res.data.marker.id );
+						}
 					}
 					if(!currentMarkerMapId) {
 						g_gmpMapMarkersIdsAdded.push( res.data.marker.id );
@@ -107,19 +169,20 @@ jQuery(document).ready(function(){
 		});
 		return false;
 	});
-	jQuery('#gmpMarkerForm').find('input,textarea,select').change(function(){
-		_gmpChangeMarkerForm();
-	});
 	gmpInitIconsWnd();
 	jQuery('#gmpMarkerForm [name="marker_opts[title]"]').keyup(function(){
 		var marker = gmpGetCurrentMarker();
+		if(!marker) {
+			_gmpCreateNewMapMarker();
+			marker = gmpGetCurrentMarker();
+		}
 		if(marker) {
 			marker.setTitle( jQuery(this).val() );
 			marker.showInfoWnd();
 		}
 	});
 	// Build initial markers list
-	gmpRefreshMapMarkersList();
+	gmpRefreshMapMarkersList(false, true);
 	// Bind change marker description - with it's description in map preview
 	setTimeout(function(){
 		gmpBindTinyMceUpdate();
@@ -131,6 +194,10 @@ jQuery(document).ready(function(){
 	}, 500);
 	jQuery('#markerDescription').keyup(function(){
 		var marker = gmpGetCurrentMarker();
+		if(!marker) {
+			_gmpCreateNewMapMarker();
+			marker = gmpGetCurrentMarker();
+		}
 		if(marker) {
 			marker.setDescription( gmpGetTxtEditorVal('markerDescription') );
 			marker.showInfoWnd();
@@ -146,9 +213,13 @@ jQuery(document).ready(function(){
 		}
 	});
 	jQuery('#gmpMarkerForm').find('input[name="marker_opts[coord_x]"],input[name="marker_opts[coord_y]"]').change(function(){
-		var currentMarker = gmpGetCurrentMarker();
-		if(currentMarker) {
-			currentMarker.setPosition(jQuery('#gmpMarkerForm [name="marker_opts[coord_x]"]').val(), jQuery('#gmpMarkerForm [name="marker_opts[coord_y]"]').val());
+		var newX = jQuery('#gmpMarkerForm [name="marker_opts[coord_x]"]').val()
+		,	newY = jQuery('#gmpMarkerForm [name="marker_opts[coord_y]"]').val();
+		var marker = gmpGetCurrentMarker();
+		if(marker) {
+			marker.setPosition(newX, newY);
+		} else {	// If there are no marker on map - set it and re-position it right into new position
+			_gmpCreateNewMapMarker({coord_x: newX, coord_y: newY});
 		}
 	});
 	// Extended options block
@@ -260,7 +331,18 @@ jQuery(document).ready(function(){
 			g_gmpMap.disableClasterization();
 		}
 	});
+	// Set base icon img
+	gmpSetIconImg();
 	gmpInitChangePosWnd();
+	// Map Markers List selection
+	gmpInitMapMarkersListWnd();
+	// Ask before leave page without saving
+	jQuery('#gmpMapForm').find('input,select,textarea').change(function(){
+		_gmpChangeMapForm();
+	});
+	jQuery('#gmpMarkerForm').find('input,textarea,select').change(function(){
+		_gmpChangeMarkerForm();
+	});
 });
 jQuery(window).load(function(){
 	jQuery('#gmpMapRightStickyBar').width( jQuery('#gmpMapRightStickyBar').width() );
@@ -269,6 +351,10 @@ function gmpBindTinyMceUpdate() {
 	if(!g_gmpTinyMceEditorUpdateBinded && typeof(tinyMCE) !== 'undefined' && tinyMCE.editors && tinyMCE.editors.markerDescription) {
 		tinyMCE.editors.markerDescription.onKeyUp.add(function(){
 			var marker = gmpGetCurrentMarker();
+			if(!marker) {
+				_gmpCreateNewMapMarker();
+				marker = gmpGetCurrentMarker();
+			}
 			if(marker) {
 				marker.setDescription( gmpGetTxtEditorVal('markerDescription') );
 				marker.showInfoWnd();
@@ -307,7 +393,14 @@ function gmpInitIconsWnd() {
 		var newId = jQuery(this).data('id');
 		jQuery('#gmpMarkerForm input[name="marker_opts[icon]"]').val( newId );
 		gmpSetIconImg();
-		gmpGetCurrentMarker().setIcon( gmpGetIconPath() );
+		var marker = gmpGetCurrentMarker();
+		if(!marker) {
+			_gmpCreateNewMapMarker();
+			marker = gmpGetCurrentMarker();
+		}
+		if(marker) {
+			marker.setIcon( gmpGetIconPath() );
+		}
 		$container.dialog('close');
 		return false;
 	});
@@ -325,12 +418,22 @@ function gmpSetCurrentMarker(marker) {
 function gmpGetCurrentMarker() {
 	return g_gmpCurrentEditMarker;
 }
-function gmpRefreshMapMarkersList(fromServer) {
+function gmpRefreshMapMarkersList(fromServer, justTable) {
 	var shell = jQuery('#markerList');
 	var buildListClb = function(markersList) {
 		if(gmpMainMap)
 			gmpMainMap.markers = markersList;
-		gmpRefreshMapMarkers(g_gmpMap, _gmpPrepareMarkersList(markersList));
+		if(!justTable) {
+			gmpRefreshMapMarkers(g_gmpMap, markersList);
+			var currentFormMarker = parseInt( jQuery('#gmpMarkerForm input[name="marker_opts[id]"]').val() );
+			if(currentFormMarker) {
+				var editMapMarker = g_gmpMap.getMarkerById(currentFormMarker);
+				if(editMapMarker) {
+					gmpSetCurrentMarker( editMapMarker );
+					editMapMarker.showInfoWnd();
+				}
+			}
+		}
 		//g_gmpMap.setMarkersParams( markersList );
 		shell.find('.gmpMapMarkerRow:not(#markerRowTemplate)').remove();
 		if(markersList && markersList.length) {
@@ -347,14 +450,14 @@ function gmpRefreshMapMarkersList(fromServer) {
 				});
 				newRow.find('.egm-marker-remove').click(function(){
 					var markerRow = jQuery(this).parents('.gmpMapMarkerRow:first');
-					gmpRemoveMarkerFromMapTblClick(markerRow.data('id'), markerRow);
+					gmpRemoveMarkerFromMapTblClick(markerRow.data('id'), {row: markerRow});
 					return false;
 				});
 				newRow.removeAttr('id').show();
 				shell.append( newRow );
 			}
 		}
-		g_gmpMap.markersRefresh();
+		_gmpResizeRightSidebar();
 	};
 	if(fromServer) {
 		shell.find('.egm-marker').css('opacity', '0.5');
@@ -392,8 +495,10 @@ function gmpOpenMarkerEdit(id) {
 		marker.showInfoWnd();
 	}
 }
-function gmpRemoveMarkerFromMapTblClick(markerId, row) {
-	var markerTitle = row ? row.find('.egm-marker-title').text() : '';
+function gmpRemoveMarkerFromMapTblClick(markerId, params) {
+	params = params || {};
+	var markerTitle = params.row ? params.row.find('.egm-marker-title').text() : ''
+	,	btn = params.row ? params.row : params.btn;
 	if(!confirm('Remove "'+ markerTitle+ '" marker?')) {
 		return false;
 	}
@@ -401,13 +506,13 @@ function gmpRemoveMarkerFromMapTblClick(markerId, row) {
 		return false;
 	}
 	jQuery.sendFormGmp({
-		btn: row.find('.egm-marker-remove')
+		btn: btn
 	,	data: {action: 'removeMarker', mod: 'marker', id: markerId}
 	,	onSuccess: function(res) {
 			if(!res.error){
-				if(row) {
-					row.slideUp(g_gmpAnimationSpeed, function(){
-						row.remove();
+				if(params.row) {
+					params.row.slideUp(g_gmpAnimationSpeed, function(){
+						params.row.remove();
 					});
 				}
 				g_gmpMap.removeMarker( markerId );
@@ -438,14 +543,7 @@ function gmpHideMarkerForm() {
 function gmpShowMarkerForm() {
 	var markerFormIsVisible = jQuery('#gmpMarkerForm').is(':visible');
 	if(!markerFormIsVisible) {
-		var btnClone = jQuery('#gmpAddNewMarkerBtn').clone().css('width', 'auto').appendTo('#containerWrapper')
-		,	requiredWidth = btnClone.outerWidth();
-		btnClone.remove();
-		jQuery('#gmpAddNewMarkerBtn').animate({
-			'width': requiredWidth
-		}, g_gmpAnimationSpeed);
-		jQuery('#gmpSaveMarkerBtn').show( g_gmpAnimationSpeed );
-		jQuery('#gmpMarkerForm').slideDown( g_gmpAnimationSpeed );
+		jQuery('#gmpMapMarkerTabs').wpTabs('activate', '#gmpMarkerTab');
 	}
 }
 function gmpResetMarkerForm() {
@@ -472,6 +570,7 @@ function _gmpMarkerDragEndClb() {
 		});
 	}
 }
+// Markers form check change actions
 function _gmpIsMarkerFormChanged() {
 	return g_gmpMarkerFormChanged;
 }
@@ -480,6 +579,16 @@ function _gmpChangeMarkerForm() {
 }
 function _gmpUnchangeMarkerForm() {
 	g_gmpMarkerFormChanged = false;
+}
+// Map form check change actions
+function _gmpIsMapFormChanged() {
+	return g_gmpMapFormChanged;
+}
+function _gmpChangeMapForm() {
+	g_gmpMapFormChanged = true;
+}
+function _gmpUnchangeMapForm() {
+	g_gmpMapFormChanged = false;
 }
 function gmpInitChangePosWnd() {
 	if(!GMP_DATA.isPro) {
@@ -494,12 +603,106 @@ function gmpInitChangePosWnd() {
 		});
 	}
 }
+function gmpInitMapMarkersListWnd() {
+	var wndWidth = jQuery(window).width()
+	,	normWidth = 740
+	,	popupWidth = wndWidth > normWidth ? normWidth : wndWidth - 20;
+	jQuery('#gmpMarkersListWnd').find('.gmpMmlElement').css('max-width', popupWidth - 20);
+	var $markersListWnd = jQuery('#gmpMarkersListWnd').dialog({
+		modal:    true
+	,	autoOpen: false
+	,	width: popupWidth
+	,	height: 540
+	});
+	jQuery('#gmpMapMarkersListBtn').click(function(){
+		$markersListWnd.dialog('open');
+		return false;
+	});
+	if(!GMP_DATA.isPro) {
+		jQuery('.gmpMmlElement').click(function(){
+			var url = jQuery('#gmpMarkersListWnd').data('promourl');
+			window.open( url );
+			return false;
+		});
+		jQuery('.gmpMmlApplyBtn').click(function(){
+			var url = jQuery('#gmpMarkersListWnd').data('promourl');
+			window.open( url );
+			return false;
+		});
+	}
+}
 function gmpRefreshMapMarkers(map, markers) {
 	map.clearMarkers();
+	markers = _gmpPrepareMarkersListAdmin( markers );
 	for(var i in markers) {
 		var newMarker = map.addMarker( markers[i] );
 		newMarker.setTitle( markers[i].title, true );
 		newMarker.setDescription( markers[i].description );
 	}
 	map.markersRefresh();
+}
+function _gmpPrepareMarkersListAdmin(markers) {
+	return _gmpPrepareMarkersList(markers, {
+		dragend: _gmpMarkerDragEndClb
+	});
+}
+function _gmpResizeRightSidebar() {
+	var wndHt = jQuery(window).height()
+	,	rightBarHt = jQuery('#gmpMapRightStickyBar').outerHeight()
+	,	rightBarTop = parseInt(jQuery('#gmpMapRightStickyBar').css('top'));
+	if(!rightBarTop) {
+		var rightBarPos = jQuery('#gmpMapRightStickyBar').offset();
+		wndHt -= rightBarPos.top + 32;
+	}
+	if(rightBarHt > wndHt) {
+		jQuery('#markerList').css('overflow', 'scroll');
+		var minMapHt = 250
+		,	minMarkersTblHt = 236
+		,	d = rightBarHt - wndHt
+		,	mListHt = jQuery('#markerList').outerHeight()
+		,	mapPreviewHt = jQuery('#gmpMapPreview').outerHeight();
+		if(mListHt - d >= minMarkersTblHt) {	// Try to minimazi it using just markers list
+			jQuery('#markerList').height( mListHt - d );
+			return;
+		}
+		var canDecreaseMList = mListHt - minMarkersTblHt;
+		if(canDecreaseMList > 0) {
+			jQuery('#markerList').css('height', mListHt - canDecreaseMList);
+			d -= canDecreaseMList;
+		}
+		if(d <= 0) return;
+		
+		if(mapPreviewHt - d >= minMapHt) {
+			jQuery('#gmpMapPreview').height( mapPreviewHt - d );
+			return;
+		}
+		var canDecreaseMapPrev = mapPreviewHt - minMapHt;
+		if(canDecreaseMapPrev > 0) {
+			jQuery('#gmpMapPreview').height( mapPreviewHt - canDecreaseMapPrev );
+			d -= canDecreaseMapPrev;
+		}
+		if(d <= 0) return;
+	}
+}
+function _gmpCreateNewMapMarker(params) {
+	params = params || {};
+	var newMarkerData = {
+		icon: gmpGetIconPath()
+	,	draggable: true
+	,	dragend: _gmpMarkerDragEndClb
+	};
+	var lat = 0
+	,	lng = 0;
+	if(params.coord_x && params.coord_y) {
+		newMarkerData.coord_x = lat = parseFloat( params.coord_x );
+		newMarkerData.coord_y = lng = parseFloat( params.coord_y );
+	} else {
+		var mapCenter = g_gmpMap.getCenter();
+		newMarkerData.position = mapCenter;
+		lat = mapCenter.lat();
+		lng = mapCenter.lng();
+	}
+	gmpSetCurrentMarker( g_gmpMap.addMarker( newMarkerData ) );
+	jQuery('#gmpMarkerForm [name="marker_opts[coord_x]"]').val( lat );
+	jQuery('#gmpMarkerForm [name="marker_opts[coord_y]"]').val( lng );
 }

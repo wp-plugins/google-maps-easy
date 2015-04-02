@@ -16,3 +16,15 @@ jQuery(document).ready(function(){
 		}
 	}
 });
+function gmpGetAllMaps() {
+	return g_gmlAllMaps;
+}
+function gmpGetMapById(id) {
+	var allMaps = g_gmlAllMaps;
+	for(var i = 0; i < allMaps.length; i++) {
+		if(allMaps[i].getId() == id) {
+			return allMaps[i];
+		}
+	}
+	return false;
+}
