@@ -32,6 +32,7 @@ Google Map Easy plugin is an excellent way to make a beautiful map on your websi
 
 If you have any problem or feature request for the Google Maps by Supsystic, please [let us know](http://supsystic.com/contact-us/ "Contact Us")!
 
+
 == Installation ==
 
 = First time Google Maps Easy user =
