@@ -223,4 +223,7 @@ abstract class modelGmp extends baseObjectGmp {
 	public function getTbl() {
 		return $this->_tbl;
 	}
+	public function existsId($id) {
+		
+	}
 }

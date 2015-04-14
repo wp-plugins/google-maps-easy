@@ -12,7 +12,7 @@ class gmap_widgetViewGmp extends viewGmp {
 		$maps = frameGmp::_()->getModule('gmap')->getModel()->getAllMaps();
 		$mapsOpts = array();
 		if(empty($maps)) {
-			$mapsOpts[0] = langGmp::_('You have no maps');
+			$mapsOpts[0] = __('You have no maps', GMP_LANG_CODE);
 		} else {
 			foreach($maps as $map) {
 				$mapsOpts[ $map['id'] ] = $map['title'];

@@ -87,14 +87,28 @@ class  gmapGmp extends moduleGmp {
 	}
 	public function getMarkerLists() {
 		if(empty($this->_markersLists)) {
+			// or == orientation (horizontal, vertical), d == display (title, image, description), eng == slider engine (jssor)
 			$this->_markersLists = array(
-				//'none' => array('label' => __('None', GMP_LANG_CODE)),
-				'slider_simple' => array('label' => __('Slider', GMP_LANG_CODE)),
+				'slider_simple' => array('label' => __('Slider', GMP_LANG_CODE), 'or' => 'h', 'd' => array('title', 'img', 'desc'), 'eng' => 'jssor'),
+				'slider_simple_title_img' => array('label' => __('Slider - Title and Img', GMP_LANG_CODE), 'or' => 'h', 'd' => array('title', 'img'), 'eng' => 'jssor'),
+				'slider_simple_vertical_title_img' => array('label' => __('Slider Vertical - Title and Img', GMP_LANG_CODE), 'or' => 'v', 'd' => array('title', 'img'), 'eng' => 'jssor'),
+				'slider_simple_vertical_title_desc' => array('label' => __('Slider Vertical - Title and Description', GMP_LANG_CODE), 'or' => 'v', 'd' => array('title', 'desc'), 'eng' => 'jssor'),
+				'slider_simple_vertical_img_2cols' => array('label' => __('Slider Vertical - Title and Img', GMP_LANG_CODE), 'or' => 'v', 'd' => array('img'), 'eng' => 'jssor', 'two_cols' => true),
 			);
 			foreach($this->_markersLists as $i => $v) {
 				$this->_markersLists[$i]['prev_img'] = isset($this->_markersLists[$i]['prev_img']) ? $this->_markersLists[$i]['prev_img'] : $i. '.jpg';
+				$this->_markersLists[$i]['slide_height'] = 150;
+				$this->_markersLists[$i]['slide_width'] = in_array('img', $this->_markersLists[$i]['d']) && in_array('desc', $this->_markersLists[$i]['d'])
+					? 400 : 200;
+				if(isset($this->_markersLists[$i]['two_cols']) && $this->_markersLists[$i]['two_cols']) {
+					$this->_markersLists[$i]['slide_height'] = round($this->_markersLists[$i]['slide_height'] / 2);
+				}
 			}
 		}
 		return $this->_markersLists;
+	}
+	public function getMarkerListByKey($key) {
+		$this->getMarkerLists();
+		return isset($this->_markersLists[ $key ]) ? $this->_markersLists[ $key ] : false;
 	}
 }

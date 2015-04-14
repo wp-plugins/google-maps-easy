@@ -4,12 +4,12 @@ class adminmenuControllerGmp extends controllerGmp {
         $res = new responseGmp();
         $data = reqGmp::get('post');
         $fields = array(
-            'name' => new fieldGmpGmp('name', langGmp::_('Your name field is required.'), '', '', 'Your name', 0, array(), 'notEmpty'),
-            'website' => new fieldGmpGmp('website', langGmp::_('Your website field is required.'), '', '', 'Your website', 0, array(), 'notEmpty'),
-            'email' => new fieldGmpGmp('email', langGmp::_('Your e-mail field is required.'), '', '', 'Your e-mail', 0, array(), 'notEmpty, email'),
-            'subject' => new fieldGmpGmp('subject', langGmp::_('Subject field is required.'), '', '', 'Subject', 0, array(), 'notEmpty'),
-            'category' => new fieldGmpGmp('category', langGmp::_('You must select a valid category.'), '', '', 'Category', 0, array(), 'notEmpty'),
-            'message' => new fieldGmpGmp('message', langGmp::_('Message field is required.'), '', '', 'Message', 0, array(), 'notEmpty'),
+            'name' => new fieldGmpGmp('name', __('Your name field is required.'), '', '', 'Your name', 0, array(), 'notEmpty', GMP_LANG_CODE),
+            'website' => new fieldGmpGmp('website', __('Your website field is required.'), '', '', 'Your website', 0, array(), 'notEmpty', GMP_LANG_CODE),
+            'email' => new fieldGmpGmp('email', __('Your e-mail field is required.'), '', '', 'Your e-mail', 0, array(), 'notEmpty, email', GMP_LANG_CODE),
+            'subject' => new fieldGmpGmp('subject', __('Subject field is required.'), '', '', 'Subject', 0, array(), 'notEmpty', GMP_LANG_CODE),
+            'category' => new fieldGmpGmp('category', __('You must select a valid category.'), '', '', 'Category', 0, array(), 'notEmpty', GMP_LANG_CODE),
+            'message' => new fieldGmpGmp('message', __('Message field is required.'), '', '', 'Message', 0, array(), 'notEmpty', GMP_LANG_CODE),
         );
         foreach($fields as $f) {
             $f->setValue($data[$f->name]);
@@ -26,7 +26,7 @@ class adminmenuControllerGmp extends controllerGmp {
 			$headers[] = 'From: '. $fields['name']->value. ' <'. $fields['email']->value. '>';
 			add_filter('wp_mail_content_type', array(frameGmp::_()->getModule('messenger'), 'mailContentType'));
             wp_mail('support@supsystic.team.zendesk.com', 'Supsystic Easy Google Maps', $msg, $headers);
-            $res->addMessage(langGmp::_('Done'));
+            $res->addMessage(__('Done', GMP_LANG_CODE));
         }
         $res->ajaxExec();
     }

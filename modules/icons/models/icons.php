@@ -26,7 +26,7 @@ class iconsModelGmp extends modelGmp {
     }
     public function saveNewIcon($params){
         if(!isset($params['url'])){
-            $this->pushError(langGmp::_("Icon no found"));
+            $this->pushError(__("Icon no found", GMP_LANG_CODE));
             return false;
         }
         $url = $params['url'];
@@ -78,12 +78,12 @@ class iconsModelGmp extends modelGmp {
     public function downloadIconFromUrl($url){
         $filename = basename($url);
         if(empty($filename)){
-            $this->pushError(langGmp::_('File not found'));
+            $this->pushError(__('File not found', GMP_LANG_CODE));
             return false;
         }
         $imageinfo = getimagesize ( $url,$imgProp );
         if(empty($imageinfo)){
-            $this->pushError(langGmp::_('Cannot get image'));
+            $this->pushError(__('Cannot get image', GMP_LANG_CODE));
             return false;
         }
         $fileExt = str_replace("image/","",$imageinfo['mime']);    
@@ -94,7 +94,7 @@ class iconsModelGmp extends modelGmp {
         if($newIconId){
            return array('id'=>$newIconId,'path'=>$this->getIconsFullDir().$filename);            
         }else{
-            $this->pushError(langGmp::_('cannot insert to table'));
+            $this->pushError(__('cannot insert to table', GMP_LANG_CODE));
             return false;
         }
     }
@@ -130,7 +130,7 @@ class iconsModelGmp extends modelGmp {
 			} else
 				$this->pushError (frameGmp::_()->getTable('icons')->getErrors());
 		} else
-			$this->pushError (langGmp::_('Invalid ID'));
+			$this->pushError (__('Invalid ID', GMP_LANG_CODE));
 		return false;
 	}
 }

@@ -104,6 +104,7 @@ class gmapViewGmp extends viewGmp {
 			$markersDisplayType = $mapObj['params']['markers_list_type'];
 		}
 		$mapObj['params']['markers_list_type'] = $markersDisplayType;
+		$mapObj = dispatcherGmp::applyFilters('mapDataRender', $mapObj);
 		$this->addMapData(dispatcherGmp::applyFilters('mapDataToJs', $mapObj));
 
 		$this->assign('markersDisplayType', $markersDisplayType);
@@ -155,6 +156,7 @@ class gmapViewGmp extends viewGmp {
 		frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpMapShortcode', GMP_SHORTCODE);
 		$allStylizationsList = $this->getModule()->getStylizationsList();
 		frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpAllStylizationsList', $allStylizationsList);
+		frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpMapsListUrl', frameGmp::_()->getModule('options')->getTabUrl('gmap'));
 		$stylizationsForSelect = array(
 			'none' => __('None', GMP_LANG_CODE),
 		);

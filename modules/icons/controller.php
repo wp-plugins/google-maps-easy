@@ -17,7 +17,7 @@ class iconsControllerGmp extends controllerGmp {
 		$data = reqGmp::get('post');
 		$res = new responseGmp();
 		if(!isset($data['icon_url']) || empty($data['icon_url'])){
-			$res->pushError(langGmp::_('Empty url'));
+			$res->pushError(__('Empty url', GMP_LANG_CODE));
 			return $res->ajaxExec();
 		}
 		$result = $this->getModel()->downloadIconFromUrl($data['icon_url']);

@@ -31,7 +31,7 @@ class csvModelGmp extends modelGmp {
 		$field = str_replace('[GMP_SITE_PATH]', $this->getSitePath(), $field);
 		return $field;
 	}
-	public function import($fileArray, $overwriteSameNames) {
+	public function import($fileArray, $overwriteSameNames = 1) {
 		$inputFields = $this->_getFieldsListFromInput($fileArray);
 		if(!empty($inputFields)) {
 			if($importType = $this->_detectImportType($inputFields)) {
@@ -130,9 +130,9 @@ class csvModelGmp extends modelGmp {
 				}
 				return $counters;
 			} else
-				$this->pushError (langGmp::_('Can not detect import list type'));
+				$this->pushError (__('Can not detect import list type', GMP_LANG_CODE));
 		} else
-			$this->pushError (langGmp::_('Can not find fields names'));
+			$this->pushError (__('Can not find fields names', GMP_LANG_CODE));
 		return false;
 	}
 	public function importMaps($fileArray, $inputFields) {

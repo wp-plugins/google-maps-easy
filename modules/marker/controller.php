@@ -5,7 +5,7 @@ class markerControllerGmp extends controllerGmp {
 		$markerData = reqGmp::getVar('marker_opts');
 		$update = false;
 		if($id = $this->getModel()->save($markerData, $update)){
-			$res->addMessage(langGmp::_('Done'));
+			$res->addMessage(__('Done', GMP_LANG_CODE));
 			$res->addData('marker', $this->getModel()->getById($id));
 			$res->addData('update', $update);
 		} else {
@@ -17,7 +17,7 @@ class markerControllerGmp extends controllerGmp {
 	public function updatePos() {
 		$res = new responseGmp();
 		if($this->getModel()->updatePos(reqGmp::get('post'))) {
-			//$res->addMessage(langGmp::_('Done'));	// Do nothing for now - void method
+			//$res->addMessage(__('Done', GMP_LANG_CODE));	// Do nothing for now - void method
 		} else {
 			$res->pushError($this->getModel()->getErrors());
 		}
@@ -39,13 +39,13 @@ class markerControllerGmp extends controllerGmp {
         $params = reqGmp::get('post');
         $res = new responseGmp();
         if(!isset($params['id'])){
-            $res->pushError(langGmp::_('Marker Not Found'));
+            $res->pushError(__('Marker Not Found', GMP_LANG_CODE));
             return $res->ajaxExec();
         }    
         if($this->getModel()->removeMarker($params["id"])){
-           $res->addMessage(langGmp::_("Done")); 
+           $res->addMessage(__("Done", GMP_LANG_CODE)); 
         }else{
-            $res->pushError(langGmp::_("Cannot remove marker"));
+            $res->pushError(__("Cannot remove marker", GMP_LANG_CODE));
         }
         frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat('marker.delete');
         return $res->ajaxExec();
@@ -54,13 +54,13 @@ class markerControllerGmp extends controllerGmp {
 		$params = reqGmp::get('post');
         $res = new responseGmp();
         if(!isset($params['remove_ids'])){
-			$res->pushError(langGmp::_('Marker Not Found'));
+			$res->pushError(__('Marker Not Found', GMP_LANG_CODE));
 			return $res->ajaxExec();
         }
         if($this->getModel()->removeList($params['remove_ids'])){
-           $res->addMessage(langGmp::_('Done')); 
+           $res->addMessage(__('Done', GMP_LANG_CODE)); 
         } else {
-            $res->pushError(langGmp::_('Cannot remove markers'));
+            $res->pushError(__('Cannot remove markers', GMP_LANG_CODE));
         }
         frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat('marker.delete_list');
         return $res->ajaxExec();
@@ -141,7 +141,7 @@ class markerControllerGmp extends controllerGmp {
 			} else
 				$res->pushError ($this->getModel()->getErrors());
 		} else
-			$res->pushError (langGmp::_('Empty or invalid marker ID'));
+			$res->pushError (__('Empty or invalid marker ID', GMP_LANG_CODE));
 		return $res->ajaxExec();
 	}
 	public function saveFindAddressStat() {

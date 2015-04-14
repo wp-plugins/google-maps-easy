@@ -153,7 +153,7 @@ if(!function_exists('in_array_array')) {
             }
             return false;
         } else
-            return in_array_array($needle, $haystack);
+            return in_array($needle, $haystack);
     }
 }
 if(!function_exists('json_encode_utf_normal')) {

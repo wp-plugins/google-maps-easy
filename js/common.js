@@ -441,6 +441,15 @@ jQuery.fn.zoom = function(level) {
 	,	'transform-origin': 'center center'
 	});
 };
+jQuery.fn.rotate = function(deg) {
+	return jQuery(this).css({
+		'-moz-transform':'rotate('+ deg+ 'deg)'
+	,	'-webkit-transform':'rotate('+ deg+ 'deg)'
+	,	'-o-transform':'rotate('+ deg+ 'deg)'
+	,	'-ms-transform':'rotate('+ deg+ 'deg)'
+	,	'transform': 'rotate('+ deg+ 'deg)'
+	});
+};
 jQuery.fn.scrollWidth = function() {
 	var inner = document.createElement('p');
 	inner.style.width = "100%";

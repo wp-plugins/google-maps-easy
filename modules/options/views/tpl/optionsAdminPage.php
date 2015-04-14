@@ -27,3 +27,9 @@
         </section>
     </div>
 </div>
+<!--Option available in PRO version Wnd-->
+<div id="gmpOptInProWnd" style="display: none;" title="<?php _e('Improve Free version', GMP_LANG_CODE)?>">
+	<p>
+		<?php printf(__('Please be advised that this option is available only in <a target="_blank" href="%s">PRO version</a>. You can <a target="_blank" href="%s" class="button">Get PRO</a> today and get this and other PRO option for your PopUps!', GMP_LANG_CODE), $this->mainLink, $this->mainLink)?>
+	</p>
+</div>

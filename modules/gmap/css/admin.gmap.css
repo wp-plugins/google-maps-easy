@@ -10,7 +10,7 @@
 }
 /* Map shortcode */
 .shortcode-wrap {
-    padding: 10px;
+    padding: 10px 10px 0;
     margin: 5px 0;
     background-color: rgba(241, 196, 15, .3);
     border: 1px solid rgba(241, 196, 15, .3);
@@ -55,7 +55,7 @@
 .gmpMapShortCodeShell {
 	background: none;
 	font-family: Consolas, Monaco, monospace;
-	float: right;
+	/*float: right;*/
 	color: #a4aaac;
 	font-style: normal;
 	font-weight: 500;
@@ -72,7 +72,7 @@
 	width: calc(100% - 20px);
 }
 .gmpProOptMiniLabel {
-	padding-left: 20px;
+	/*padding-left: 20px;*/
 	display: block;
 	margin-bottom: -20px;
 }
@@ -137,6 +137,7 @@
 	text-align: center;
 	float: left;
 	position: relative;
+	max-height: 265px;
 }
 .gmpMmlElement img {
 	max-width: 100%;
@@ -151,5 +152,11 @@
 .gmpMmlElementBtnShell .button {
 	margin: 0 auto;
 	font-size: 18px;
+}
+.gmpMapMarkerRow .egm-marker-title {
+	word-break: break-all; /*for long marker titles*/
+}
+#gmpMarkersListWnd {
+	padding: 0;
 }
 

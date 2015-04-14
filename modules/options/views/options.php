@@ -43,6 +43,7 @@ class optionsViewGmp extends viewGmp {
 		$this->assign('content', $content);
 		$this->assign('mainUrl', $this->getModule()->getTabUrl());
 		$this->assign('activeParentTabs', $activeParentTabs);
+		$this->assign('mainLink', frameGmp::_()->getModule('supsystic_promo')->getMainLink());
 		
         parent::display('optionsAdminPage');
     }

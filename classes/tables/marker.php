@@ -4,18 +4,18 @@ class tableMarkerGmp extends tableGmp{
         $this->_table = '@__markers';
         $this->_id = 'id';
         $this->_alias = 'toe_mr';
-        $this->_addField('id', 'int', 'int', '11', langGmp::_('Map ID'))
-                ->_addField('title', 'varchar', 'varchar', '255', langGmp::_('File name'))
-                ->_addField('description', 'text', 'text', '', langGmp::_('Description Of Map'))
-                ->_addField('coord_x', 'varchar', 'varchar', '50', langGmp::_('X coordinate if marker(lng)')) 
-                ->_addField('coord_y', 'varchar', 'varchar', '50', langGmp::_('Y coordinate of marker(lat)'))
-                ->_addField('icon', 'varchar', 'varchar', '255', langGmp::_('Path of icon file'))
-                ->_addField('map_id', 'int', 'int', '11', langGmp::_('Map Id'))                
-                ->_addField('address', 'text', 'text', '', langGmp::_('Marker Address'))                
-                ->_addField('marker_group_id', 'int', 'int', '11', langGmp::_("Id of Marker's group"))
-                ->_addField('animation','int','int','0', langGmp::_('Animation'))
-                ->_addField('params','text','text','', langGmp::_('Params'))
-                ->_addField('create_date','datetime','datetime','',  langGmp::_('Creation date'));
+        $this->_addField('id', 'int', 'int', '11', __('Map ID', GMP_LANG_CODE))
+                ->_addField('title', 'varchar', 'varchar', '255', __('File name', GMP_LANG_CODE))
+                ->_addField('description', 'text', 'text', '', __('Description Of Map', GMP_LANG_CODE))
+                ->_addField('coord_x', 'varchar', 'varchar', '50', __('X coordinate if marker(lng)', GMP_LANG_CODE)) 
+                ->_addField('coord_y', 'varchar', 'varchar', '50', __('Y coordinate of marker(lat)', GMP_LANG_CODE))
+                ->_addField('icon', 'varchar', 'varchar', '255', __('Path of icon file', GMP_LANG_CODE))
+                ->_addField('map_id', 'int', 'int', '11', __('Map Id', GMP_LANG_CODE))                
+                ->_addField('address', 'text', 'text', '', __('Marker Address', GMP_LANG_CODE))                
+                ->_addField('marker_group_id', 'int', 'int', '11', __("Id of Marker's group", GMP_LANG_CODE))
+                ->_addField('animation','int','int','0', __('Animation', GMP_LANG_CODE))
+                ->_addField('params','text','text','', __('Params', GMP_LANG_CODE))
+                ->_addField('create_date','datetime','datetime','',  __('Creation date', GMP_LANG_CODE));
     }
 }
 

@@ -9,12 +9,12 @@
 	}
     $height = $this->currentMap['html_options']['height'];
     $classname = @$this->currentMap['html_options']['classname'];
-    $align = $this->currentMap['html_options']['align'];
+    $align = @$this->currentMap['html_options']['align'];
 	$viewId = $this->currentMap['view_id'];
     $mapHtmlId = $this->currentMap['view_html_id'];
     
-	$border = ((int)$this->currentMap['html_options']['border_width']). 'px solid '. $this->currentMap['html_options']['border_color'];
-	$margin = $this->currentMap['html_options']['margin'];
+	$border = ((int)@$this->currentMap['html_options']['border_width']). 'px solid '. @$this->currentMap['html_options']['border_color'];
+	$margin = @$this->currentMap['html_options']['margin'];
     $ln = $this->currentMap['params']['language'];
 	$percentModeOn = false;
 	$styleInPercent = '';

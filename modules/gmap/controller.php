@@ -20,7 +20,7 @@ class gmapControllerGmp extends controllerGmp {
 		$mapId = 0;
 		$edit = true;
 		if(!isset($data['map_opts'])) {
-			$res->pushError(langGmp::_('Map data not found'));
+			$res->pushError(__('Map data not found', GMP_LANG_CODE));
 			return $res->ajaxExec();
 		}
 		if(isset($data['map_opts']['id']) && !empty($data['map_opts']['id'])) {
@@ -36,7 +36,7 @@ class gmapControllerGmp extends controllerGmp {
 			if($addMarkerIds && !empty($addMarkerIds)) {
 				frameGmp::_()->getModule('marker')->getModel()->setMarkersToMap($addMarkerIds, $mapId);
 			}
-			$res->addMessage(langGmp::_('Done'));
+			$res->addMessage(__('Done', GMP_LANG_CODE));
 			$res->addData('map_id', $mapId);
 			$res->addData('map', $this->getModel()->getMapById( $mapId ));
 			if(!$edit) {	// For new maps
@@ -62,12 +62,12 @@ class gmapControllerGmp extends controllerGmp {
 		$data=  reqGmp::get('post');
 		$res = new responseGmp();
 		if(!isset($data['map_id']) || empty($data['map_id'])){
-			$res->pushError(langGmp::_("Nothing to remove"));
+			$res->pushError(__("Nothing to remove", GMP_LANG_CODE));
 			return $res->ajaxExec();
 		}
 
 		if($this->getModel()->remove($data['map_id'])){
-			$res->addMessage(langGmp::_("Done"));
+			$res->addMessage(__("Done", GMP_LANG_CODE));
 		}else{
 			$res->pushError($this->getModel()->getErrors());
 		}
@@ -116,7 +116,7 @@ class gmapControllerGmp extends controllerGmp {
 	    $req = reqGmp::get('post');
 
 		if (!isset($req['id']) || 1 > (int)$req['id']) {
-			$res->pushError(langGmp::_('Invalid map identifier.'));
+			$res->pushError(__('Invalid map identifier.', GMP_LANG_CODE));
 
 			return $res->ajaxExec();
 		}
@@ -124,7 +124,7 @@ class gmapControllerGmp extends controllerGmp {
 		$map = $model->getMapById($req['id']);
 
 		if (!$map) {
-			$res->pushError(langGmp::_('Failed to find map.'));
+			$res->pushError(__('Failed to find map.', GMP_LANG_CODE));
 
 			return $res->ajaxExec();
 		}

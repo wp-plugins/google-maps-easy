@@ -31,8 +31,8 @@ class gmapModelGmp extends modelGmp {
 		$mapOptKeys = dispatcherGmp::applyFilters('mapParamsKeys', 
 				array('enable_zoom', 'enable_mouse_zoom' /*we used "mouse_wheel_zoom" insted of this - as this was already nulled*/, 'zoom', 
 					'type' /*used "map_type" insted - same reason as prev. one*/, 'language', 'map_display_mode', 'map_center', 
-					'infowindow_height', 'infowindow_width', 'width_units', 'infowindow_on_mouseover',
-					'infownd_title_color', 'infownd_title_size', 
+					/*'infowindow_height', 'infowindow_width',*/ 'width_units', 'infowindow_on_mouseover',
+					/*'infownd_title_color', 'infownd_title_size', */
 					// New parameters started here
 					'type_control', 'zoom_control', 'street_view_control', 'pan_control', 'overview_control', 'draggable',
 					'dbl_click_zoom', 'mouse_wheel_zoom', 'map_type', 'map_stylization', 'marker_clasterer',
@@ -41,7 +41,7 @@ class gmapModelGmp extends modelGmp {
 		return $mapOptKeys;
 	}
 	public function getHtmlOptionsList() {
-		return array('width', 'height', 'align', 'margin', 'border_color', 'border_width');
+		return array('width', 'height'/*, 'align', 'margin', 'border_color', 'border_width'*/);
 	}
 	public function prepareParams($params){
 		$htmlKeys = $this->getHtmlOptionsList();
@@ -64,7 +64,7 @@ class gmapModelGmp extends modelGmp {
 	}
 	private function _validateSaveMap($map) {
 		if(empty($map['title'])) {
-			$this->pushError(langGmp::_('Please enter Map Name'), 'map_opts[title]');
+			$this->pushError(__('Please enter Map Name'), 'map_opts[title]', GMP_LANG_CODE);
 		}
 		return !$this->haveErrors();
 	}
@@ -93,7 +93,7 @@ class gmapModelGmp extends modelGmp {
 				}
 			}
 		} else
-			$this->pushError(langGmp::_('Empty Params'));
+			$this->pushError(__('Empty Params', GMP_LANG_CODE));
 		return false;
 	}
 	public function remove($mapId){

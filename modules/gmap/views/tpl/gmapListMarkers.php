@@ -17,7 +17,7 @@
         <?php if ($rest > 0): ?>
             <?php $markers = array(); array_shift($this->map['markers']); array_shift($this->map['markers']);  foreach ($this->map['markers'] as $marker): $markers[] = htmlspecialchars($marker['title']); endforeach; ?>
             <span class="supsystic-tooltip" title="<?php echo implode(', ', $markers); ?>" style="cursor: help"><?php echo sprintf(
-                    langGmp::_('and %s more'),
+                    __('and %s more', GMP_LANG_CODE),
                     $rest
                 ); ?></span>
         <?php endif; ?>

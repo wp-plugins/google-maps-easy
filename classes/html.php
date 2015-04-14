@@ -204,7 +204,7 @@ class htmlGmp {
         $out = '';
         if(strpos($params['url'], 'pl='. GMP_CODE) === false)
 			$params['url'] = uriGmp::_(array('baseUrl' => $params['url'], 'pl' => GMP_CODE));
-        $out .= self::button(array('value' => __( empty($params['buttonName']) ? 'Upload' :  $params['buttonName'] ), 'attrs' => 'id="toeUploadbut_'.$name.'" class="button button-large"'));
+        $out .= self::button(array('value' => empty($params['buttonName']) ? __('Upload') :  $params['buttonName'], 'attrs' => 'id="toeUploadbut_'.$name.'" class="button"'));
         $display = (empty($params['value']) ? 'style="display: none;"' : '');
         if(isset($params['preview']) && $params['preview'])
             $out .= self::img($params['value'], 0, array('attrs' => 'id="prev_'.$name.'" '.$display.' class="previewpicture"'));

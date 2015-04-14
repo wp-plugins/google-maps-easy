@@ -7,70 +7,68 @@ class csvControllerGmp extends controllerGmp {
 	private function _getSitePath() {
 		return $this->getModel()->getSitePath();
 	}
+	private function _getKeys($data, $prefix = array()) {
+		$keys = array();
+		foreach($data as $k => $v) {
+			if(is_array($v)) {
+				$newPrefix = $prefix;
+				$newPrefix[] = $k;
+				$keys = array_merge($keys, $this->_getKeys($v, $newPrefix));
+			} else {
+				$keys[] = empty($prefix) ? $k : implode('.', $prefix). '.'. $k;
+			}
+		}
+		return $keys;
+	}
+	private function _getKeyVal($data, $key) {
+		if(strpos($key, '.')) {
+			$keys = explode('.', $key);
+			$firstKey = array_shift($keys);
+			return isset($data[ $firstKey ]) ? $this->_getKeyVal($data[ $firstKey ], implode('.', $keys)) : '';
+		} else {
+			return isset($data[ $key ]) ? $data[ $key ] : '';
+		}
+	}
+	private function _setKeyVal(&$data, $key, $val) {
+		if(strpos($key, '.')) {
+			$keys = explode('.', $key);
+			$firstKey = array_shift($keys);
+			if(!isset($data[ $firstKey ]))
+				$data[ $firstKey ] = array();
+			$this->_setKeyVal($data[ $firstKey ], implode('.', $keys), $val);
+		} else {
+			$data[ $key ] = $val;
+		}
+	}
 	public function exportMaps() {
-		$fileName = langGmp::_('Maps');
-		$this->_connectCsvLib();
-		$withMarkers = (int) reqGmp::getVar('withMarkers');
-		$maps = frameGmp::_()->getModule('gmap')->getModel()->getAllMaps(array(), $withMarkers, $withMarkers);	// If there will be markers - there should be also be all groups data
-		$mapOptKeys = frameGmp::_()->getModule('gmap')->getModel()->getParamsList();
-		foreach($maps as $i => $map) {
-			foreach($mapOptKeys as $key) {
-				$maps[$i][$key] = isset($maps[$i]['params'][$key]) ? $maps[$i]['params'][$key] : '';
-				switch($key) {
-					case 'map_center':
-						if(!empty($maps[$i][$key]) && is_array($maps[$i][$key]))
-							$maps[$i][$key] = implode(', ', $maps[$i][$key]);
-						break;
-				}
-			}
+		$fileDate = str_replace(array('/', '.', ':'), '_', date(GMP_DATE_FORMAT_HIS));
+		$fileName = sprintf(__('Maps from %s - %s', GMP_LANG_CODE), get_bloginfo('name'), $fileDate);
+		$maps = frameGmp::_()->getModule('gmap')->getModel()->getAllMaps(array());	// Only maps data
+		if(empty($maps)) {
+			_e('You have no maps for now.', GMP_LANG_CODE);
+			exit();
 		}
-		$htmlKeys = frameGmp::_()->getModule('gmap')->getModel()->getHtmlOptionsList();
-		foreach($maps as $i => $map) {
-			foreach($htmlKeys as $key) {
-				$maps[$i][$key] = isset($maps[$i]['html_options'][$key]) ? $maps[$i]['html_options'][$key] : '';
-			}
-		}
-		$mapHeaders = $this->getModule()->getMapHeadersList();
-		if($withMarkers) {
-			$markerHeaders = $this->getModule()->getMarkerHeadersList();
-		}
-		
+		$keys = $this->_getKeys($maps[0]);
 		$c = $r = 0;
+		$this->_connectCsvLib();
 		$csvGenerator = toeCreateObjGmp('csvgeneratorGmp', array($fileName));
-		foreach($mapHeaders as $k => $v) {
-			$csvGenerator->addCell($r, $c, langGmp::_($v). ' ['. $k. ']');
+		foreach($keys as $k) {
+			$csvGenerator->addCell($r, $c, $k);
 			$c++;
-		}
-		$mapHeaderCount = $c;
-		if($withMarkers) {
-			foreach($markerHeaders as $k => $v) {
-				$csvGenerator->addCell($r, $c, langGmp::_('Marker'). ' - '. langGmp::_($v). ' ['. $k. ']');
-				$c++;
-			}
 		}
 		$c = 0;
 		$r = 1;
 		foreach($maps as $map) {
 			$c = 0;
-			foreach($mapHeaders as $k => $v) {
-				$mapValue = $this->_prepareValueToExport((isset($map[$k]) ? $map[$k] : ''));
+			foreach($keys as $k) {
+				$mapValue = $this->_prepareValueToExport( $this->_getKeyVal($map, $k) );
+				if(is_array($mapValue)) {
+					$mapValue = implode(';', $mapValue);
+				}
 				$csvGenerator->addCell($r, $c, $mapValue);
 				$c++;
 			}
 			$r++;
-			if($withMarkers && !empty($map['markers'])) {
-				foreach($map['markers'] as $marker) {
-					for($c = 0; $c < $mapHeaderCount; $c++) {
-						$csvGenerator->addCell($r, $c, '');
-					}
-					foreach($markerHeaders as $k => $v) {
-						$markerValue = $this->_prepareValueToExport( $this->_getMarkerValue($marker, $k) );
-						$csvGenerator->addCell($r, $c, htmlspecialchars($markerValue));
-						$c++;
-					}
-					$r++;
-				}
-			}
 		}
 		$csvGenerator->generate();
 		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('csv.export.maps');
@@ -80,40 +78,33 @@ class csvControllerGmp extends controllerGmp {
 		$sitePath = $this->_getSitePath();
 		return str_replace($sitePath, '[GMP_SITE_PATH]', $val);
 	}
-	private function _getMarkerValue($marker, $key) {
-		$value = '';
-		switch($key) {
-			case 'icon_path': 
-				$value = $marker['icon_data']['path']; break;
-			case 'icon_title':
-				$value = $marker['icon_data']['title']; break;
-			case 'marker_group_title':
-				$value = $marker['groupObj']['title']; break;
-			case 'marker_group_description':
-				$value = $marker['groupObj']['description']; break;
-			default:
-				$value = isset($marker[$key]) ? $marker[$key] : ''; break;
-		}
-		return $value;
+	private function _prepareValueToImport($val) {
+		$sitePath = $this->_getSitePath();
+		return str_replace('[GMP_SITE_PATH]', $sitePath, $val);
 	}
 	public function exportMarkers() {
-		$fileName = langGmp::_('Markers');
+		$fileSiteDate = str_replace(array('/', '.', ':'), '_', esc_html(get_bloginfo('name')). ' - '. date(GMP_DATE_FORMAT_HIS));
+		$fileName = sprintf(__('Markers from %s', GMP_LANG_CODE), $fileSiteDate);
+		$markers = frameGmp::_()->getModule('marker')->getModel()->getAllMarkers();
+		if(empty($markers)) {
+			_e('You have no markers for now.', GMP_LANG_CODE);
+			exit();
+		}
 		$this->_connectCsvLib();
 		$csvGenerator = toeCreateObjGmp('csvgeneratorGmp', array($fileName));
-		$markers = frameGmp::_()->getModule('marker')->getModel()->getAllMarkers();
-		$markerHeaders = $this->getModule()->getMarkerHeadersList();
 		$c = $r = 0;
-		
-		foreach($markerHeaders as $k => $v) {
-			$csvGenerator->addCell($r, $c, langGmp::_($v). ' ['. $k. ']');
+		$keys = $this->_getKeys($markers[0]);
+		foreach($keys as $k) {
+			$csvGenerator->addCell($r, $c, $k);
 			$c++;
 		}
 		$c = 0;
 		$r = 1;
 		foreach($markers as $marker) {
 			$c = 0;
-			foreach($markerHeaders as $k => $v) {
-				$csvGenerator->addCell($r, $c, htmlspecialchars($marker[$k]));
+			foreach($keys as $k) {
+				$markerValue = $this->_prepareValueToExport( $this->_getKeyVal($marker, $k) );
+				$csvGenerator->addCell($r, $c, $markerValue);
 				$c++;
 			}
 			$r++;
@@ -127,12 +118,12 @@ class csvControllerGmp extends controllerGmp {
 		$res = new responseGmp();
 		$this->_connectCsvLib();
 		$csvGenerator = toeCreateObjGmp('csvgeneratorGmp', array(''));
-
-        $file = reqGmp::getVar('csv_import_file', 'file');
+		$type = reqGmp::getVar('type');
+        $file = $type == 'maps' ? reqGmp::getVar('csv_import_file_maps', 'file') : reqGmp::getVar('csv_import_file_markers', 'file');
         if(empty($file) || empty($file['size']))
-            $res->pushError (langGmp::_('Missing File'));
+            $res->pushError (__('Missing File', GMP_LANG_CODE));
         if(!empty($file['error']))
-            $res->pushError (langGmp::_(array('File uploaded with error code', $file['error'])));
+            $res->pushError (sprintf(__('File uploaded with error code %s', $file['error'])));
         if(!$res->error()) {
             $fileArray = array();
 			$handle = fopen($file['tmp_name'], 'r');
@@ -147,23 +138,76 @@ class csvControllerGmp extends controllerGmp {
 			exit();*/
 			if(!empty($fileArray)) {
 				if(count($fileArray) > 1) {
-					$overwriteSameNames = (int) reqGmp::getVar('overwrite_same_names');
-					$importRes = $this->getModel()->import($fileArray, $overwriteSameNames);
+					//$overwriteSameNames = (int) reqGmp::getVar('overwrite_same_names');
+					$keys = array_shift($fileArray);
+					switch($type) {
+						case 'maps':
+							$mapModel = frameGmp::_()->getModule('gmap')->getModel();
+							foreach($fileArray as $i => $row) {
+								$map = array();
+								foreach($keys as $j => $key) {
+									$value = $this->_prepareValueToImport($row[ $j ]);
+									if(strpos($key, '.')) {
+										$realKeys = explode('.', $key);
+										$realKey = array_pop( $realKeys );
+										$realPreKey = array_pop( $realKeys );
+										if($realPreKey == 'map_center') {
+											$valueMapCenter = isset($map['map_center']) ? $map['map_center'] : array();
+											$valueMapCenter[ $realKey ] = $value;
+											$value = $valueMapCenter;
+											$realKey = 'map_center';
+										}
+									} else
+										$realKey = $key;
+									if($value === '')
+										$value = NULL;
+									$map[ $realKey ] = $value;
+								}
+								if(isset($map['id']) && $mapModel->existsId($map['id'])) {
+									$mapModel->updateMap($map);
+								} else {
+									$originalMapId = isset($map['id']) ? isset($map['id']) : 0;
+									if(isset($map['id']))
+										unset($map['id']);
+									$newMapId = $mapModel->saveNewMap($map);
+									if($newMapId && $originalMapId) {
+										dbGmp::query("UPDATE @__maps SET id = '$originalMapId' WHERE id = '$newMapId'");
+										if($originalMapId > $newMapId)
+											dbPps::setAutoIncrement('@__popup', $originalMapId + 1);
+									}
+								}
+							}
+							break;
+						case 'markers':
+							$markerModel = frameGmp::_()->getModule('marker')->getModel();
+							foreach($fileArray as $i => $row) {
+								$marker = array();
+								foreach($keys as $j => $key) {
+									$this->_setKeyVal($marker, $key, $this->_prepareValueToImport($row[ $j ]));
+								}
+								if(isset($marker['id']) && !$markerModel->existsId($marker['id'])) {
+									unset($marker['id']);
+								}
+								$markerModel->save($marker);
+							}
+							break;
+					}
+					/*$importRes = $this->getModel()->import($fileArray, $overwriteSameNames);
 					if($importRes) {
 						if($importRes['map']['added'])
-							$res->addMessage (langGmp::_(array('Added', $importRes['map']['added'], 'maps')));
+							$res->addMessage (sprintf(__('Added %s maps', GMP_LANG_CODE), $importRes['map']['added']));
 						if($importRes['map']['updated'])
-							$res->addMessage (langGmp::_(array('Updated', $importRes['map']['updated'], 'maps')));
+							$res->addMessage (sprintf(__('Updated %s maps', GMP_LANG_CODE), $importRes['map']['added']));
 						if($importRes['marker']['added'])
-							$res->addMessage (langGmp::_(array('Added', $importRes['marker']['added'], 'markers')));
+							$res->addMessage (sprintf(__('Added %s markers', GMP_LANG_CODE), $importRes['map']['added']));
 						if($importRes['marker']['updated'])
-							$res->addMessage (langGmp::_(array('Updated', $importRes['marker']['updated'], 'markers')));
+							$res->addMessage (sprintf(__('Updated %s markers', GMP_LANG_CODE), $importRes['map']['added']));
 					} else
-						$res->pushError ($this->getModel()->getErrors());
+						$res->pushError ($this->getModel()->getErrors());*/
 				} else
-					$res->pushError (langGmp::_('File should contain more then 1 row, at least 1 row should be for headers'));
+					$res->pushError (__('File should contain more then 1 row, at least 1 row should be for headers', GMP_LANG_CODE));
 			} else
-				$res->pushError (langGmp::_('Empty data in file'));
+				$res->pushError (__('Empty data in file', GMP_LANG_CODE));
 		}
 		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('csv.import');
 		$res->ajaxExec();

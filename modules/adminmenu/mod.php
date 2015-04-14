@@ -22,7 +22,7 @@ class adminmenuGmp extends moduleGmp {
 			'menu_slug' => $mainSlug,
 			'function' => array(frameGmp::_()->getModule('options'), 'getAdminPage'));
 		$mainMenuPageOptions = dispatcherGmp::applyFilters('adminMenuMainOption', $mainMenuPageOptions);
-        add_menu_page($mainMenuPageOptions['page_title'], $mainMenuPageOptions['menu_title'], $mainMenuPageOptions['capability'], $mainMenuPageOptions['menu_slug'], $mainMenuPageOptions['function']/*, 'dashicons-format-gallery'*/);
+        add_menu_page($mainMenuPageOptions['page_title'], $mainMenuPageOptions['menu_title'], $mainMenuPageOptions['capability'], $mainMenuPageOptions['menu_slug'], $mainMenuPageOptions['function'], 'dashicons-admin-site');
 		//remove duplicated WP menu item
 		//add_submenu_page($mainMenuPageOptions['menu_slug'], '', '', $mainMenuPageOptions['capability'], $mainMenuPageOptions['menu_slug'], $mainMenuPageOptions['function']);
 		$tabs = frameGmp::_()->getModule('options')->getTabs();

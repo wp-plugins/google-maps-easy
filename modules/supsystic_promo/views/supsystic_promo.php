@@ -27,6 +27,12 @@ class supsystic_promoViewGmp extends viewGmp {
 	}
 	public function getFaqList() {
 		return array(
+			__('How to use Google Maps Easy Widget?', GMP_LANG_CODE)
+				=> sprintf(__('1. Go to Appearance -> Widgets in the WordPress navigation menu.<br />
+				2. Find the Google Maps Easy in the list of available widgets.<br />
+				3. Drag the Google Maps Easy widget to widget area, which you need.<br />
+				4. Choose the map for widget and configure the settings – Widget Map width and height.<br />
+				5. Click “Save”.', PPS_LANG_CODE), $this->getModule()->getMainLink()),
 			__('How to get PRO version of plugin for FREE?', GMP_LANG_CODE) => sprintf(__('You have an incredible opportunity to get PRO version for free. Make Translation of plugin! It will be amazing if you take advantage of this offer! More info you can find here <a target="_blank" href="%s">"Get PRO version of any plugin for FREE"</a>', GMP_LANG_CODE), $this->getModule()->getMainLink()),
 			__('Translation', GMP_LANG_CODE) => sprintf(__('All available languages are provided with the Supsystic Google Maps plugin. If your language isn\'t available, your plugin will be in English by default.<br /><b>Available Translations: English</b><br />Translate or update a translation Google Maps WordPress plugin in your language and get a Premium license for FREE. <a target="_blank" href="%s">Contact us</a>.', GMP_LANG_CODE), $this->getModule()->getMainLink(). '#contact'),
 		);

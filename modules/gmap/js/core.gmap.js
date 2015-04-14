@@ -26,6 +26,7 @@ function gmpGoogleMap(elementId, params) {
 	this._clasterer = null;
 	this._clastererEnabled = false;
 	this._eventListeners = {};
+	this._layers = {};
 	this.init();
 }
 gmpGoogleMap.prototype.init = function() {
@@ -101,6 +102,7 @@ gmpGoogleMap.prototype._afterInit = function() {
 	if(typeof(this._mapParams.marker_clasterer) !== 'undefined' && this._mapParams.marker_clasterer) {
 		this.enableClasterization( this._mapParams.marker_clasterer );
 	}
+	jQuery(document).trigger('gmapAfterMapInit', this);
 };
 gmpGoogleMap.prototype.enableClasterization = function(clasterType) {
 	switch(clasterType) {

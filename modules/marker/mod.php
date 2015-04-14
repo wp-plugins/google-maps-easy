@@ -17,9 +17,9 @@ class  markerGmp extends moduleGmp {
 	}*/
 	public function getAnimationList() {
 		return array(
-			0 => langGmp::_('None'),
-			1 => langGmp::_('Drop'),	//DROP
-			2 => langGmp::_('Bounce'),	//BOUNCE
+			0 => __('None', GMP_LANG_CODE),
+			1 => __('Drop', GMP_LANG_CODE),	//DROP
+			2 => __('Bounce', GMP_LANG_CODE),	//BOUNCE
 		);
 	}
 }

@@ -11,14 +11,14 @@ class marker_groupsControllerGmp extends controllerGmp {
         $data=  reqGmp::get('post');
         $res = new responseGmp();
         if(!isset($data['goupInfo'])){
-            $res->pushError(langGmp::_('Nothing To Save'));
+            $res->pushError(__('Nothing To Save', GMP_LANG_CODE));
             return $res->ajaxExec();
         }
         if($id = $this->getModel()->saveGroup($data['goupInfo'])) {
-            $res->addMessage(langGmp::_('Done'));
+            $res->addMessage(__('Done', GMP_LANG_CODE));
 			$res->addData('group', $this->getModel()->getGroupById($id));
         } else {
-            $res->pushError(langGmp::_('Cannot Save Group'));
+            $res->pushError(__('Cannot Save Group', GMP_LANG_CODE));
         }
         return $res->ajaxExec();
     }
@@ -26,13 +26,13 @@ class marker_groupsControllerGmp extends controllerGmp {
         $params = reqGmp::get('post');
         $res = new responseGmp();
         if(!isset($params['group_id'])){
-            $res->pushError(langGmp::_('Group Not Found'));
+            $res->pushError(__('Group Not Found', GMP_LANG_CODE));
             return $res->ajaxExec();
         }    
         if($this->getModel()->removeGroup($params["group_id"])){
-           $res->addMessage(langGmp::_("Done")); 
+           $res->addMessage(__("Done", GMP_LANG_CODE)); 
         }else{
-            $res->pushError(langGmp::_("Cannot remove group"));
+            $res->pushError(__("Cannot remove group", GMP_LANG_CODE));
         }
         frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat("group.delete");
         return $res->ajaxExec();

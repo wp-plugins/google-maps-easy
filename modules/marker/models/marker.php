@@ -2,6 +2,7 @@
 class markerModelGmp extends modelGmp {
     public static $tableObj;
     function __construct() {
+		$this->_setTbl('marker');
         if(empty(self::$tableObj)){
             self::$tableObj = frameGmp::_()->getTable('marker');
         }
@@ -39,7 +40,7 @@ class markerModelGmp extends modelGmp {
 				$this->pushError(frameGmp::_()->getTable('marker')->getErrors());
 			}
 		} else {
-			$this->pushError(langGmp::_('Please enter marker name'), 'marker_opts[title]');
+			$this->pushError(__('Please enter marker name'), 'marker_opts[title]', GMP_LANG_CODE);
 		}
 		return false;
 	}
@@ -166,12 +167,6 @@ class markerModelGmp extends modelGmp {
 		}
 		return $markers;
 	}
-    public function constructMarkerOptions(){
-        $params = array();
-        $params['groups'] =  frameGmp::_()->getModule('marker_groups')->getModel()->getMarkerGroups();
-        $params['icons']  =  frameGmp::_()->getModule('icons')->getModel()->getIcons();
-        return  $params;
-    }
     public function removeMarker($markerId){
 		dispatcherGmp::doAction('beforeMarkerRemove', $markerId);
 		return frameGmp::_()->getTable('marker')->delete(array('id' => $markerId));
@@ -182,7 +177,7 @@ class markerModelGmp extends modelGmp {
 	}
     public function findAddress($params){
         if(!isset($params['addressStr']) || strlen($params['addressStr']) < 3){
-            $this->pushError(langGmp::_('Address is empty or not match'));
+            $this->pushError(__('Address is empty or not match', GMP_LANG_CODE));
             return false;
         }
         $addr = $params['addressStr'];
@@ -214,10 +209,8 @@ class markerModelGmp extends modelGmp {
 		}
         $markerList = frameGmp::_()->getTable('marker')->get('*', $d);
         $iconsModel = frameGmp::_()->getModule('icons')->getModel();
-        $markerGroupModel = frameGmp::_()->getModule('marker_groups')->getModule()->getModel();
         foreach($markerList as $i => &$m) {
 			$markerList[$i] = $this->_afterGet($markerList[$i], $widthMapData);
-            $m['marker_group'] = $markerGroupModel->getGroupById($m['marker_group_id']);
         } 
         return $markerList;
     }

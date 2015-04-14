@@ -232,16 +232,6 @@ class installerGmp {
 		   //delete_option(GMP_DB_PREF. 'plug_was_used');       
 		}
 	}
-	static protected function _addPageToWP($post_title, $post_parent = 0) {
-		return wp_insert_post(array(
-			 'post_title' => langGmp::_($post_title),
-			 'post_content' => langGmp::_($post_title. ' Page Content'),
-			 'post_status' => 'publish',
-			 'post_type' => 'page',
-			 'post_parent' => $post_parent,
-			 'comment_status' => 'closed'
-		));
-	}
 	static public function update() {
 		global $wpdb;
 		$wpPrefix = $wpdb->prefix; /* add to 0.0.3 Versiom */

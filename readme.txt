@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
 Tested up to: 4.1.1
-Stable tag: 1.0.9
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -134,6 +134,18 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 4. Google Map Stylyzations
 
 == Changelog ==
+
+= 1.1.0 / 14.04.2015 =
+ * Admin area - added dashicons to menu
+ * Fixed map delete from map edit page
+ * Multi language integration - fully available for translation from now
+ * CSV Maps and Markers fix
+ * Added Polish language
+ * PRO - added Traffic, Transit and Bicycles layers
+ * PRO - added 4 new marker list themes
+ * Some minor code improvements for DEBUG mode
+ * Minor changes for FAQ section
+ * Shortcode in admin area - make more comfortable selection
 
 = 1.0.9 / 03.04.2015 =
  * Re-design of admin area - make map creation process more comfortable for users

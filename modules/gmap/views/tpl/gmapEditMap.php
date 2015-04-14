@@ -1,8 +1,8 @@
 <?php
-	$addProElementAttrs = $this->isPro ? '' : ' title="'. esc_html(sprintf(__('This option is available in <a target="_blank" href="%s">PRO version</a> only, you can get it <a target="_blank" href="%s">here.</a>', GMP_LANG_CODE), $this->mainLink, $this->mainLink)). '"';
-	$addProElementClass = $this->isPro ? '' : 'supsystic-tooltip';
-	$addProElementBottomHtml = $this->isPro ? '' : '<span class="gmpProOptMiniLabel"><a target="_blank" href="'. $this->mainLink. '">'. __('PRO option', GMP_LANG_CODE). '</a></span>';
-	$addProElementOptBottomHtml = $this->isPro ? '' : '<br /><span class="gmpProOptMiniLabel" style="padding-left: 0;"><a target="_blank" href="'. $this->mainLink. '">'. __('PRO option', GMP_LANG_CODE). '</a></span>';
+	$addProElementAttrs = $this->isPro ? '' : ' title="'. esc_html(__('This option is available in <a target="_blank" href="%s">PRO version</a> only, you can get it <a target="_blank" href="%s">here.</a>', GMP_LANG_CODE)). '"';
+	$addProElementClass = $this->isPro ? '' : 'supsystic-tooltip gmpProOpt';
+	//$addProElementBottomHtml = $this->isPro ? '' : '<span class="gmpProOptMiniLabel"><a target="_blank" href="'. $this->mainLink. '">'. __('PRO option', GMP_LANG_CODE). '</a></span>';
+	//$addProElementOptBottomHtml = $this->isPro ? '' : '<br /><span class="gmpProOptMiniLabel" style="padding-left: 0;"><a target="_blank" href="'. $this->mainLink. '">'. __('PRO option', GMP_LANG_CODE). '</a></span>';
 ?>
 <section>
 	<div class="supsystic-item supsystic-panel">
@@ -106,13 +106,16 @@
 												'attrs' => 'style="width: 100%;" id="map_opts_type_control"'))?>
 										</div>
 										<div class="sup-col sup-w-50">
+											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=type_control_position&utm_campaign=googlemaps'; ?>
 											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change type control position on map', GMP_LANG_CODE)?>"></i>
 											<?php echo htmlGmp::selectbox('map_opts[type_control_position]', array(
 												'options' => $this->positionsList,
 												'value' => $this->editMap && isset($this->map['params']['type_control_position']) ? $this->map['params']['type_control_position'] : 'TOP_RIGHT',
-												'attrs' => 'data-for="mapTypeControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. $addProElementAttrs
+												'attrs' => 'data-for="mapTypeControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. (empty($addProElementAttrs) ? '' : sprintf($addProElementAttrs, $proLink, $proLink))
 											))?>
-											<?php echo $addProElementBottomHtml;?>
+											<?php if(!$this->isPro) { ?>
+												<span class="gmpProOptMiniLabel" style="padding-left: 20px;"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+											<?php }?>
 										</div>
 									</td>
 								</tr>
@@ -131,13 +134,16 @@
 												'attrs' => 'style="width: 100%;" id="map_opts_zoom_control"'))?>
 										</div>
 										<div class="sup-col sup-w-50">
+											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=zoom_control_position&utm_campaign=googlemaps'; ?>
 											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change zoom control position on map', GMP_LANG_CODE)?>"></i>
 											<?php echo htmlGmp::selectbox('map_opts[zoom_control_position]', array(
 												'options' => $this->positionsList,
 												'value' => $this->editMap && isset($this->map['params']['zoom_control_position']) ? $this->map['params']['zoom_control_position'] : 'TOP_LEFT',
-												'attrs' => 'data-for="zoomControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. $addProElementAttrs
+												'attrs' => 'data-for="zoomControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. (empty($addProElementAttrs) ? '' : sprintf($addProElementAttrs, $proLink, $proLink))
 											))?>
-											<?php echo $addProElementBottomHtml;?>
+											<?php if(!$this->isPro) { ?>
+												<span class="gmpProOptMiniLabel" style="padding-left: 20px;"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+											<?php }?>
 										</div>
 									</td>
 								</tr>
@@ -155,13 +161,16 @@
 											))?>
 										</div>
 										<div class="sup-col sup-w-50">
+											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=street_view_control_position&utm_campaign=googlemaps'; ?>
 											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change street view control position on map', GMP_LANG_CODE)?>"></i>
 											<?php echo htmlGmp::selectbox('map_opts[street_view_control_position]', array(
 												'options' => $this->positionsList,
 												'value' => $this->editMap && isset($this->map['params']['street_view_control_position']) ? $this->map['params']['street_view_control_position'] : 'TOP_LEFT',
-												'attrs' => 'data-for="streetViewControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. $addProElementAttrs
+												'attrs' => 'data-for="streetViewControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. (empty($addProElementAttrs) ? '' : sprintf($addProElementAttrs, $proLink, $proLink))
 											))?>
-											<?php echo $addProElementBottomHtml;?>
+											<?php if(!$this->isPro) { ?>
+												<span class="gmpProOptMiniLabel" style="padding-left: 20px;"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+											<?php }?>
 										</div>
 									</td>
 								</tr>
@@ -179,13 +188,16 @@
 											))?>
 										</div>
 										<div class="sup-col sup-w-50">
+											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=pan_control_position&utm_campaign=googlemaps'; ?>
 											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change pan control position on map', GMP_LANG_CODE)?>"></i>
 											<?php echo htmlGmp::selectbox('map_opts[pan_control_position]', array(
 												'options' => $this->positionsList,
 												'value' => $this->editMap && isset($this->map['params']['pan_control_position']) ? $this->map['params']['pan_control_position'] : 'TOP_LEFT',
-												'attrs' => 'data-for="panControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. $addProElementAttrs
+												'attrs' => 'data-for="panControlOptions" class="gmpMapPosChangeSelect '. $addProElementClass. '"'. (empty($addProElementAttrs) ? '' : sprintf($addProElementAttrs, $proLink, $proLink))
 											))?>
-											<?php echo $addProElementBottomHtml;?>
+											<?php if(!$this->isPro) { ?>
+												<span class="gmpProOptMiniLabel" style="padding-left: 20px;"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+											<?php }?>
 										</div>
 									</td>
 								</tr>
@@ -260,6 +272,57 @@
 								</tr>
 								<tr>
 									<th scope="row">
+										<label for="map_opts_enable_trafic_layer">
+											<?php _e('Traffic Layer', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Add real-time traffic information to your map.', GMP_LANG_CODE)?>"></i>
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=trafic_layer&utm_campaign=googlemaps'; ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[enable_trafic_layer]', array(
+											'value' => $this->editMap && isset($this->map['params']['enable_trafic_layer']) ? $this->map['params']['enable_trafic_layer'] : false,
+											'attrs' => 'class="gmpProOpt"'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_enable_transit_layer">
+											<?php _e('Transit Layer', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Display the public transit network of a city on your map. When the Transit Layer is enabled, and the map is centered on a city that supports transit information, the map will display major transit lines as thick, colored lines.', GMP_LANG_CODE)?>"></i>
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=transit_layer&utm_campaign=googlemaps'; ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[enable_transit_layer]', array(
+											'value' => $this->editMap && isset($this->map['params']['enable_transit_layer']) ? $this->map['params']['enable_transit_layer'] : false,
+											'attrs' => 'class="gmpProOpt"'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_enable_bicycling_layer">
+											<?php _e('Bicycling Layer', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Add a layer of bike paths, suggested bike routes and other overlays specific to bicycling usage on top of the given map.Dark green routes indicated dedicated bicycle routes. Light green routes indicate streets with dedicated "bike lanes." Dashed routes indicate streets or paths otherwise recommended for bicycle usage.', GMP_LANG_CODE)?>"></i>
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=bicycling_layer&utm_campaign=googlemaps'; ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[enable_bicycling_layer]', array(
+											'value' => $this->editMap && isset($this->map['params']['enable_bicycling_layer']) ? $this->map['params']['enable_bicycling_layer'] : false,
+											'attrs' => 'class="gmpProOpt"'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
 										<label for="map_opts_map_stylization">
 											<?php _e('Map Stylization', GMP_LANG_CODE)?>:
 										</label>
@@ -269,11 +332,11 @@
 										<?php echo htmlGmp::selectbox('map_opts[map_stylization]', array(
 											'options' => $this->stylizationsForSelect,
 											'value' => $this->editMap && isset($this->map['params']['map_stylization']) ? $this->map['params']['map_stylization'] : 'none',
-											'attrs' => 'style="width: '. ($this->isPro ? '100%' : 'calc(100% - 150px)'). ';" id="map_opts_map_stylization"'))?>
+											'attrs' => 'style="width: '. ($this->isPro ? '100%' : 'calc(100% - 200px)'). ';" id="map_opts_map_stylization"'))?>
 										<?php if(!$this->isPro) {?>
 											<a target="_blank" href="<?php echo $this->mainLink;?>" class="sup-standard-link">
 												<i class="fa fa-plus"></i>
-												<?php _e('Get 300+ Themes', GMP_LANG_CODE)?>
+												<?php _e('Get 300+ Themes with PRO', GMP_LANG_CODE)?>
 											</a>
 										<?php }?>
 									</td>
@@ -284,7 +347,10 @@
 											<?php _e('Markers List', GMP_LANG_CODE)?>:
 										</label>
 										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Display all map markers - as list bellow Your map. This will help your users get more info about your markers and find required marker more faster.', GMP_LANG_CODE)?>"></i>
-										<?php echo $addProElementOptBottomHtml;?>
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=markers_list&utm_campaign=googlemaps'; ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
 									</th>
 									<td>
 										<a id="gmpMapMarkersListBtn" href="#" class="button"><?php _e('Select Markers List type', GMP_LANG_CODE)?></a>
@@ -419,15 +485,20 @@
 			<div class="supsistic-half-side-box">
 				<div id="gmpMapRightStickyBar" class="supsystic-sticky">
 					<div id="gmpMapPreview" style="width: 100%; height: 300px;"></div>
-					<?php /*?><div class="gmpMapProControlsCon" id="gmpMapProControlsCon_<?php echo $this->viewId;?>">
-						<?php dispatcherGmp::doAction('addMapBottomControls', array()); ?>
-					</div><?php */?>
 					<?php echo htmlGmp::hidden('rand_view_id', array('value' => $this->viewId, 'attrs' => 'id="gmpViewId"'))?>
 					<div id="gmpShortCodeRowShell" class="row">
 						<div class="shortcode-wrap">
 							<p id="shortcodeCode" style="display: none;">
-								<strong style="margin-top: 2px; font-size: 1.2em; float: left;"><?php _e('Map shortcode', GMP_LANG_CODE)?>:</strong>
-								<span class="gmpMapShortCodeShell"><?php /*Will be inserted from JS*/ ?></span>
+								<strong style="margin-top: 7px; font-size: 1.2em; float: left;"><?php _e('Map shortcode', GMP_LANG_CODE)?>:</strong>
+								<?php echo htmlGmp::text('gmpCopyTextCode', array(
+									'value' => '',	// Will be inserted from JS
+									'attrs' => 'class="gmpCopyTextCode gmpMapShortCodeShell" style="float: right;"'));?>
+								<br style="clear: both;" />
+								<strong style="margin-top: 7px; font-size: 1.2em; float: left;"><?php _e('PHP code', GMP_LANG_CODE)?>:</strong>
+								<?php echo htmlGmp::text('gmpCopyTextCode', array(
+									'value' => '',	// Will be inserted from JS
+									'attrs' => 'class="gmpCopyTextCode gmpMapPhpShortCodeShell" style="float: right;"'));?>
+								<br style="clear: both;" />
 							</p>
 							<p id="shortcodeNotice" style="display: none;"><?php _e('Shortcode will appear after you save map.', GMP_LANG_CODE)?></p>
 						</div>
@@ -435,19 +506,31 @@
 					</div>
 					<div id="gmpMapMainBtns" class="row">
 						<div class="sup-col sup-w-50">
-							<button id="gmpMapSaveBtn" class="button button-primary" style="width: 100%;"><?php _e('Save Map', GMP_LANG_CODE)?></button>
+							<button id="gmpMapSaveBtn" class="button button-primary" style="width: 100%;">
+								<i class="fa dashicons-before dashicons-admin-site"></i>
+								<?php _e('Save Map', GMP_LANG_CODE)?>
+							</button>
 						</div>
 						<div class="sup-col sup-w-50" style="padding-right: 0;">
-							<button id="gmpMapDeleteBtn" class="button button-primary" style="width: 100%;"><?php _e('Delete Map', GMP_LANG_CODE)?></button>
+							<button id="gmpMapDeleteBtn" class="button button-primary" style="width: 100%;">
+								<i class="fa dashicons-before dashicons-trash"></i>
+								<?php _e('Delete Map', GMP_LANG_CODE)?>
+							</button>
 						</div>
 						<div style="clear: both;"></div>
 					</div>
 					<div id="gmpMarkerMainBtns" class="row">
 						<div class="sup-col sup-w-50">
-							<button id="gmpSaveMarkerBtn" class="button button-primary" style="width: 100%;"><?php _e('Save Marker', GMP_LANG_CODE)?></button>
+							<button id="gmpSaveMarkerBtn" class="button button-primary" style="width: 100%;">
+								<i class="fa fa-map-marker"></i>
+								<?php _e('Save Marker', GMP_LANG_CODE)?>
+							</button>
 						</div>
 						<div class="sup-col sup-w-50" style="padding-right: 0;">
-							<button id="gmpMarkerDeleteBtn" class="button button-primary" style="width: 100%;"><?php _e('Delete Marker', GMP_LANG_CODE)?></button>
+							<button id="gmpMarkerDeleteBtn" class="button button-primary" style="width: 100%;">
+								<i class="fa dashicons-before dashicons-trash"></i>
+								<?php _e('Delete Marker', GMP_LANG_CODE)?>
+							</button>
 						</div>
 						<div style="clear: both;"></div>
 					</div>
@@ -493,23 +576,17 @@
 		<?php }?>
 	</ul>
 </div>
-<!--Option available in PRO version-->
-<div id="gmpOptInProWnd" style="display: none;">
-	<p>
-		<?php printf(__('Please be advised that this option is available only in <a target="_blank" href="%s">PRO version</a>. You can <a target="_blank" href="%s" class="button">Get PRO</a> today and get this and other PRO option for your Maps!', GMP_LANG_CODE), $this->mainLink, $this->mainLink)?>
-	</p>
-</div>
 <!--Map Markers List Wnd-->
-<div id="gmpMarkersListWnd" style="display: none;" data-promourl="<?php echo $this->mainLink?>?utm_source=plugin&utm_medium=marker_slider&utm_campaign=googlemaps" title="<?php _e('Show markers list with your map on frontend', GMP_LANG_CODE)?>">
+<div id="gmpMarkersListWnd" style="display: none;" title="<?php _e('Show markers list with your map on frontend', GMP_LANG_CODE)?>">
 	<!--Mml == Map Markers List-->
 	<ul id="gmpMml">
 		<?php foreach($this->markerLists as $lKey => $lData) { ?>
 		<li class="gmpMmlElement gmpMmlElement-<?php echo $lKey?>" data-key="<?php echo $lKey?>">
 			<img src="<?php echo $this->promoModPath?>img/markers_list/<?php echo $lData['prev_img']?>" /><br />
 			<div class="gmpMmlElementBtnShell">
-				<button class="button button-primary gmpMmlApplyBtn" data-apply-label="<?php _e('Apply', GMP_LANG_CODE)?>" data-active-label="<?php _e('Selected', GMP_LANG_CODE)?>">
+				<a href="<?php echo $this->mainLink?>?utm_source=plugin&utm_medium=marker_list_<?php echo $lKey?>&utm_campaign=googlemaps" target="_blank" class="button button-primary gmpMmlApplyBtn" data-apply-label="<?php _e('Apply', GMP_LANG_CODE)?>" data-active-label="<?php _e('Selected', GMP_LANG_CODE)?>">
 					<?php $this->isPro ? _e('Apply', GMP_LANG_CODE) : _e('Available in PRO', GMP_LANG_CODE)?>
-				</button>
+				</a>
 			</div>
 		</li>
 		<?php }?>

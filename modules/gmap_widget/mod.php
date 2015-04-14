@@ -15,7 +15,7 @@ class gmpMapsWidget extends WP_Widget {
     public function __construct() {
         $widgetOps = array( 
             'classname' => 'gmpMapsWidget', 
-            'description' => langGmp::_('Displays Most Viewed Products')
+            'description' => __('Displays Most Viewed Products', GMP_LANG_CODE)
         );
         $control_ops = array(
             'id_base' => 'gmpMapsWidget'

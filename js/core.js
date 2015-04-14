@@ -351,3 +351,11 @@ function setBrowserUrl(url) {
         history.pushState(obj, obj.Title, obj.Url);
     }
 }
+function createAjaxLinkGmp(param) {
+	return GMP_DATA.ajaxurl+ '?'+ paramGmp(param);
+}
+function paramGmp(param) {
+	var param = jQuery.extend({}, param);
+	param['pl'] = GMP_DATA.GMP_CODE;
+	return jQuery.param( param );
+}
