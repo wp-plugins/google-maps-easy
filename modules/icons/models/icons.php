@@ -11,6 +11,20 @@ class iconsModelGmp extends modelGmp {
 			$this->setDefaultIcons();
 		}
 	}
+	public function getIconsByIds($ids) {
+		$icons = frameGmp::_()->getTable('icons')->get('*', array('additionalCondition' => 'id IN ('. implode(',', $ids). ')'));
+        if(empty($icons) ){
+			return $icons ;
+        }
+		if(!empty($icons)) {
+			$iconsArr = array();
+			foreach($icons as $i => $icon){
+				$icon['path'] = $this->getIconUrl($icon['path']);
+				$iconsArr[$icon['id']] = $icon;
+			}
+		}
+        return $iconsArr;
+	}
     public function getIcons($params = array()) {
 		$fields = isset($params['fields']) ? $params['fields'] : '*';
         $icons = frameGmp::_()->getTable('icons')->get( $fields );
@@ -98,8 +112,9 @@ class iconsModelGmp extends modelGmp {
             return false;
         }
     }
+	
 	public function getIconFromId($id){
-		$res = frameGmp::_()->getTable('icons')->get("*",array('id'=>$id));
+		$res = frameGmp::_()->getTable('icons')->get("*", array('id'=>$id));
 		if(empty($res)){
 			return $res;
 		}

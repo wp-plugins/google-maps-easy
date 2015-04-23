@@ -47,7 +47,7 @@
 	define('GMP_EOL', "\n");    
     
     define('GMP_PLUGIN_INSTALLED', true);
-    define('GMP_VERSION', '1.1.0');
+    define('GMP_VERSION', '1.2.1');
     define('GMP_USER', 'user');
     
     define('GMP_CLASS_PREFIX', 'gmpc');     

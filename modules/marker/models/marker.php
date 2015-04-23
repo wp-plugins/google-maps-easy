@@ -50,9 +50,11 @@ class markerModelGmp extends modelGmp {
 	public function getMarkerByTitle($title) {
 		return $this->_afterGet(frameGmp::_()->getTable('marker')->get('*', array('title' => $title), '', 'row'));
 	}
-	public function _afterGet($marker, $widthMapData = false) {
+	public function _afterGet($marker, $widthMapData = false, $withoutIcons = false) {
 		if(!empty($marker)) {
-			$marker['icon_data'] = frameGmp::_()->getModule('icons')->getModel()->getIconFromId($marker['icon']);
+			if(!$withoutIcons) {
+				$marker['icon_data'] = frameGmp::_()->getModule('icons')->getModel()->getIconFromId($marker['icon']);
+			}
 			$marker['params'] = utilsGmp::unserialize($marker['params']);
 			/*$marker['position'] = array(
 				'coord_x' => $marker['coord_x'],
@@ -143,14 +145,15 @@ class markerModelGmp extends modelGmp {
     public function getMapMarkers($mapId, $withGroup = false) {
 		$mapId = (int) $mapId;
         $markers = frameGmp::_()->getTable('marker')->get('*', array('map_id' => $mapId));
-       // $iconsModel =  frameGmp::_()->getModule('icons')->getModel();
-		//$groupModel = frameGmp::_()->getModule('marker_groups')->getModel();
 		if(!empty($markers)) {
+			$iconIds = array();
 			foreach($markers as $i => $m) {
-				$markers[$i] = $this->_afterGet($markers[$i]);
-				/*if($withGroup) {
-					$markers[$i]['groupObj'] = $groupModel->getGroupById($markers[$i]['marker_group_id']);
-				}*/
+				$markers[$i] = $this->_afterGet($markers[$i], false, true);
+				$iconIds[ $m['icon'] ] = 1;
+			}
+			$usedIcons = frameGmp::_()->getModule('icons')->getModel()->getIconsByIds( array_keys($iconIds) );
+			foreach($markers as $i => $m) {
+				$markers[$i]['icon_data'] = $usedIcons[ $m['icon'] ];
 			}
 		}
         return $markers;

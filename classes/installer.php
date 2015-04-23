@@ -209,11 +209,7 @@ class installerGmp {
 	static public function delete() {
 		global $wpdb;
 		$wpPrefix = $wpdb->prefix; /* add to 0.0.3 Versiom */
-		$deleteOptions = reqGmp::getVar('deleteAllData');
-		if(is_null($deleteOptions)) {
-			frameGmp::_()->getModule('options')->getView()->displayDeactivatePage();
-			exit();
-		}
+		$deleteOptions = false;
 		if((bool)$deleteOptions){
 		   $wpdb->query("DROP TABLE IF EXISTS `".$wpPrefix.GMP_DB_PREF."modules`");
 		   $wpdb->query("DROP TABLE IF EXISTS `".$wpPrefix.GMP_DB_PREF."icons`");
