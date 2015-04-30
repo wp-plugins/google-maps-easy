@@ -333,6 +333,9 @@ gmpGoogleMarker.prototype.setDescription = function (description, noRefresh) {
 	this._markerParams.description = description;
 	if(!noRefresh)
 		this._updateInfoWndContent();
+    if(this._markerParams.params.show_description == 1) {
+        this.showInfoWnd();
+    }
 };
 gmpGoogleMarker.prototype.getDescription = function () {
 	return this._markerParams.description;

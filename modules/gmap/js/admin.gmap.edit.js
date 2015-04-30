@@ -410,6 +410,15 @@ function gmpCheckShortcode() {
 function gmpGetCurrentId() {
 	return parseInt( jQuery('#gmpMapForm input[name="map_opts[id]"]').val() );
 }
+function drawNewIcon(icon){
+    if(typeof(icon.data) == undefined){
+        return;
+    }
+    jQuery('#gmpMarkerForm input[name="marker_opts[icon]"]').val(icon.id);
+    var newIcon = '<li class="previewIcon" data-id="' + icon.id + '" title="' + icon.title + '"><img src="' + icon.url + '"></li>';
+    jQuery('ul.iconsList').append(newIcon);
+    gmpSetIconImg();
+}
 function gmpInitIconsWnd() {
 	var $container = jQuery('#gmpIconsWnd').dialog({
 		modal:    true
@@ -437,6 +446,60 @@ function gmpInitIconsWnd() {
 		$container.dialog('close');
 		return false;
 	});
+    /*
+     * wp media upload
+     *
+     */
+    jQuery('#gmpUploadIconBtn').click(function(e){
+        var custom_uploader;
+        e.preventDefault();
+        //If the uploader object has already been created, reopen the dialog
+        if (custom_uploader) {
+            custom_uploader.open();
+            return;
+        }
+        //Extend the wp.media object
+        custom_uploader = wp.media.frames.file_frame = wp.media({
+            title: 'Choose Image'
+            ,	button: {
+                text: 'Choose Image'
+            }
+            ,	multiple: false
+        });
+        //When a file is selected, grab the URL and set it as the text field's value
+        var currentForm = jQuery(this).parents('form');
+        custom_uploader.on('select', function(){
+            var attachment = custom_uploader.state().get('selection').first().toJSON()
+                ,	respElem = jQuery('.gmpUplRes')
+                ,	sendData={
+                    page: 'icons'
+                    ,	action: 'saveNewIcon'
+                    ,	reqType: 'ajax'
+                    ,	icon: {
+                        url: attachment.url
+                    }
+                };
+            if(attachment.title != undefined){
+                sendData.icon.title = attachment.title;
+            }
+            if(attachment.description != undefined){
+                sendData.icon.description = attachment.description;
+            }
+            jQuery.sendFormGmp({
+                msgElID: respElem
+                ,	data: sendData
+                ,	onSuccess: function(res){
+                    if(!res.error) {
+                        var newItem = drawNewIcon(res.data);
+                    } else {
+                        respElem.html(data.error.join(','));
+                    }
+                }
+            });
+        });
+        //Open the uploader dialog
+        custom_uploader.open();
+    });
 }
 function gmpSetIconImg() {
 	var id = parseInt( jQuery('#gmpMarkerForm input[name="marker_opts[icon]"]').val() );
@@ -523,6 +586,10 @@ function gmpOpenMarkerEdit(id) {
 		jQuery('#gmpMarkerForm input[name="marker_opts[coord_x]"]').val( markerParams.coord_x );
 		jQuery('#gmpMarkerForm input[name="marker_opts[coord_y]"]').val( markerParams.coord_y );
 		jQuery('#gmpMarkerForm input[name="marker_opts[id]"]').val( markerParams.id );
+        if(markerParams.params.show_description == 1){
+            jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]').prop('checked', true);
+            gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]') );
+        }
 		gmpSetIconImg();
 		gmpSetCurrentMarker( marker );
 		marker.showInfoWnd();
@@ -583,6 +650,8 @@ function gmpResetMarkerForm() {
 	jQuery('#gmpMarkerForm')[0].reset();
 	jQuery('#gmpMarkerForm input[name="marker_opts[id]"]').val('');
 	jQuery('#gmpMarkerForm input[name="marker_opts[icon]"]').val( 1 );
+    jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]').prop('checked', false);
+    gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]') );
 	gmpSetIconImg();
 }
 function _gmpMarkerDragEndClb() {

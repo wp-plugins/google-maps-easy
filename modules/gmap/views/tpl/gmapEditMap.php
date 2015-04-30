@@ -427,7 +427,12 @@
 									<?php echo htmlGmp::hidden('marker_opts[icon]', array(
 										'value' => 1 /*Default Icon ID*/ ))?>
 									<img id="gmpMarkerIconPrevImg" src="" style="float: left;" />
-									<a id="gmpMarkerIconBtn" href="#" class="button" style="float: right;" ><?php _e('Choose icon', GMP_LANG_CODE)?></a>
+									<div style="float: right">
+										<a id="gmpMarkerIconBtn" href="#" class="button"><?php _e('Choose Icon', GMP_LANG_CODE)?></a>
+										<a id="gmpUploadIconBtn" href="#" class="button"><?php _e('Upload Icon', GMP_LANG_CODE)?></a>
+										<div class="gmpUplRes"></div>
+										<div class="gmpFileUpRes"></div>
+									</div>
 									<div style="clear: both;"></div>
 								</td>
 							</tr>
@@ -473,6 +478,18 @@
 										'attrs' => 'style="width: 100%;" id="marker_opts_coord_y"'))?>
 								</td>
 							</tr>
+                            <tr>
+                                <th scope="row">
+                                    <label for="marker_opts_show_description">
+                                        <?php _e('Show description by default', GMP_LANG_CODE)?>:
+                                    </label>
+                                    <i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Show marker description on the map by default', GMP_LANG_CODE)?>"></i>
+                                </th>
+                                <td>
+                                    <?php echo htmlGmp::checkbox('marker_opts[params][show_description]', array(
+                                        'checked' => ''))?>
+                                </td>
+                            </tr>
 						</table>
 						<?php echo htmlGmp::hidden('mod', array('value' => 'marker'))?>
 						<?php echo htmlGmp::hidden('action', array('value' => 'save'))?>

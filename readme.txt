@@ -34,6 +34,14 @@ Google Map Easy plugin is an excellent way to make a beautiful map on your websi
 
 If you have any problem or feature request for the Google Maps by Supsystic, please [let us know](http://supsystic.com/contact-us/ "Contact Us")!
 
+= Translations in your language =
+
+You have an incredible opportunity to get PRO version for free. Make Translation of the plugin! It will be amazing if you take advantage of this offer!
+
+* English
+* Polish
+* German
+
 
 == Installation ==
 
@@ -123,6 +131,7 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 * [Popup plugin](https://wordpress.org/plugins/popup-by-supsystic/ "Popup plugin")
 * [Security and Firewall](https://wordpress.org/plugins/security-by-supsystic/ "Security solution")
 
+
 == Screenshots ==
 
 1. Google Map with Image slider for markers
@@ -138,6 +147,12 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 6. Google Map Stylyzations
 
 == Changelog ==
+
+= 1.2.2 / 30.04.2015 =
+ * Translations added
+ * New option to upload custom map icons
+ * Option to show marker infowindow after map load by default
+ * Minor bugs fixed
 
 = 1.2.1 / 23.04.2015 =
  * Google Map slider added
