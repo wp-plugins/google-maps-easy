@@ -696,7 +696,7 @@ msgid "Empty data in file"
 msgstr ""
 
 #: ../doc/old-version/modules/csv/mod.php:11 ../modules/csv/mod.php:11
-msgid "CSV Import and Export"
+msgid "Maps Import / Export"
 msgstr ""
 
 #: ../doc/old-version/modules/csv/models/csv.php:133

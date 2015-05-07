@@ -425,8 +425,8 @@ msgid "Empty data in file"
 msgstr "Leeres Datenfeld in der Datei"
 
 #: ../modules/csv/mod.php:11
-msgid "CSV Import and Export"
-msgstr "CSV Import und Export"
+msgid "Maps Import / Export"
+msgstr "Maps Import / Export"
 
 #: ../modules/csv/models/csv.php:133
 msgid "Can not detect import list type"

@@ -314,8 +314,8 @@ msgstr "Ustawienia"
 
 #: modules/csv/mod.php:11
 #@ gmp_lng
-msgid "CSV Import and Export"
-msgstr "Import & Export CSV"
+msgid "Maps Import / Export"
+msgstr "Mapy Import / Export"
 
 #: modules/csv/views/tpl/csvTabContent.php:9
 #@ default

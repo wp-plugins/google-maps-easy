@@ -333,7 +333,7 @@ gmpGoogleMarker.prototype.setDescription = function (description, noRefresh) {
 	this._markerParams.description = description;
 	if(!noRefresh)
 		this._updateInfoWndContent();
-    if(this._markerParams.params.show_description == 1) {
+    if(this._markerParams.params && this._markerParams.params.show_description == 1) {
         this.showInfoWnd();
     }
 };
@@ -442,7 +442,7 @@ function gmpGetGeocoder() {
 function _gmpPrepareMarkersList(markers, params) {
 	params = params || {};
 	if(markers) {
-		for(var i in markers) {
+		for(var i = 0; i < markers.length; i++) {
 			markers[i].coord_x = parseFloat( markers[i].coord_x );
 			markers[i].coord_y = parseFloat( markers[i].coord_y );
 			markers[i].icon = markers[i].icon_data.path;

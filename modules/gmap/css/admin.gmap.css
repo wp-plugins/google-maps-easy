@@ -142,6 +142,10 @@
 .gmpMmlElement img {
 	max-width: 100%;
 }
+.gmpMmlElement:hover img, 
+.gmpMmlElement:hover .gmpMmlElementBtnShell .button {
+	box-shadow: 5px 5px 5px #000;
+}
 .gmpMmlElementBtnShell {
 	position: absolute;
 	width: 100%;

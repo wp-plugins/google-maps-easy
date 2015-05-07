@@ -27,6 +27,15 @@
 							frameborder="0">
 					</iframe>
 				</div>
+				<div class="video">
+					<h3><?php _e('PRO Features', GMP_LANG_CODE)?></h3>
+					<iframe type="text/html"
+							width="80%"
+							height="240px"
+							src="https://www.youtube.com/embed/0wl0p_m8HEE"
+							frameborder="0">
+					</iframe>
+				</div>
 				<div class="server-settings">
 					<h3><?php _e('Server Settings', GMP_LANG_CODE)?></h3>
 					<ul class="settings-list">

@@ -2,8 +2,8 @@
 Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
-Tested up to: 4.2
-Stable tag: 1.2.1
+Tested up to: 4.2.1
+Stable tag: 1.2.3
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -13,7 +13,7 @@ The easiest way to create Google Map with markers, locations and clusterization.
 Create [Google Maps](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=description&utm_campaign=maps "Google Maps WordPress plugin") in a minute with with Google Maps Easy WordPress plugin. 
 Map markers with any media, location points with video and text descriptions.
 Add map with shortcode, open it in popup or use google map widget.
-Ultimate solution to display google map on the contact page, routes, reale estates, pizzas delivery areas.
+Ultimate solution to display google map on the contact page, routes, real estates, pizzas delivery areas and more
 
 = Google Maps plugin Features =
 
@@ -25,6 +25,8 @@ Ultimate solution to display google map on the contact page, routes, reale estat
 * Add markers and locations by searching or coordinates
 * 100% customizable. All map and markers options can be modified
 * Works with any WordPress themes
+* Add map with shortcode or PHP code
+* Google Maps Import and Export feature
 
 [youtube http://www.youtube.com/watch?v=Ej8EtuLcLZk]
 
@@ -60,8 +62,8 @@ Important! Short code must be inserted in a text editor page, and not in the vis
 = To install a plugin via FTP, you must = 
 
 1. Download the Google Maps Easy plugin
-2. Unarchive plugin
-3. Copy the folder with plugin
+2. Unarchive plugin google-maps-easy.zip
+3. Copy the folder with google maps plugin
 4. Open the ftp \wp-content\plugins\
 5. Paste the plug-ins folder in the folder
 6. Go to admin panel => open item "Plugins" => activate Google Maps Easy plugin you need
@@ -147,6 +149,11 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 6. Google Map Stylyzations
 
 == Changelog ==
+
+= 1.2.3 / 07.05.2015 =
+ * Minor admin interface improvements
+ * Fix conflict with some other plugins/themes that modified standard js array properties
+ * Minor issues fix
 
 = 1.2.2 / 30.04.2015 =
  * Translations added

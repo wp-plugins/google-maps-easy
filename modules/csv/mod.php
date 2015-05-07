@@ -8,7 +8,7 @@ class  csvGmp extends moduleGmp {
 	}
 	public function addAdminTab($tabs) {
 		$tabs[ $this->getCode() ] = array(
-			'label' => __('CSV Import and Export', GMP_LANG_CODE), 'callback' => array($this, 'getTabContent'), 'fa_icon' => 'fa-download', 'sort_order' => 50,
+			'label' => __('Maps Import / Export', GMP_LANG_CODE), 'callback' => array($this, 'getTabContent'), 'fa_icon' => 'fa-download', 'sort_order' => 50,
 		);
 		return $tabs;
 	}

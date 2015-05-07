@@ -726,8 +726,8 @@ msgid "Empty data in file"
 msgstr "Se han encontrado datos vacíos en el archivo"
 
 #: ../doc/old-version/modules/csv/mod.php:11 ../modules/csv/mod.php:11
-msgid "CSV Import and Export"
-msgstr "Importar y exportar CSV"
+msgid "Maps Import / Export"
+msgstr "Mapas de Importación / Exportación"
 
 #: ../doc/old-version/modules/csv/models/csv.php:133
 #: ../modules/csv/models/csv.php:133

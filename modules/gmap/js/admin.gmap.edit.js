@@ -694,14 +694,17 @@ function _gmpUnchangeMapForm() {
 }
 function gmpInitMapMarkersListWnd() {
 	var wndWidth = jQuery(window).width()
+	,	wndHeight = jQuery(window).height()
 	,	normWidth = 740
-	,	popupWidth = wndWidth > normWidth ? normWidth : wndWidth - 20;
+	,	normHeight = 540
+	,	popupWidth = wndWidth > normWidth ? normWidth : wndWidth - 20
+	,	popupHeight = wndHeight < normHeight ? normHeight : wndHeight - 70;
 	jQuery('#gmpMarkersListWnd').find('.gmpMmlElement').css('max-width', popupWidth - 20);
 	var $markersListWnd = jQuery('#gmpMarkersListWnd').dialog({
 		modal:    true
 	,	autoOpen: false
 	,	width: popupWidth
-	,	height: 540
+	,	height: popupHeight
 	,	open: function() {
 			jQuery('.ui-widget-overlay').bind('click', function() {
 				$markersListWnd.dialog('close');

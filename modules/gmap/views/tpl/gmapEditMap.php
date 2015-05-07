@@ -483,7 +483,7 @@
                                     <label for="marker_opts_show_description">
                                         <?php _e('Show description by default', GMP_LANG_CODE)?>:
                                     </label>
-                                    <i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Show marker description on the map by default', GMP_LANG_CODE)?>"></i>
+                                    <i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Open markers description when map load', GMP_LANG_CODE)?>"></i>
                                 </th>
                                 <td>
                                     <?php echo htmlGmp::checkbox('marker_opts[params][show_description]', array(
