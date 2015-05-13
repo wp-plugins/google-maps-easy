@@ -372,6 +372,23 @@
 											'attrs' => 'style="width: 100%;" id="map_opts_marker_clasterer"'))?>
 									</td>
 								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_enable_full_screen_btn">
+											<?php _e('Full Screen Button', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Add a button on map to open it full screen.', GMP_LANG_CODE)?>"></i>
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=enable_full_screen_btn&utm_campaign=googlemaps'; ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[enable_full_screen_btn]', array(
+											'value' => $this->editMap && isset($this->map['params']['enable_full_screen_btn']) ? $this->map['params']['enable_full_screen_btn'] : false,
+											'attrs' => 'class="gmpProOpt"'))?>
+									</td>
+								</tr>
 							</table>
 						</div>
 						<?php echo htmlGmp::hidden('mod', array('value' => 'gmap'))?>

@@ -48,15 +48,19 @@
            width:<?php echo $controlsWidth;?>
         }
 		<?php
-			if($this->currentMap['params']['infowindow_width'] != ""){
+			if(isset($this->currentMap['params']['infowindow_width'])
+				&& $this->currentMap['params']['infowindow_width'] != ""
+			){
 				$infoWindowWidth = $this->currentMap['params']['infowindow_width'];
-			} else {
-				$infoWindowWidth = $this->indoWindowSize['width'];
+			}else{
+    			$infoWindowWidth = $this->indoWindowSize['width'];
 			}
-			if($this->currentMap['params']['infowindow_height'] != ""){
-				$infoWindowHeight = $this->currentMap['params']['infowindow_height'];
-			} else {
-				$infoWindowHeight = $this->indoWindowSize['height'];
+			if(isset( $this->currentMap['params']['infowindow_height'])
+				&& $this->currentMap['params']['infowindow_height'] != ""
+			){
+    			$infoWindowHeight = $this->currentMap['params']['infowindow_height'];
+			}else{
+  				$infoWindowHeight = $this->indoWindowSize['height'];
 			}
 			if(!strpos($infoWindowWidth, 'px') && !strpos($infoWindowWidth, '%')) {
 				$infoWindowWidth .= 'px';

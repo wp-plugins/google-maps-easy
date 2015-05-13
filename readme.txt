@@ -2,8 +2,8 @@
 Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
-Tested up to: 4.2.1
-Stable tag: 1.2.3
+Tested up to: 4.2.2
+Stable tag: 1.2.4
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -22,8 +22,9 @@ Ultimate solution to display google map on the contact page, routes, real estate
 * Markers and Locations groups (clusterization)
 * Display google map markers with slider
 * Compatible with any mobile devices
+* Unlimited number of markers and locations
 * Add markers and locations by searching or coordinates
-* 100% customizable. All map and markers options can be modified
+* 100% customizable. All google map and markers options can be modified
 * Works with any WordPress themes
 * Add map with shortcode or PHP code
 * Google Maps Import and Export feature
@@ -90,7 +91,7 @@ Don't forget to press the "Save map" button.
 
 = Step 2: Creating/Editing Markers for the Google Maps by Supsystic =
 
-1. Click "Add New Marker" button - in the center of the map will appear a marker.
+1. Click "Add New Marker" button - in the center of the google map will appear a marker.
 2. Set the name of marker.
 3. Set the address of the marker by using the address field or fields with marker coordinates. Or you can just click on a point on the map.
 4. Click "Save marker" button.
@@ -138,17 +139,23 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 
 1. Google Map with Image slider for markers
 
-2. [Google Maps Easy WordPress plugin](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=screenshots&utm_campaign=maps "Google Maps WordPress plugin") admin area
+2. [Google Maps Easy WordPress plugin](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=screenshots&utm_campaign=maps "Google Maps WordPress plugin") admin area. Provides directions, interactive maps, and satellite/aerial imagery.
 
 3. Map with markers images slider
 
 4. Add marker to the google map
 
-5. Map Markers Clusterization
+5. Map Markers Clusterization. Grid-based clustering works by dividing the google map into squares of a certain size (the size changes at each zoom) and then grouping the map markers into each grid
 
-6. Google Map Stylyzations
+6. Google Map Stylizations
 
 == Changelog ==
+
+= 1.2.4 / 13.05.2015 =
+ * Full Screen button added to the map
+ * Fix of PHP Notices
+ * Minor issues fix
+ * Fix adding marker to the google map via address
 
 = 1.2.3 / 07.05.2015 =
  * Minor admin interface improvements

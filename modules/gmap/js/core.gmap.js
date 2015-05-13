@@ -157,7 +157,10 @@ gmpGoogleMap.prototype.getRawMapInstance = function() {
 	return this._mapObj;
 };
 gmpGoogleMap.prototype.setCenter = function (lat, lng) {
-	this.getRawMapInstance().setCenter(new google.maps.LatLng(lat, lng));
+	if(typeof lng == 'undefined'){
+		this.getRawMapInstance().setCenter(lat);
+	}else
+		this.getRawMapInstance().setCenter(new google.maps.LatLng(lat, lng));
 	return this;
 };
 gmpGoogleMap.prototype.getCenter = function () {
