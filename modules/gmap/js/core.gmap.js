@@ -113,7 +113,9 @@ gmpGoogleMap.prototype.enableClasterization = function(clasterType) {
 				self._clasterer = new MarkerClusterer(self.getRawMapInstance(), self.getAllRawMarkers());
 			});
 			this._addEventListenerHandle('idle', 'enableClasterization', eventHandle);
-			google.maps.event.trigger(self.getRawMapInstance(), 'idle');
+			if(GMP_DATA.isAdmin) {
+				google.maps.event.trigger(self.getRawMapInstance(), 'idle');
+			}
 			this._clastererEnabled = true;
 			break;
 	}
@@ -348,9 +350,16 @@ gmpGoogleMarker.prototype._updateInfoWndContent = function() {
 	var title = this._markerParams.title ? this._markerParams.title : false;
 	var description = this._markerParams.description ? this._markerParams.description.replace(/([^>])\n/g, '$1<br/>') : false;
 	if(title) {
-		contentStr.append(jQuery('<div/>', {})
+		var titleDiv = jQuery('<div/>', {})
 			.addClass('gmpInfoWindowtitle')
-			.html( title ));
+			.html( title );
+		var titleColor = this._map.getParam('marker_title_color');
+		if(titleColor && titleColor != '') {
+			titleDiv.css({
+				'color': titleColor
+			});
+		}
+		contentStr.append( titleDiv );
 	}
 	if(description) {
 		contentStr.append(jQuery('<div/>', {})

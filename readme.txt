@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
 Tested up to: 4.2.2
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -44,6 +44,7 @@ You have an incredible opportunity to get PRO version for free. Make Translation
 * English
 * Polish
 * German
+* Russian
 
 
 == Installation ==
@@ -135,21 +136,43 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 * [Security and Firewall](https://wordpress.org/plugins/security-by-supsystic/ "Security solution")
 
 
+= Our plugins =
+
+* [Social Share Buttons by Supsystic](https://wordpress.org/plugins/social-share-buttons-by-supsystic/ "Social Share Buttons by Supsystic")
+* [Data Tables Generator by Supsystic](https://wordpress.org/plugins/data-tables-generator-by-supsystic/ "Data Tables Generator by Supsystic")
+* [Google Maps Easy](https://wordpress.org/plugins/google-maps-easy/ "Google Maps Easy")
+* [Gallery by Supsystic](https://wordpress.org/plugins/gallery-by-supsystic/ "Gallery by Supsystic")
+* [Backup by Supsystic](https://wordpress.org/plugins/backup-by-supsystic/ "Backup by Supsystic")
+* [Lightbox by Supsystic](https://wordpress.org/plugins/lightbox-by-supsystic/ "Lightbox by Supsystic")
+* [Slider by Supsystic](https://wordpress.org/plugins/slider-by-supsystic/ "Slider by Supsystic")
+* [PopUp by Supsystic](https://wordpress.org/plugins/popup-by-supsystic/ "PopUp by Supsystic")
+* [Security by Supsystic](https://wordpress.org/plugins/security-by-supsystic/ "Security by Supsystic")
+* [Secure Login by Supsystic](https://wordpress.org/plugins/secure-login-by-supsystic/ "Secure Login by Supsystic")
+
+
 == Screenshots ==
 
-1. Google Map with Image slider for markers
+1. Google Map with Image Slider for markers. Choose the slider type for markers list and enjoy your map!
 
 2. [Google Maps Easy WordPress plugin](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=screenshots&utm_campaign=maps "Google Maps WordPress plugin") admin area. Provides directions, interactive maps, and satellite/aerial imagery.
 
-3. Map with markers images slider
+3. Map with markers images slider - display all map markers - as list bellow your map. This will help your users get more info about your markers and find required marker more faster.
 
-4. Add marker to the google map
+4. Google Maps Easy plugin admin area. Add marker to the google map.
 
-5. Map Markers Clusterization. Grid-based clustering works by dividing the google map into squares of a certain size (the size changes at each zoom) and then grouping the map markers into each grid
+5. Map Markers Clusterization. Grid-based clustering works by dividing the google map into squares of a certain size (the size changes at each zoom) and then grouping the map markers into each grid.
 
-6. Google Map Stylizations
+6. Google Map Stylizations. Make your map unique with our Map Themes!
 
 == Changelog ==
+
+= 1.2.5 / 29.05.2015 =
+ * Adding option "Full Screen Button" at Map Properties to open map full screen for PRO version plugin.
+ * Change markers title option
+ * Fix of PHP Notice:  Undefined index: infowindow_width, infowindow_height
+ * Added Russian language and fixed some spelling issues
+ * Fix conflict with selection marker in slider list for cases when marker is in cluster
+ * Marker slider list design improvements
 
 = 1.2.4 / 13.05.2015 =
  * Full Screen button added to the map

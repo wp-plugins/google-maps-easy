@@ -4,7 +4,9 @@ var g_gmpMap = null
 ,	g_gmpCurrentEditMarker = null
 ,	g_gmpTinyMceEditorUpdateBinded = false
 ,	g_gmpMarkerFormChanged = false
-,	g_gmpMapFormChanged = false;
+,	g_gmpMapFormChanged = false
+,	g_gmpMarkerTitleColorTimeoutSet = false
+,	g_gmpMarkerTitleColorLast = '';
 window.onbeforeunload = function(){
 	// If there are at lease one unsaved form - show message for confirnation for page leave
 	if(_gmpIsMapFormChanged()) {
@@ -415,7 +417,7 @@ function drawNewIcon(icon){
         return;
     }
     jQuery('#gmpMarkerForm input[name="marker_opts[icon]"]').val(icon.id);
-    var newIcon = '<li class="previewIcon" data-id="' + icon.id + '" title="' + icon.title + '"><img src="' + icon.url + '"></li>';
+    var newIcon = '<li class="previewIcon" data-id="'+ icon.id+ '" title="'+ icon.title+ '"><img src="'+ icon.url+ '"></li>';
     jQuery('ul.iconsList').append(newIcon);
     gmpSetIconImg();
 }
@@ -797,4 +799,21 @@ function _gmpCreateNewMapMarker(params) {
 	gmpSetCurrentMarker( g_gmpMap.addMarker( newMarkerData ) );
 	jQuery('#gmpMarkerForm [name="marker_opts[coord_x]"]').val( lat );
 	jQuery('#gmpMarkerForm [name="marker_opts[coord_y]"]').val( lng );
+}
+function wpColorPicker_map_optsmarker_title_color_change(event, ui) {
+	g_gmpMarkerTitleColorLast = ui.color.toString();
+	if(!g_gmpMarkerTitleColorTimeoutSet) {
+		setTimeout(function(){
+			gmpWpColorpickerUpdatTitlesColor();
+		}, 500);
+		g_gmpMarkerTitleColorTimeoutSet = true;
+	}
+}
+function gmpWpColorpickerUpdatTitlesColor(color) {
+	g_gmpMarkerTitleColorTimeoutSet = false;
+	var styleObj = jQuery('#gmpHardcodeMapTitleStl');
+	if(!styleObj || !styleObj.size()) {
+		styleObj = jQuery('<style type="text/css" id="gmpHardcodeMapTitleStl" />').appendTo('head');
+	}
+	styleObj.html('.gmpInfoWindowtitle { color: '+ g_gmpMarkerTitleColorLast+ ' !important; }');
 }

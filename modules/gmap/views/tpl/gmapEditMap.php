@@ -389,6 +389,18 @@
 											'attrs' => 'class="gmpProOpt"'))?>
 									</td>
 								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_marker_title_color">
+											<?php _e('Marker Title color', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('You can set your markers title color here', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::colorpicker('map_opts[marker_title_color]', array(
+											'value' => $this->editMap && isset($this->map['params']['marker_title_color']) ? $this->map['params']['marker_title_color'] : '#A52A2A'))?>
+									</td>
+								</tr>
 							</table>
 						</div>
 						<?php echo htmlGmp::hidden('mod', array('value' => 'gmap'))?>

@@ -192,7 +192,7 @@ ul.supsystic-bar-controls > li.separator {
 }
 
 .ui-widget-content {
-    background: #fff !important;
+    background-color: #fff;
 }
 
 .ui-widget-header {

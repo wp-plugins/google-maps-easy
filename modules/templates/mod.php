@@ -48,6 +48,7 @@ class templatesGmp extends moduleGmp {
 				'close'						=> GMP_IMG_PATH. 'cross.gif', 
 				'ajaxurl'					=> $ajaxurl,
 				'GMP_CODE'					=> GMP_CODE,
+				'isAdmin'					=> is_admin(),
 			);
 			if(is_admin()) {
 				$jsData['isPro'] = frameGmp::_()->getModule('supsystic_promo')->isPro();
