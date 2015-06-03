@@ -552,7 +552,8 @@ class utilsGmp {
 		);
 	}
 	static public function getLangCode2Letter() {
-		return strlen(GMP_WPLANG) > 2 ? substr(GMP_WPLANG, 0, 2) : GMP_WPLANG;
+		$lang = get_locale();
+		return strlen($lang) > 2 ? substr($lang, 0, 2) : $lang;
 	}
 	static public function gmpExtractImgTags($str) {
 		preg_match_all('/<img[^>]+>/i', $str, $result);

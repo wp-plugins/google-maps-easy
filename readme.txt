@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
 Tested up to: 4.2.2
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -18,11 +18,11 @@ Ultimate solution to display google map on the contact page, routes, real estate
 = Google Maps plugin Features =
 
 * Google Map builder in live mode
+* Unlimited number of map markers and locations
 * Map Markers with media description. Text, images, video, email, phone
 * Markers and Locations groups (clusterization)
-* Display google map markers with slider
+* Display google map markers with slider mode
 * Compatible with any mobile devices
-* Unlimited number of markers and locations
 * Add markers and locations by searching or coordinates
 * 100% customizable. All google map and markers options can be modified
 * Works with any WordPress themes
@@ -165,6 +165,11 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 6. Google Map Stylizations. Make your map unique with our Map Themes!
 
 == Changelog ==
+
+= 1.2.6 / 03.06.2015 =
+ * Map translation fix
+ * Minor issues fix
+ * Code improvements
 
 = 1.2.5 / 29.05.2015 =
  * Adding option "Full Screen Button" at Map Properties to open map full screen for PRO version plugin.
