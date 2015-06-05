@@ -10,12 +10,12 @@ The easiest way to create Google Map with markers, locations and clusterization.
 
 == Description ==
 
-Create [Google Maps](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=description&utm_campaign=maps "Google Maps WordPress plugin") in a minute with with Google Maps Easy WordPress plugin. 
-Map markers with any media, location points with video and text descriptions.
-Add map with shortcode, open it in popup or use google map widget.
-Ultimate solution to display google map on the contact page, routes, real estates, pizzas delivery areas and more
+= WordPress Google Maps =
+* [WordPress Google Maps](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=description&utm_campaign=maps "WordPress Goolge Maps")
+* [How to use Google Maps](http://supsystic.com/plugins/google-maps-plugin/#faq "How to use Google Maps")
+* [Google Maps Demo](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=description&utm_campaign=maps "WordPress Google Maps")
 
-= Google Maps plugin Features =
+= Google Maps Plugin Features =
 
 * Google Map builder in live mode
 * Unlimited number of map markers and locations
@@ -28,6 +28,11 @@ Ultimate solution to display google map on the contact page, routes, real estate
 * Works with any WordPress themes
 * Add map with shortcode or PHP code
 * Google Maps Import and Export feature
+
+Create [Google Maps](http://supsystic.com/plugins/google-maps-plugin?utm_source=wordpress&utm_medium=description&utm_campaign=maps "Google Maps WordPress plugin") in a minute with with Google Maps Easy WordPress plugin. 
+Map markers with any media, location points with video and text descriptions.
+Add map with shortcode, open it in popup or use google map widget.
+Ultimate solution to display google map on the contact page, routes, real estates, pizzas delivery areas and more
 
 [youtube http://www.youtube.com/watch?v=Ej8EtuLcLZk]
 
@@ -126,15 +131,6 @@ On the left navigation menu click “Settings”. Here you can export or import 
 Under the map you can see shortcode of the map.
 
 Copy and paste the shortcode into your post or page and Google Maps Easy will automatically create the map on your page using the settings you chose above. Important! Shortcode must be inserted in a text editor page, and not in the visual.
-
-*Check other WordPress plugins:*
-
-* [Backup by Supsystic](https://wordpress.org/plugins/backup-by-supsystic/ "Backup and Restoration plugin")
-* [Grid Gallery](https://wordpress.org/plugins/gallery-by-supsystic/ "Grid Gallery plugin")
-* [Slider by Supsystic](https://wordpress.org/plugins/slider-by-supsystic/ "Slider plugin")
-* [Popup plugin](https://wordpress.org/plugins/popup-by-supsystic/ "Popup plugin")
-* [Security and Firewall](https://wordpress.org/plugins/security-by-supsystic/ "Security solution")
-
 
 = Our plugins =
 
