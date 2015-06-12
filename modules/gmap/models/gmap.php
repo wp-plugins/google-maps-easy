@@ -183,4 +183,22 @@ class gmapModelGmp extends modelGmp {
 	public function getCount($d = array()) {
 		return frameGmp::_()->getTable('maps')->get('COUNT(*)', $d, '', 'one');
 	}
+	public function resortMarkers($d = array()) {
+		$mapId = isset($d['map_id']) ? (int) $d['map_id'] : 0;
+		$markersList = isset($d['markers_list']) ? $d['markers_list'] : false;
+		if(!$markersList && $mapId) {
+			$markersList = frameGmp::_()->getModule('marker')->getModel()->getMapMarkersIds($mapId);
+		}
+		if($markersList) {
+			$i = 1;
+			foreach($markersList as $mId) {
+				frameGmp::_()->getTable('marker')->update(array(
+					'sort_order' => $i++
+				), array(
+					'id' => $mId,
+				));
+			}
+		}
+		return true;
+	}
 }

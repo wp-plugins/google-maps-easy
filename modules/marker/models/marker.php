@@ -20,8 +20,14 @@ class markerModelGmp extends modelGmp {
 			if(!isset($marker['icon']) || !frameGmp::_()->getModule('icons')->getModel()->iconExists($marker['icon'])) {
 				$marker['icon'] = 1;
 			}
-			if(!$update)
+			$marker['map_id'] = isset($marker['map_id']) ? (int) $marker['map_id'] : 0;
+			if(!$update) {
 				$marker['create_date'] = date('Y-m-d H:i:s');
+				if($marker['map_id']) {
+					$maxSortOrder = (int) dbGmp::get('SELECT MAX(sort_order) FROM @__markers WHERE map_id = "'. $marker['map_id']. '"', 'one');
+					$marker['sort_order'] = ++$maxSortOrder;
+				}
+			}
 			$marker['params'] = isset($marker['params']) ? utilsGmp::serialize($marker['params']) : '';
 			if($update) {
 				dispatcherGmp::doAction('beforeMarkerUpdate', $id, $marker);
@@ -144,7 +150,7 @@ class markerModelGmp extends modelGmp {
     }*/
     public function getMapMarkers($mapId, $withGroup = false) {
 		$mapId = (int) $mapId;
-        $markers = frameGmp::_()->getTable('marker')->get('*', array('map_id' => $mapId));
+        $markers = frameGmp::_()->getTable('marker')->orderBy('sort_order ASC')->get('*', array('map_id' => $mapId));
 		if(!empty($markers)) {
 			$iconIds = array();
 			foreach($markers as $i => $m) {
@@ -158,6 +164,9 @@ class markerModelGmp extends modelGmp {
 		}
         return $markers;
     }
+	public function getMapMarkersIds($mapId) {
+		return frameGmp::_()->getTable('marker')->get('id', array('map_id' => $mapId), '', 'col');
+	}
 	public function getMarkersByIds($ids) {
 		if(!is_array($ids))
 			$ids = array( $ids );

@@ -15,6 +15,7 @@ class tableMarkerGmp extends tableGmp{
                 ->_addField('marker_group_id', 'int', 'int', '11', __("Id of Marker's group", GMP_LANG_CODE))
                 ->_addField('animation','int','int','0', __('Animation', GMP_LANG_CODE))
                 ->_addField('params','text','text','', __('Params', GMP_LANG_CODE))
+				->_addField('sort_order','int','int','0', __('Sort Order', GMP_LANG_CODE))
                 ->_addField('create_date','datetime','datetime','',  __('Creation date', GMP_LANG_CODE));
     }
 }

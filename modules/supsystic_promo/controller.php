@@ -69,6 +69,37 @@ class supsystic_promoControllerGmp extends controllerGmp {
 		}
         $res->ajaxExec();
 	}
+	public function checkNoticeButton() {
+		$res = new responseGmp();
+		$code = reqGmp::getVar('buttonCode');
+		$showNotice = get_option('showGMapsRevNotice');
+
+		if($code == 'is_shown') {
+			$showNotice['is_shown'] = true;
+		} else {
+			$showNotice['date'] = new DateTime();
+		}
+
+		$this->sendUsageStat($code);
+		update_option('showGMapsRevNotice', $showNotice);
+
+		return $res->ajaxExec();
+	}
+	public function sendUsageStat($state) {
+		$apiUrl = 'http://54.68.191.217';
+
+		$reqUrl = $apiUrl . '?mod=options&action=saveUsageStat&pl=rcs';
+		$res = wp_remote_post($reqUrl, array(
+			'body' => array(
+				'site_url' => get_bloginfo('wpurl'),
+				'site_name' => get_bloginfo('name'),
+				'plugin_code' => 'gmp',
+				'all_stat' => array('views' => 'review', 'code' => $state),
+			)
+		));
+
+		return true;
+	}
 	/**
 	 * @see controller::getPermissions();
 	 */

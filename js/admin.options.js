@@ -81,6 +81,9 @@ jQuery(document).ready(function(){
 	}
 	// Tooltipster initialization
 	tooltipsterize();
+
+    // Check for showing review notice after a week usage
+    gmpShowReviewNotice();
 });
 jQuery(window).load(function(){
 	setTimeout(function(){	// setTimeout to make sure that all required show/hide were triggered
@@ -442,4 +445,26 @@ function gmpInitMainPromoPopup() {
 			return false;
 		});
 	}
+}
+function gmpInitNoticeDialog() {
+    $('#reviewNotice').dialog({
+        modal:    true,
+        width:    600,
+        autoOpen: true
+    });
+}
+function gmpShowReviewNotice() {
+    if(GMP_DATA.checkReviewNotice) {
+        gmpInitNoticeDialog();
+        jQuery('#reviewNotice [data-statistic-code]').on('click', function() {
+            var code = jQuery(this).data('statistic-code');
+
+            jQuery.sendFormGmp({
+                data: {mod: 'supsystic_promo', action: 'checkNoticeButton'}
+                ,	onSuccess: function(res) {
+                    $('#reviewNotice').dialog('close');
+                }
+            });
+        });
+    }
 }

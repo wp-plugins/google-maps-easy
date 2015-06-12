@@ -109,7 +109,7 @@ class gmapViewGmp extends viewGmp {
 
 		$this->assign('markersDisplayType', $markersDisplayType);
 		$this->connectMapsAssets( $mapObj['params'] );
-		frameGmp::_()->addScript('frontend.gmap', $this->getModule()->getModPath(). 'js/frontend.gmap.js', array('jquery'));
+		frameGmp::_()->addScript('frontend.gmap', $this->getModule()->getModPath(). 'js/frontend.gmap.js', array('jquery'), false, true);
 		$this->assign('currentMap', $mapObj);
 		return parent::getInlineContent('gmapDrawMap');
 	}
@@ -149,6 +149,7 @@ class gmapViewGmp extends viewGmp {
 	}
 	public function getEditMap($id = 0) {
 		$gMapApiParams = array('language' => '');
+		frameGmp::_()->addScript('jquery-ui-sortable');
 		frameGmp::_()->addScript('wp.tabs', GMP_JS_PATH. 'wp.tabs.js');
 		frameGmp::_()->addScript('admin.gmap', $this->getModule()->getModPath(). 'js/admin.gmap.js');
 		frameGmp::_()->addScript('admin.gmap.edit', $this->getModule()->getModPath(). 'js/admin.gmap.edit.js');

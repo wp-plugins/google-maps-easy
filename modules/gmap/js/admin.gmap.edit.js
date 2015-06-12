@@ -376,6 +376,28 @@ jQuery(document).ready(function(){
 	jQuery('#gmpMarkerForm').find('input,textarea,select').change(function(){
 		_gmpChangeMarkerForm();
 	});
+	// Make markers table - sortable
+	jQuery('#markerList').sortable({
+		revert: true
+	,	items: '.gmpMapMarkerRow'
+	,	placeholder: 'ui-sortable-placeholder'
+	,	update: function(event, ui) {
+			var mapId = gmpGetCurrentId();
+			var msgEl = jQuery('#gmpMarkersSortMsg').size() ? jQuery('#gmpMarkersSortMsg') : jQuery('<div id="gmpMarkersSortMsg" />')
+			,	markersList = [];
+			jQuery('#markerList').find('.gmpMapMarkerRow:not(#markerRowTemplate)').each(function(){
+				markersList.push( jQuery(this).data('id') );
+			});
+			ui.item.find('.egm-marker-icon').append( msgEl );
+			jQuery.sendFormGmp({
+				msgElID: 'gmpMarkersSortMsg'
+			,	data: {mod: 'gmap', action: 'resortMarkers', markers_list: markersList, map_id: mapId}
+			,	onSuccess: function(res) {
+					
+				}
+			});
+		}
+	});
 });
 jQuery(window).load(function(){
 	jQuery('#gmpMapRightStickyBar').width( jQuery('#gmpMapRightStickyBar').width() );

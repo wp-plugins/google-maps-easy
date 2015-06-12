@@ -114,9 +114,17 @@ class supsystic_promoGmp extends moduleGmp {
 	}
 	public function getMainLink() {
 		if(empty($this->_mainLink)) {
-			$this->_mainLink = 'http://supsystic.com/plugins/google-maps-plugin/';
+			$affiliateQueryString = '';
+			$this->_mainLink = 'http://supsystic.com/plugins/google-maps-plugin/' . $affiliateQueryString;
 		}
 		return $this->_mainLink ;
+	}
+	public function generateMainLink($params = '') {
+		$mainLink = $this->getMainLink();
+		if(!empty($params)) {
+			return $mainLink. (strpos($mainLink , '?') ? '&' : '?'). $params;
+		}
+		return $mainLink;
 	}
 	public function getContactFormFields() {
 		$fields = array(

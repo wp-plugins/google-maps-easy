@@ -247,6 +247,9 @@ gmpGoogleMap.prototype.getViewHtmlId = function() {
 gmpGoogleMap.prototype.getId = function() {
 	return this._mapParams.id;
 };
+gmpGoogleMap.prototype.refresh = function() {
+	return google.maps.event.trigger(this.getRawMapInstance(), 'resize');
+};
 // Markers
 function gmpGoogleMarker(map, params) {
 	this._map = map;

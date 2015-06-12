@@ -95,7 +95,11 @@
 			<img src="<?php echo GMP_IMG_PATH. 'gmap_preview.png' ?>" data_val="<?php echo $this->currentMap['id']; ?>" class="show_map_icon map_num_<?php echo $this->currentMap['id']; ?>" title = "Click to view map">
 		</div>
 	<?php } ?>
-<div class="gmp_map_opts <?php echo $class_name;?>" id="mapConElem_<?php echo $viewId;?>">
+<div class="gmp_map_opts <?php echo $class_name;?>" 
+	 id="mapConElem_<?php echo $viewId;?>" 
+	 data-view-id="<?php echo $viewId;?>" 
+	 data-id="<?php echo $this->currentMap['id']; ?>"
+>
 	<div class="gmpMapDetailsContainer" id="gmpMapDetailsContainer_<?php echo $viewId ;?>">
 		<?php if($this->currentMap['params']['map_display_mode'] == 'popup') { ?>
 			<a class="btn btn-info close_button" onclick="closePopup();">X</a>

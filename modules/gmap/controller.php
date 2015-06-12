@@ -35,6 +35,7 @@ class gmapControllerGmp extends controllerGmp {
 			$addMarkerIds = reqGmp::getVar('add_marker_ids');
 			if($addMarkerIds && !empty($addMarkerIds)) {
 				frameGmp::_()->getModule('marker')->getModel()->setMarkersToMap($addMarkerIds, $mapId);
+				$this->getModel()->resortMarkers(array('map_id' => $mapId));
 			}
 			$res->addMessage(__('Done', GMP_LANG_CODE));
 			$res->addData('map_id', $mapId);
@@ -192,13 +193,20 @@ class gmapControllerGmp extends controllerGmp {
 		}
 		return $returnList;
 	}*/
+	public function resortMarkers() {
+		$res = new responseGmp();
+		if(!$this->getModel()->resortMarkers(reqGmp::get('post'))) {
+			$res->pushError( $this->getModel()->getErrors() );
+		}
+		return $res->ajaxExec();
+	}
 	/**
 	 * @see controller::getPermissions();
 	 */
 	public function getPermissions() {
 		return array(
 			GMP_USERLEVELS => array(
-				GMP_ADMIN => array('getListForTbl', 'getAllMaps', 'save', 'clear', 'remove', 'removeGroup')
+				GMP_ADMIN => array('getListForTbl', 'getAllMaps', 'save', 'clear', 'remove', 'removeGroup', 'resortMarkers')
 			),
 		);
 	}

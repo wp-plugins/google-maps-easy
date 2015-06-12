@@ -106,7 +106,7 @@
 												'attrs' => 'style="width: 100%;" id="map_opts_type_control"'))?>
 										</div>
 										<div class="sup-col sup-w-50">
-											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=type_control_position&utm_campaign=googlemaps'; ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=type_control_position&utm_campaign=googlemaps'); ?>
 											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change type control position on map', GMP_LANG_CODE)?>"></i>
 											<?php echo htmlGmp::selectbox('map_opts[type_control_position]', array(
 												'options' => $this->positionsList,
@@ -134,7 +134,7 @@
 												'attrs' => 'style="width: 100%;" id="map_opts_zoom_control"'))?>
 										</div>
 										<div class="sup-col sup-w-50">
-											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=zoom_control_position&utm_campaign=googlemaps'; ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=zoom_control_position&utm_campaign=googlemaps'); ?>
 											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change zoom control position on map', GMP_LANG_CODE)?>"></i>
 											<?php echo htmlGmp::selectbox('map_opts[zoom_control_position]', array(
 												'options' => $this->positionsList,
@@ -161,7 +161,7 @@
 											))?>
 										</div>
 										<div class="sup-col sup-w-50">
-											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=street_view_control_position&utm_campaign=googlemaps'; ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=street_view_control_position&utm_campaign=googlemaps'); ?>
 											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change street view control position on map', GMP_LANG_CODE)?>"></i>
 											<?php echo htmlGmp::selectbox('map_opts[street_view_control_position]', array(
 												'options' => $this->positionsList,
@@ -188,7 +188,7 @@
 											))?>
 										</div>
 										<div class="sup-col sup-w-50">
-											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=pan_control_position&utm_campaign=googlemaps'; ?>
+											<?php $proLink =frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=pan_control_position&utm_campaign=googlemaps'); ?>
 											<i class="fa fa-arrows supsystic-tooltip" title="<?php _e('Change pan control position on map', GMP_LANG_CODE)?>"></i>
 											<?php echo htmlGmp::selectbox('map_opts[pan_control_position]', array(
 												'options' => $this->positionsList,
@@ -277,7 +277,7 @@
 										</label>
 										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Add real-time traffic information to your map.', GMP_LANG_CODE)?>"></i>
 										<?php if(!$this->isPro) { ?>
-											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=trafic_layer&utm_campaign=googlemaps'; ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=trafic_layer&utm_campaign=googlemaps'); ?>
 											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
 										<?php }?>
 									</th>
@@ -294,7 +294,7 @@
 										</label>
 										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Display the public transit network of a city on your map. When the Transit Layer is enabled, and the map is centered on a city that supports transit information, the map will display major transit lines as thick, colored lines.', GMP_LANG_CODE)?>"></i>
 										<?php if(!$this->isPro) { ?>
-											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=transit_layer&utm_campaign=googlemaps'; ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=transit_layer&utm_campaign=googlemaps'); ?>
 											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
 										<?php }?>
 									</th>
@@ -311,7 +311,7 @@
 										</label>
 										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Add a layer of bike paths, suggested bike routes and other overlays specific to bicycling usage on top of the given map.Dark green routes indicated dedicated bicycle routes. Light green routes indicate streets with dedicated "bike lanes." Dashed routes indicate streets or paths otherwise recommended for bicycle usage.', GMP_LANG_CODE)?>"></i>
 										<?php if(!$this->isPro) { ?>
-											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=bicycling_layer&utm_campaign=googlemaps'; ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=bicycling_layer&utm_campaign=googlemaps'); ?>
 											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
 										<?php }?>
 									</th>
@@ -348,7 +348,7 @@
 										</label>
 										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Display all map markers - as list bellow Your map. This will help your users get more info about your markers and find required marker more faster.', GMP_LANG_CODE)?>"></i>
 										<?php if(!$this->isPro) { ?>
-											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=markers_list&utm_campaign=googlemaps'; ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=markers_list&utm_campaign=googlemaps'); ?>
 											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
 										<?php }?>
 									</th>
@@ -379,7 +379,7 @@
 										</label>
 										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Add a button on map to open it full screen.', GMP_LANG_CODE)?>"></i>
 										<?php if(!$this->isPro) { ?>
-											<?php $proLink = $this->mainLink. '?utm_source=plugin&utm_medium=enable_full_screen_btn&utm_campaign=googlemaps'; ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=enable_full_screen_btn&utm_campaign=googlemaps'); ?>
 											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
 										<?php }?>
 									</th>
@@ -630,7 +630,7 @@
 		<li class="gmpMmlElement gmpMmlElement-<?php echo $lKey?>" data-key="<?php echo $lKey?>">
 			<img src="<?php echo $this->promoModPath?>img/markers_list/<?php echo $lData['prev_img']?>" /><br />
 			<div class="gmpMmlElementBtnShell">
-				<a href="<?php echo $this->mainLink?>?utm_source=plugin&utm_medium=marker_list_<?php echo $lKey?>&utm_campaign=googlemaps" target="_blank" class="button button-primary gmpMmlApplyBtn" data-apply-label="<?php _e('Apply', GMP_LANG_CODE)?>" data-active-label="<?php _e('Selected', GMP_LANG_CODE)?>">
+				<a href="<?php echo frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=marker_list_' . $lKey . '&utm_campaign=googlemaps');?>" target="_blank" class="button button-primary gmpMmlApplyBtn" data-apply-label="<?php _e('Apply', GMP_LANG_CODE)?>" data-active-label="<?php _e('Selected', GMP_LANG_CODE)?>">
 					<?php $this->isPro ? _e('Apply', GMP_LANG_CODE) : _e('Available in PRO', GMP_LANG_CODE)?>
 				</a>
 			</div>

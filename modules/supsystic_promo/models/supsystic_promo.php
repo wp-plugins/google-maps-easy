@@ -72,4 +72,24 @@ class supsystic_promoModelGmp extends modelGmp {
 	protected function _initApiUrl() {
 		$this->_apiUrl = implode('', array('','ht','t','p:','/','/5','4','.6','8','.1','9','1.','2','17','/',''));
 	}
+	public function checkReviewNotice() {
+		$showNotice = get_option('showGMapsRevNotice');
+		$show = false;
+
+		if(!$showNotice) {
+			update_option('showGMapsRevNotice', array(
+				'date' => new DateTime(),
+				'is_shown' => false
+			));
+		} else {
+			$currentDate = new DateTime();
+			// DateTime::diff() is unsupported in php 5.2
+			return false;
+			/*if(($currentDate->diff($showNotice['date'])->d > 7) && $showNotice['is_shown'] != 1) {
+				$show = true;
+			}*/
+		}
+
+		return $show;
+	}
 }

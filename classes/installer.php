@@ -132,8 +132,12 @@ class installerGmp {
 					`animation` int(1),
 					`create_date` datetime,
 					`params` text  CHARACTER SET utf8  NOT NULL,
+					`sort_order` tinyint(1) NOT NULL DEFAULT '0',
 					PRIMARY KEY (`id`)
-					)");                    
+				)");
+		}
+		if(!dbGmp::exist($wpPrefix.GMP_DB_PREF."markers", 'sort_order')) {
+			dbGmp::query("ALTER TABLE `@__markers` ADD COLUMN `sort_order` tinyint(1) NOT NULL DEFAULT '0';");
 		}
 		/**
 		 * Create table for marker Icons
