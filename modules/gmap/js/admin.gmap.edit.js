@@ -610,10 +610,24 @@ function gmpOpenMarkerEdit(id) {
 		jQuery('#gmpMarkerForm input[name="marker_opts[coord_x]"]').val( markerParams.coord_x );
 		jQuery('#gmpMarkerForm input[name="marker_opts[coord_y]"]').val( markerParams.coord_y );
 		jQuery('#gmpMarkerForm input[name="marker_opts[id]"]').val( markerParams.id );
-        if(markerParams.params.show_description == 1){
-            jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]').prop('checked', true);
-            gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]') );
-        }
+		if(markerParams.params.show_description == 1){
+			jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]').prop('checked', true);
+			gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]') );
+		}
+		if(markerParams.params.marker_link == 1){
+			jQuery('#gmpMarkerForm input[name="marker_opts[params][marker_link]"]').prop('checked', true);
+			gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][marker_link]"]') );
+			jQuery('#gmpMarkerForm input[name="marker_opts[params][marker_link_src]"]').val( markerParams.params.marker_link_src );
+			if(markerParams.params.marker_link_new_wnd == 1){
+				jQuery('#gmpMarkerForm input[name="marker_opts[params][marker_link_new_wnd]"]').prop('checked', true);
+				gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][marker_link_new_wnd]"]') );
+			}
+		}
+		if(markerParams.params.description_mouse_hover == 1) {
+			jQuery('#gmpMarkerForm input[name="marker_opts[params][description_mouse_hover]"]').prop('checked', true);
+			gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][description_mouse_hover]"]') );
+		}
+		addLinkOptions();
 		gmpSetIconImg();
 		gmpSetCurrentMarker( marker );
 		marker.showInfoWnd();
@@ -674,9 +688,16 @@ function gmpResetMarkerForm() {
 	jQuery('#gmpMarkerForm')[0].reset();
 	jQuery('#gmpMarkerForm input[name="marker_opts[id]"]').val('');
 	jQuery('#gmpMarkerForm input[name="marker_opts[icon]"]').val( 1 );
-    jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]').prop('checked', false);
-    gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]') );
+	jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]').prop('checked', false);
+	gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]') );
+	jQuery('#gmpMarkerForm input[name="marker_opts[params][marker_link]"]').prop('checked', false);
+	gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][marker_link]"]') );
+	jQuery('#gmpMarkerForm input[name="marker_opts[params][marker_link_new_wnd]"]').prop('checked', false);
+	gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][marker_link_new_wnd]"]') );
+	jQuery('#gmpMarkerForm input[name="marker_opts[params][description_mouse_hover]"]').prop('checked', false);
+	gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][description_mouse_hover]"]') );
 	gmpSetIconImg();
+	addLinkOptions();
 }
 function _gmpMarkerDragEndClb() {
 	var currentMarkerIdInForm = g_gmpCurrentEditMarker ? g_gmpCurrentEditMarker.getId() : 0
@@ -838,4 +859,12 @@ function gmpWpColorpickerUpdatTitlesColor(color) {
 		styleObj = jQuery('<style type="text/css" id="gmpHardcodeMapTitleStl" />').appendTo('head');
 	}
 	styleObj.html('.gmpInfoWindowtitle { color: '+ g_gmpMarkerTitleColorLast+ ' !important; }');
+}
+function addLinkOptions() {
+	var markerLink = jQuery('#marker_link').prop('checked');
+	if (markerLink) {
+		jQuery('#link_options').css('display', 'inline');
+	} else {
+		jQuery('#link_options').css('display', 'none');
+	};
 }

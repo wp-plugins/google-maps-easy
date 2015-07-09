@@ -278,8 +278,32 @@ gmpGoogleMarker.prototype.init = function() {
 	if(this._markerParams.click) {
 		this._markerObj.addListener('click', jQuery.proxy(this._markerParams.click, this));
 	}
-	this._markerObj.addListener('click', jQuery.proxy(function () {
-		this.showInfoWnd();
+	var markerEvent = '';
+	if(this._markerParams.params && this._markerParams.params.description_mouse_hover == 1) {
+		markerEvent = 'mouseover';
+	} else {
+		markerEvent = 'click';
+	}
+	this._markerObj.addListener(markerEvent, jQuery.proxy(function () {
+		if(this._markerParams.params && this._markerParams.params.marker_link == 1) {
+			var markerLink = this._markerParams.params.marker_link_src;
+			var isLink = /http/gi;
+			if(!markerLink.match(isLink)) {
+				markerLink = 'http://' + this._markerParams.params.marker_link_src;
+			}
+			if(this._markerParams.params.marker_link_new_wnd == 1) {
+				window.open(
+					markerLink,
+					'_blank'
+				);
+			}
+			else {
+				location.href = markerLink;
+			}
+		}
+		else {
+			this.showInfoWnd();
+		}
 		jQuery(document).trigger('gmapAfterMarkerClick', this);
 	}, this));
 };
