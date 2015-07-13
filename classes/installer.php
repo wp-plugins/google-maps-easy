@@ -179,7 +179,7 @@ class installerGmp {
 			) DEFAULT CHARSET=utf8");
 			dbGmp::query("INSERT INTO `".$wpPrefix.GMP_DB_PREF."usage_stat` (code, visits) VALUES ('installed', 1)");
 		}
-        update_option($wpPrefix. GMP_DB_PREF. 'db_version', GMP_VERSION);
+        update_option($wpPrefix. GMP_DB_PREF. 'db_version', GMP_VERSION_PLUGIN);
 		add_option($wpPrefix. GMP_DB_PREF. 'db_installed', 1);
 		
         installerDbUpdaterGmp::runUpdate();
@@ -237,9 +237,9 @@ class installerGmp {
 		$wpPrefix = $wpdb->prefix; /* add to 0.0.3 Versiom */
 		$currentVersion = get_option($wpPrefix. GMP_DB_PREF. 'db_version', 0);
 		$installed = (int) get_option($wpPrefix. GMP_DB_PREF. 'db_installed', 0);
-		if(!$currentVersion || version_compare(GMP_VERSION, $currentVersion, '>')) {
+		if(!$currentVersion || version_compare(GMP_VERSION_PLUGIN, $currentVersion, '>')) {
 			self::init();
-			update_option($wpPrefix. GMP_DB_PREF. 'db_version', GMP_VERSION);
+			update_option($wpPrefix. GMP_DB_PREF. 'db_version', GMP_VERSION_PLUGIN);
 		}
 	}
 }

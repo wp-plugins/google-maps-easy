@@ -76,7 +76,7 @@ jQuery(document).ready(function(){
 				<?php _e('Welcome to', GMP_LANG_CODE)?>
 				<?php echo GMP_WP_PLUGIN_NAME?>
 				<?php _e('Version', GMP_LANG_CODE)?>
-				<?php echo GMP_VERSION?>!
+				<?php echo GMP_VERSION_PLUGIN?>!
 			</h1>
 			<div class="clear"></div>
 			<hr />

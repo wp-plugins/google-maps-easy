@@ -2,7 +2,7 @@
 	<div class="gmpAdminFooterCell">
 		<?php echo GMP_WP_PLUGIN_NAME?>
 		<?php _e('Version', GMP_LANG_CODE)?>:
-		<a target="_blank" href="http://wordpress.org/plugins/google-maps-easy/changelog/"><?php echo GMP_VERSION?></a>
+		<a target="_blank" href="http://wordpress.org/plugins/google-maps-easy/changelog/"><?php echo GMP_VERSION_PLUGIN?></a>
 	</div>
 	<div class="gmpAdminFooterCell">|</div>
 	<?php  if(!frameGmp::_()->getModule(implode('', array('l','ic','e','ns','e')))) {?>

@@ -8,9 +8,9 @@ class optionsViewGmp extends viewGmp {
 			$readmeContent = @file_get_contents($readmePath);
 			if(!empty($readmeContent)) {
 				$matchedData = '';
-				if(preg_match('/= '. GMP_VERSION. ' =(.+)=.+=/isU', $readmeContent, $matches)) {
+				if(preg_match('/= '. GMP_VERSION_PLUGIN. ' =(.+)=.+=/isU', $readmeContent, $matches)) {
 					$matchedData = $matches[1];
-				} elseif(preg_match('/= '. GMP_VERSION. ' =(.+)/is', $readmeContent, $matches)) {
+				} elseif(preg_match('/= '. GMP_VERSION_PLUGIN. ' =(.+)/is', $readmeContent, $matches)) {
 					$matchedData = $matches[1];
 				}
 				$matchedData = trim($matchedData);
