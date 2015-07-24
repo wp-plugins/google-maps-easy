@@ -46,6 +46,10 @@ class installerGmp {
 			dbGmp::query("INSERT INTO `".$wpPrefix.GMP_DB_PREF."modules` (id, code, active, type_id, params, has_tab, label, description) VALUES
 				(NULL, 'mail', 1, 1, '', 1, 'mail', 'mail');");
 		}
+		if(!dbGmp::exist('@__modules', 'code', 'supsystic_promo')) {
+			dbGmp::query("INSERT INTO `@__modules` (id, code, active, type_id, params, has_tab, label, description) VALUES
+				(NULL, 'supsystic_promo', 1, 1, '', 1, 'supsystic_promo', 'supsystic_promo');");
+		}
 		/**
 		 *  modules_type 
 		 */
@@ -162,8 +166,12 @@ class installerGmp {
 					`description` text CHARACTER SET utf8,
 				 PRIMARY KEY (`id`)
 				  )");
-			dbGmp::query("INSERT INTO `".$wpPrefix.GMP_DB_PREF."marker_groups` VALUES('null', 'Default Group','Default Group');");
-		}     
+		}
+		$markerGroupsClearedInvalid = get_option($wpPrefix. GMP_DB_PREF. 'mg_cleared_inv', 0);
+		if(!$markerGroupsClearedInvalid) {
+			dbGmp::query('UPDATE @__markers SET marker_group_id = 0 WHERE marker_group_id = 1');	// This was wrong update in markers table before - fix this one time before update plugin
+			update_option($wpPrefix. GMP_DB_PREF. 'mg_cleared_inv', 1);
+		}
 		/**
 		* Plugin usage statistics
 		*/

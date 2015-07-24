@@ -173,7 +173,7 @@ class csvControllerGmp extends controllerGmp {
 									if($newMapId && $originalMapId) {
 										dbGmp::query("UPDATE @__maps SET id = '$originalMapId' WHERE id = '$newMapId'");
 										if($originalMapId > $newMapId)
-											dbPps::setAutoIncrement('@__popup', $originalMapId + 1);
+											dbGmp::setAutoIncrement('@__popup', $originalMapId + 1);
 									}
 								}
 							}

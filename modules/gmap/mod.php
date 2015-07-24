@@ -2,6 +2,7 @@
 class  gmapGmp extends moduleGmp {
 	private $_stylizations = array();
 	private $_markersLists = array();
+	private $_markersGroupsList = array();
 	
 	public function init() {
 		dispatcherGmp::addFilter('mainAdminTabs', array($this, 'addAdminTab'));
@@ -110,5 +111,14 @@ class  gmapGmp extends moduleGmp {
 	public function getMarkerListByKey($key) {
 		$this->getMarkerLists();
 		return isset($this->_markersLists[ $key ]) ? $this->_markersLists[ $key ] : false;
+	}
+	public function getMarkerGroupsList() {
+		if(empty($this->_markersGroupsList)) {
+			$markerGroups = frameGmp::_()->getModule('marker_groups')->getModel()->getAllMarkerGroups();
+			foreach($markerGroups as $key => $value) {
+				$this->_markersGroupsList[$value['id']] = $value['title'];
+			}
+			return $this->_markersGroupsList;
+		}
 	}
 }

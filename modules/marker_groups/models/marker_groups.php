@@ -1,54 +1,68 @@
 <?php
 class marker_groupsModelGmp extends modelGmp {
-    public function getMarkerGroups($params = array()){
-        return frameGmp::_()->getTable('marker_groups')->get('*', $params);
-    }
-	public function getListForMarkers($markers) {
-		if($markers) {
-			$goupIds = array();
-			foreach($markers as $m) {
-				if((int) $m['marker_group_id'])
-					$goupIds[ $m['marker_group_id'] ] = 1;
-			}
-			if(!empty($goupIds)) {
-				$goupIds = array_keys($goupIds);
-				return $this->getMarkerGroups(array('additionalCondition' => 'id IN ('. implode(',', $goupIds). ')'));
-			}
+	function __construct() {
+		$this->_setTbl('marker_groups');
+	}
+	public function getAllMarkerGroups($d = array()){
+		if(isset($d['limitFrom']) && isset($d['limitTo']))
+			frameGmp::_()->getTable('marker_groups')->limitFrom($d['limitFrom'])->limitTo($d['limitTo']);
+		if(isset($d['orderBy']) && !empty($d['orderBy'])) {
+			frameGmp::_()->getTable('marker_groups')->orderBy( $d['orderBy'] );
+		}
+		return $markerGroups = frameGmp::_()->getTable('marker_groups')->get('*', $d);
+	}
+	public function getMarkerGroupById($id = false){
+		if(!$id){
+			return false;
+		}
+		$markerGroup = frameGmp::_()->getTable('marker_groups')->get('*', array('id' => (int)$id), '', 'row');
+
+		if(!empty($markerGroup)){
+			return $markerGroup;
 		}
 		return false;
 	}
-	public function getGroupByTitle($title) {
-		return frameGmp::_()->getTable('marker_groups')->get('*', array('title' => $title), '', 'row');
-	}
-    public function getGroupById($id){
-        $group = frameGmp::_()->getTable('marker_groups')->get('*', array('id' => $id), '', 'row');
-        if(!empty($group)){
-            return $group;
-        }
-        return $group;
-    }
-    public function showAllGroups(){
-        $groups = $this->getMarkerGroups();
-        return $this->getModule()->getView()->showGroupsTab($groups);
-    }
-    public function saveGroup($params){
-        if($params['mode'] == 'update'){
-            unset($params['mode']);
-            $id = $params['id'];
-            unset($params['id']);
-            frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('group.edit');
-			if(frameGmp::_()->getTable('marker_groups')->update($params, array('id' => $id))) {
-				return $id;
-			} else
-				$this->pushError (frameGmp::_()->getTable('marker_groups')->getErrors());
-        } else {
-            unset($params['mode']);      
-            frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('group.save');
-            return frameGmp::_()->getTable('marker_groups')->insert($params);
-        }
+	public function remove($markerGroupId){
+		$markerGroupId = (int) $markerGroupId;
+		if(!empty($markerGroupId)) {
+			return frameGmp::_()->getTable("marker_groups")->delete($markerGroupId);
+		} else
+			$this->pushError (__('Invalid ID', GMP_LANG_CODE));
 		return false;
-    }
-    public function removeGroup($groupId){
-      return frameGmp::_()->getTable('marker_groups')->delete(array('id' => $groupId));
-    }
+	}
+	public function prepareParams($params){
+		$insert = array(
+			'title' => trim($params['title']),
+		);
+		return $insert;
+	}
+	private function _validateSaveMarkerGroup($markerGroup) {
+		if(empty($markerGroup['title'])) {
+			$this->pushError(__('Please enter Marker Category'), 'marker_group[title]', GMP_LANG_CODE);
+		}
+		return !$this->haveErrors();
+	}
+	public function updateMarkerGroup($params){
+		$data = $this->prepareParams($params);
+		if($this->_validateSaveMarkerGroup($data)) {
+			$res = frameGmp::_()->getTable('marker_groups')->update($data, array('id' => (int)$params['id']));
+			return $res;
+		}
+		return false;
+	}
+	public function saveNewMarkerGroup($params){
+		if(!empty($params)) {
+			$insertData = $this->prepareParams($params);
+			if($this->_validateSaveMarkerGroup($insertData)) {
+				$newMarkerGroupId = frameGmp::_()->getTable('marker_groups')->insert($insertData);
+				if($newMarkerGroupId){
+					return $newMarkerGroupId;
+				} else {
+					$this->pushError(frameGmp::_()->getTable('marker_groups')->getErrors());
+				}
+			}
+		} else
+			$this->pushError(__('Empty Params', GMP_LANG_CODE));
+		return false;
+	}
 }

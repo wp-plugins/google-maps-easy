@@ -156,6 +156,7 @@ class gmapViewGmp extends viewGmp {
 		frameGmp::_()->addStyle('admin.gmap', $this->getModule()->getModPath(). 'css/admin.gmap.css');
 		frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpMapShortcode', GMP_SHORTCODE);
 		$allStylizationsList = $this->getModule()->getStylizationsList();
+		$allMarkerGroupsList = $this->getModule()->getMarkerGroupsList();
 		frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpAllStylizationsList', $allStylizationsList);
 		frameGmp::_()->addJSVar('admin.gmap.edit', 'gmpMapsListUrl', frameGmp::_()->getModule('options')->getTabUrl('gmap'));
 		$stylizationsForSelect = array(
@@ -163,6 +164,12 @@ class gmapViewGmp extends viewGmp {
 		);
 		foreach($allStylizationsList as $styleName => $json) {
 			$stylizationsForSelect[ $styleName ] = $styleName;	// JSON data will be attached on js side
+		}
+		$markerGroupsForSelect = array(
+			'0' => __('None', GMP_LANG_CODE),
+		);
+		foreach($allMarkerGroupsList as $key => $value) {
+			$markerGroupsForSelect[ $key ] = $value;
 		}
 		$editMap = $id ? true : false;
 		if($editMap) {
@@ -181,6 +188,7 @@ class gmapViewGmp extends viewGmp {
 		$this->assign('isPro', frameGmp::_()->getModule('supsystic_promo')->isPro());
 		$this->assign('mainLink', frameGmp::_()->getModule('supsystic_promo')->getMainLink());
 		$this->assign('markerLists', $markerLists);
+		$this->assign('markerGroupsForSelect', $markerGroupsForSelect);
 		$this->assign('viewId', 'gmpPreview_'. mt_rand(1, 999));
 		$this->assign('promoModPath', frameGmp::_()->getModule('supsystic_promo')->getModPath());
 		return parent::getContent('gmapEditMap');

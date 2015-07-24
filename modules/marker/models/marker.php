@@ -15,7 +15,7 @@ class markerModelGmp extends modelGmp {
 		$update = (bool) $id;
 		if(!empty($marker['title'])) {
 			if(!isset($marker['marker_group_id'])) {
-				$marker['marker_group_id'] = 1;
+				$marker['marker_group_id'] = 0;
 			}
 			if(!isset($marker['icon']) || !frameGmp::_()->getModule('icons')->getModel()->iconExists($marker['icon'])) {
 				$marker['icon'] = 1;

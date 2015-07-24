@@ -556,6 +556,22 @@
 										'checked' => ''))?>
 								</td>
 							</tr>
+							<tr>
+								<th scope="row">
+									<label for="marker_opts_marker_group_id">
+										<?php _e('Marker Category', GMP_LANG_CODE)?>:
+									</label>
+									<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Choose marker category', GMP_LANG_CODE)?>"></i>
+								</th>
+								<td>
+									<div class="sup-col" style="width: 100%;">
+										<?php echo htmlGmp::selectbox('marker_opts[marker_group_id]', array(
+											'options' => $this->markerGroupsForSelect,
+											'value' => '',
+											'attrs' => 'style="width: 100%;" id="marker_opts_marker_group_id"'))?>
+									</div>
+								</td>
+							</tr>
 						</table>
 						<?php echo htmlGmp::hidden('mod', array('value' => 'marker'))?>
 						<?php echo htmlGmp::hidden('action', array('value' => 'save'))?>

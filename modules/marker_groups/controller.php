@@ -1,49 +1,72 @@
 <?php
 class marker_groupsControllerGmp extends controllerGmp {
-     public function refreshGroupsList(){
-        $markers = $this->getModel()->getMarkerGroups();
-        $data = $this->getView()->showGroupsTab($markers,true);
-        $res= new responseGmp();
-        $res->setHtml($data);
-        return $res->ajaxExec();
-    }
-    function saveGoup() {
-        $data=  reqGmp::get('post');
-        $res = new responseGmp();
-        if(!isset($data['goupInfo'])){
-            $res->pushError(__('Nothing To Save', GMP_LANG_CODE));
-            return $res->ajaxExec();
-        }
-        if($id = $this->getModel()->saveGroup($data['goupInfo'])) {
-            $res->addMessage(__('Done', GMP_LANG_CODE));
-			$res->addData('group', $this->getModel()->getGroupById($id));
-        } else {
-            $res->pushError(__('Cannot Save Group', GMP_LANG_CODE));
-        }
-        return $res->ajaxExec();
-    }
-    public function removeGroup(){
-        $params = reqGmp::get('post');
-        $res = new responseGmp();
-        if(!isset($params['group_id'])){
-            $res->pushError(__('Group Not Found', GMP_LANG_CODE));
-            return $res->ajaxExec();
-        }    
-        if($this->getModel()->removeGroup($params["group_id"])){
-           $res->addMessage(__("Done", GMP_LANG_CODE)); 
-        }else{
-            $res->pushError(__("Cannot remove group", GMP_LANG_CODE));
-        }
-        frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat("group.delete");
-        return $res->ajaxExec();
-    }
 	/**
 	 * @see controller::getPermissions();
 	 */
+	protected function _prepareTextLikeSearch($val) {
+		$query = '(title LIKE "%'. $val. '%"';
+		if(is_numeric($val)) {
+			$query .= ' OR id LIKE "%'. (int) $val. '%"';
+		}
+		$query .= ')';
+		return $query;
+	}
+	protected function _prepareListForTbl($data) {
+		if (!empty($data)) {
+			foreach($data as $i => $v) {
+				$markerGroupId   = (int)$data[$i]['id'];
+				$markerGroup     = $this->getModel()->getMarkerGroupById($markerGroupId);
+
+				// Actions
+				$actions = $this->getView()->getListOperations($markerGroup);
+				$data[$i]['actions'] = preg_replace('/\s\s+/', ' ', trim($actions));
+			}
+		}
+		return $data;
+	}
+	public function save() {
+		$saveRes = false;
+		$data = reqGmp::get('post');
+		$res = new responseGmp();
+		$markerGroupId = 0;
+		$edit = true;
+		if(!isset($data['marker_group'])) {
+			$res->pushError(__('Marker Category data not found', GMP_LANG_CODE));
+			return $res->ajaxExec();
+		}
+		if(isset($data['marker_group']['id']) && !empty($data['marker_group']['id'])) {
+			$saveRes = $this->getModel()->updateMarkerGroup($data['marker_group']);
+			$markerGroupId = $data['marker_group']['id'];
+		} else {
+			$saveRes = $this->getModel()->saveNewMarkerGroup($data['marker_group']);
+			$markerGroupId = $saveRes;
+			$edit = false;
+		}
+		if($saveRes) {
+			$res->addData('marker_group_id', $markerGroupId);
+			$res->addData('marker_group', $this->getModel()->getMarkerGroupById( $markerGroupId ));
+			if(!$edit) {	// For new marker category
+				$fullEditUrl = $this->getModule()->getEditMarkerGroupLink( $markerGroupId );
+				$editUrlParts = explode('/', $fullEditUrl);
+				$res->addData('edit_url', $editUrlParts[ count($editUrlParts) - 1 ]);
+			}
+		} else {
+			$res->pushError( $this->getModel()->getErrors() );
+		}
+		return $res->ajaxExec();
+	}
+	public function remove() {
+		$res = new responseGmp();
+		if($this->getModel()->remove(reqGmp::getVar('id', 'post'))) {
+			$res->addMessage(__('Done', GMP_LANG_CODE));
+		} else
+			$res->pushError($this->getModel()->getErrors());
+		$res->ajaxExec();
+	}
 	public function getPermissions() {
 		return array(
 			GMP_USERLEVELS => array(
-				GMP_ADMIN => array('refreshGroupsList', 'saveGoup', 'removeGroup')
+				GMP_ADMIN => array('getAllMarkerGroups', 'save', 'remove')
 			),
 		);
 	}

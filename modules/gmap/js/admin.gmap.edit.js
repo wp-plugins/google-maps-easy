@@ -609,6 +609,7 @@ function gmpOpenMarkerEdit(id) {
 		jQuery('#gmpMarkerForm input[name="marker_opts[address]"]').val( markerParams.address );
 		jQuery('#gmpMarkerForm input[name="marker_opts[coord_x]"]').val( markerParams.coord_x );
 		jQuery('#gmpMarkerForm input[name="marker_opts[coord_y]"]').val( markerParams.coord_y );
+		jQuery('#gmpMarkerForm select[name="marker_opts[marker_group_id]"]').val(markerParams.marker_group_id);
 		jQuery('#gmpMarkerForm input[name="marker_opts[id]"]').val( markerParams.id );
 		if(markerParams.params.show_description == 1){
 			jQuery('#gmpMarkerForm input[name="marker_opts[params][show_description]"]').prop('checked', true);
