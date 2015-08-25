@@ -37,7 +37,7 @@ class gmapModelGmp extends modelGmp {
 					'type_control', 'zoom_control', 'street_view_control', 'pan_control', 'overview_control', 'draggable',
 					'dbl_click_zoom', 'mouse_wheel_zoom', 'map_type', 'map_stylization', 'marker_clasterer', 'marker_title_color',
 					// Maybe PRO params - but let them be here - to avoid dublications
-					'markers_list_type'));
+					'markers_list_type', 'markers_list_color',));
 		return $mapOptKeys;
 	}
 	public function getHtmlOptionsList() {

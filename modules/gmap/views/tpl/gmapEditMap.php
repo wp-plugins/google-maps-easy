@@ -356,6 +356,15 @@
 										<a id="gmpMapMarkersListBtn" href="#" class="button"><?php _e('Select Markers List type', GMP_LANG_CODE)?></a>
 										<?php echo htmlGmp::hidden('map_opts[markers_list_type]', array(
 											'value' => $this->editMap && isset($this->map['params']['markers_list_type']) ? $this->map['params']['markers_list_type'] : ''))?>
+										<div id="gmpMapMarkersListSettings" style="display: none;">
+											<div style="margin-top: 10px;">
+												<label for="map_opts_markers_list_color">
+													<?php _e('Markers List Color', GMP_LANG_CODE)?>
+												</label></br>
+												<?php echo htmlGmp::colorpicker('map_opts[markers_list_color]', array(
+													'value' => $this->editMap && isset($this->map['params']['markers_list_color']) ? $this->map['params']['markers_list_color'] : '#55BA68'))?>
+											</div>
+										</div>
 									</td>
 								</tr>
 								<tr>
@@ -399,6 +408,111 @@
 									<td>
 										<?php echo htmlGmp::colorpicker('map_opts[marker_title_color]', array(
 											'value' => $this->editMap && isset($this->map['params']['marker_title_color']) ? $this->map['params']['marker_title_color'] : '#A52A2A'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=enable_custom_map_controls&utm_campaign=googlemaps'); ?>
+										<?php }?>
+										<label for="map_opts_enable_custom_map_controls">
+											<?php _e('Custom Map Controls', GMP_LANG_CODE)?>:
+										</label>
+										<i
+											style="float: right;"
+											class="fa fa-question supsystic-tooltip"
+											title="<?php _e('Add custom map controls to the map.', GMP_LANG_CODE); 
+												if(!$this->isPro){ 
+													echo esc_html('<a href="'. $proLink. '" target="_blank"><img src="'. $this->promoModPath. 'img/custom_controls/custom_map_controls.png" /></a>'); 
+												}?>"
+										></i>
+										<?php if(!$this->isPro) { ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[enable_custom_map_controls]', array(
+											'value' => $this->editMap && isset($this->map['params']['enable_custom_map_controls']) ? $this->map['params']['enable_custom_map_controls'] : false,
+											'attrs' => 'class="gmpProOpt" onclick="gmpAddCustomControlsOptions()"'))?>
+										<div id="custom_controls_options" style="display: none;">
+											<div style="margin-top: 10px;">
+											<label for="map_opts_custom_controls_type">
+												<?php _e('Controls type', GMP_LANG_CODE)?>
+											</label>
+											<?php echo htmlGmp::selectbox('map_opts[custom_controls_type]', array(
+												'options' => array('gmpSquareControls' => __('Square', GMP_LANG_CODE), 'gmpRoundedEdgesControls' => __('Rounded edges', GMP_LANG_CODE), 'gmpRoundControls' => __('Round', GMP_LANG_CODE)),
+												'value' => $this->editMap && isset($this->map['params']['custom_controls_type']) ? $this->map['params']['custom_controls_type'] : 'round',
+												'attrs' => 'class="gmpProOpt" style="width: 100%;" id="map_opts_custom_controls_type"'))?>
+											</div>
+											<div style="margin-top: 10px;">
+												<label for="map_opts_custom_controls_bg_color">
+													<?php _e('Background color', GMP_LANG_CODE)?>
+												</label></br>
+												<?php echo htmlGmp::colorpicker('map_opts[custom_controls_bg_color]', array(
+													'attrs' => 'class="gmpProOpt"',
+													'value' => $this->editMap && isset($this->map['params']['custom_controls_bg_color']) ? $this->map['params']['custom_controls_bg_color'] : '#55BA68'))?>
+											</div>
+											<div style="margin-top: 10px;">
+											<label for="map_opts_custom_controls_txt_color">
+												<?php _e('Text color', GMP_LANG_CODE)?>
+											</label></br>
+											<?php echo htmlGmp::colorpicker('map_opts[custom_controls_txt_color]', array(
+												'attrs' => 'class="gmpProOpt"',
+												'value' => $this->editMap && isset($this->map['params']['custom_controls_txt_color']) ? $this->map['params']['custom_controls_txt_color'] : '#000000'))?>
+											</div>
+											<div style="margin-top: 10px;">
+												<label for="map_opts_custom_controls_position">
+													<?php _e('Controls position', GMP_LANG_CODE)?>
+												</label>
+												<?php echo htmlGmp::selectbox('map_opts[custom_controls_position]', array(
+													'options' => $this->positionsList,
+													'value' => $this->editMap && isset($this->map['params']['custom_controls_position']) ? $this->map['params']['custom_controls_position'] : 'TOP_LEFT',
+													'attrs' => 'class="gmpProOpt" style="width: 100%;" id="map_opts_custom_controls_position"'
+												))?>
+											</div>
+											<div style="margin-top: 10px;">
+												<label for="map_opts_custom_controls_slider_min">
+													<?php _e('Min Search Radius', GMP_LANG_CODE)?>
+												</label></br>
+												<?php echo htmlGmp::text('map_opts[custom_controls_slider_min]', array(
+													'value' => $this->editMap && isset($this->map['params']['custom_controls_slider_min']) ? $this->map['params']['custom_controls_slider_min'] : '0',
+													'attrs' => 'class="gmpProOpt" style="width: 100%;" id="map_opts_custom_controls_slider_min"'))?>
+											</div>
+											<div style="margin-top: 10px;">
+												<label for="map_opts_custom_controls_slider_max">
+													<?php _e('Max Search Radius', GMP_LANG_CODE)?>
+												</label></br>
+												<?php echo htmlGmp::text('map_opts[custom_controls_slider_max]', array(
+													'value' => $this->editMap && isset($this->map['params']['custom_controls_slider_max']) ? $this->map['params']['custom_controls_slider_max'] : '1000000',
+													'attrs' => 'class="gmpProOpt" style="width: 100%;" id="map_opts_custom_controls_slider_max"'))?>
+											</div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=enable_directions_btn&utm_campaign=googlemaps'); ?>
+										<?php }?>
+										<label for="map_opts_enable_directions_btn">
+											<?php _e('Endable Get Directions button', GMP_LANG_CODE)?>:
+										</label>
+										<i
+											style="float: right;"
+											class="fa fa-question supsystic-tooltip"
+											title="<?php _e('Add a button at marker description to get direction from the entered address to the marker.', GMP_LANG_CODE); 
+												if(!$this->isPro){
+													echo esc_html('<a href="'. $proLink. '" target="_blank"><img src="'. $this->promoModPath. 'img/directions/get_directions.png" /></a>'); 
+												}?>"
+										></i>
+										<?php if(!$this->isPro) { ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[enable_directions_btn]', array(
+											'value' => $this->editMap && isset($this->map['params']['enable_directions_btn']) ? $this->map['params']['enable_directions_btn'] : false,
+											'attrs' => 'class="gmpProOpt"'))?>
 									</td>
 								</tr>
 							</table>
@@ -529,7 +643,7 @@
 								<td>
 									<?php echo htmlGmp::checkbox('marker_opts[params][marker_link]', array(
 										'checked' => '',
-										'attrs' => 'id="marker_link" onclick="addLinkOptions()"',
+										'attrs' => 'id="marker_link" onclick="gmpAddLinkOptions()"',
 									))?>
 									<div id="link_options" style="display: none;">
 										<?php echo htmlGmp::text('marker_opts[params][marker_link_src]', array(

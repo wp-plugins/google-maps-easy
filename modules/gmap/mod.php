@@ -2,7 +2,6 @@
 class  gmapGmp extends moduleGmp {
 	private $_stylizations = array();
 	private $_markersLists = array();
-	private $_markersGroupsList = array();
 	
 	public function init() {
 		dispatcherGmp::addFilter('mainAdminTabs', array($this, 'addAdminTab'));
@@ -95,6 +94,7 @@ class  gmapGmp extends moduleGmp {
 				'slider_simple_vertical_title_img' => array('label' => __('Slider Vertical - Title and Img', GMP_LANG_CODE), 'or' => 'v', 'd' => array('title', 'img'), 'eng' => 'jssor'),
 				'slider_simple_vertical_title_desc' => array('label' => __('Slider Vertical - Title and Description', GMP_LANG_CODE), 'or' => 'v', 'd' => array('title', 'desc'), 'eng' => 'jssor'),
 				'slider_simple_vertical_img_2cols' => array('label' => __('Slider Vertical - Title and Img', GMP_LANG_CODE), 'or' => 'v', 'd' => array('img'), 'eng' => 'jssor', 'two_cols' => true),
+				'slider_simple_table' => array('label' => __('Slider Table', GMP_LANG_CODE), 'or' => 'h', 'd' => array('title', 'img', 'desc'), 'eng' => 'table'),
 			);
 			foreach($this->_markersLists as $i => $v) {
 				$this->_markersLists[$i]['prev_img'] = isset($this->_markersLists[$i]['prev_img']) ? $this->_markersLists[$i]['prev_img'] : $i. '.jpg';
@@ -111,14 +111,5 @@ class  gmapGmp extends moduleGmp {
 	public function getMarkerListByKey($key) {
 		$this->getMarkerLists();
 		return isset($this->_markersLists[ $key ]) ? $this->_markersLists[ $key ] : false;
-	}
-	public function getMarkerGroupsList() {
-		if(empty($this->_markersGroupsList)) {
-			$markerGroups = frameGmp::_()->getModule('marker_groups')->getModel()->getAllMarkerGroups();
-			foreach($markerGroups as $key => $value) {
-				$this->_markersGroupsList[$value['id']] = $value['title'];
-			}
-			return $this->_markersGroupsList;
-		}
 	}
 }

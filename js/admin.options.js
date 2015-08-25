@@ -117,6 +117,16 @@ function tooltipsterize(shell) {
 	,	delay: 0
 	,	animation: 'swing'
 	,	maxWidth: 450
+	,	functionInit: function(origin, content) {
+			// Check if there are image in tooltip
+			if(content && typeof(content) === 'string' && content.indexOf('<img') !== -1) {
+				// Preload all images from tooltip - to make it calc position correctly
+				var $tmpDiv = jQuery('<div style="display: none;" />').appendTo('body').html(content);
+				$tmpDiv.load(function(){
+					$tmpDiv.remove();
+				});
+			}
+		}
 	}
 	,	classToPos = {
 		'.supsystic-tooltip': 'top-left'

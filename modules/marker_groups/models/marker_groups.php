@@ -11,6 +11,20 @@ class marker_groupsModelGmp extends modelGmp {
 		}
 		return $markerGroups = frameGmp::_()->getTable('marker_groups')->get('*', $d);
 	}
+	public function getMarkersGroupsByIds($ids){
+		if(!$ids){
+			return false;
+		}
+		if(!is_array($ids))
+			$ids = array( $ids );
+		$ids = array_map('intval', $ids);
+		$groups = frameGmp::_()->getTable('marker_groups')->get('*', array('additionalCondition' => 'id IN (' . implode(',', $ids) . ')'));
+
+		if(!empty($groups)) {
+			return $groups;
+		}
+		return false;
+	}
 	public function getMarkerGroupById($id = false){
 		if(!$id){
 			return false;
@@ -30,11 +44,9 @@ class marker_groupsModelGmp extends modelGmp {
 			$this->pushError (__('Invalid ID', GMP_LANG_CODE));
 		return false;
 	}
-	public function prepareParams($params){
-		$insert = array(
-			'title' => trim($params['title']),
-		);
-		return $insert;
+	protected function _dataSave($data, $update = false) {
+		$data['title'] = trim($data['title']);
+		return $data;
 	}
 	private function _validateSaveMarkerGroup($markerGroup) {
 		if(empty($markerGroup['title'])) {
@@ -43,7 +55,7 @@ class marker_groupsModelGmp extends modelGmp {
 		return !$this->haveErrors();
 	}
 	public function updateMarkerGroup($params){
-		$data = $this->prepareParams($params);
+		$data = $this->_dataSave($params);
 		if($this->_validateSaveMarkerGroup($data)) {
 			$res = frameGmp::_()->getTable('marker_groups')->update($data, array('id' => (int)$params['id']));
 			return $res;
@@ -52,7 +64,7 @@ class marker_groupsModelGmp extends modelGmp {
 	}
 	public function saveNewMarkerGroup($params){
 		if(!empty($params)) {
-			$insertData = $this->prepareParams($params);
+			$insertData = $this->_dataSave($params);
 			if($this->_validateSaveMarkerGroup($insertData)) {
 				$newMarkerGroupId = frameGmp::_()->getTable('marker_groups')->insert($insertData);
 				if($newMarkerGroupId){

@@ -501,15 +501,15 @@ class htmlGmp {
             $paramsStr = implode(', ', $paramsArr);
         }
 		
-        $res = '<div id="toeSliderDisplay_'. $id. '">'. (empty($params['value']) ? '' : $params['value']). '</div>';
+        $res = '<div id="toeSliderDisplay_'. $id. '" class="toeSliderDisplay">'. (empty($params['value']) ? '' : $params['value']). '</div>';
         $res .= '<div id="'. $id. '"></div>';
         $params['attrs'] = 'id="toeSliderInput_'. $id. '"';
         $res .= self::hidden($name, $params);
-        $res .= '<script type="text/javascript"><!-- 
+        $res .= '<script type="text/javascript">
             jQuery(function(){ 
                 jQuery("#'. $id. '").slider({'. $paramsStr. '}); 
             }); 
-            --></script>';
+            </script>';
         return $res;
     }
 	static public function capcha() {

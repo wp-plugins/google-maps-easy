@@ -14,11 +14,8 @@ class marker_groupsControllerGmp extends controllerGmp {
 	protected function _prepareListForTbl($data) {
 		if (!empty($data)) {
 			foreach($data as $i => $v) {
-				$markerGroupId   = (int)$data[$i]['id'];
-				$markerGroup     = $this->getModel()->getMarkerGroupById($markerGroupId);
-
 				// Actions
-				$actions = $this->getView()->getListOperations($markerGroup);
+				$actions = $this->getView()->getListOperations($v);
 				$data[$i]['actions'] = preg_replace('/\s\s+/', ' ', trim($actions));
 			}
 		}

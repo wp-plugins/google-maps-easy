@@ -40,6 +40,9 @@ jQuery(document).ready(function(){
 		g_gmpEditMap = true;
 	}
 	previewMapParams.view_id = jQuery('#gmpViewId').val();
+	if(previewMapParams.enable_custom_map_controls == 1) {
+		gmpAddCustomControlsOptions();
+	}
 	g_gmpMap = new gmpGoogleMap('#gmpMapPreview', previewMapParams);
 	if(gmpMainMap && gmpMainMap.markers) {
 		gmpRefreshMapMarkers(g_gmpMap, gmpMainMap.markers);
@@ -628,7 +631,7 @@ function gmpOpenMarkerEdit(id) {
 			jQuery('#gmpMarkerForm input[name="marker_opts[params][description_mouse_hover]"]').prop('checked', true);
 			gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][description_mouse_hover]"]') );
 		}
-		addLinkOptions();
+		gmpAddLinkOptions();
 		gmpSetIconImg();
 		gmpSetCurrentMarker( marker );
 		marker.showInfoWnd();
@@ -698,7 +701,7 @@ function gmpResetMarkerForm() {
 	jQuery('#gmpMarkerForm input[name="marker_opts[params][description_mouse_hover]"]').prop('checked', false);
 	gmpCheckUpdate( jQuery('#gmpMarkerForm input[name="marker_opts[params][description_mouse_hover]"]') );
 	gmpSetIconImg();
-	addLinkOptions();
+	gmpAddLinkOptions();
 }
 function _gmpMarkerDragEndClb() {
 	var currentMarkerIdInForm = g_gmpCurrentEditMarker ? g_gmpCurrentEditMarker.getId() : 0
@@ -861,11 +864,29 @@ function gmpWpColorpickerUpdatTitlesColor(color) {
 	}
 	styleObj.html('.gmpInfoWindowtitle { color: '+ g_gmpMarkerTitleColorLast+ ' !important; }');
 }
-function addLinkOptions() {
+function gmpAddLinkOptions() {
 	var markerLink = jQuery('#marker_link').prop('checked');
 	if (markerLink) {
 		jQuery('#link_options').css('display', 'inline');
 	} else {
 		jQuery('#link_options').css('display', 'none');
+	}
+}
+function gmpAddCustomControlsOptions() {
+	var customMapControls = jQuery('#map_optsenable_custom_map_controls_check').prop('checked');
+	if (customMapControls) {
+		jQuery('#custom_controls_options').css('display', 'block');
+	} else {
+		jQuery('#custom_controls_options').css('display', 'none');
 	};
+}
+function wpColorPicker_map_optscustom_controls_bg_color_change(event, ui) {
+	if(!GMP_DATA.isPro) {
+		jQuery('#gmpMapForm [name="map_opts[custom_controls_bg_color]"]').trigger('change');
+	}
+}
+function wpColorPicker_map_optscustom_controls_txt_color_change(event, ui) {
+	if(!GMP_DATA.isPro) {
+		jQuery('#gmpMapForm [name="map_opts[custom_controls_txt_color]"]').trigger('change');
+	}
 }

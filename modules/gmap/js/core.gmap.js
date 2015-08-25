@@ -324,6 +324,7 @@ gmpGoogleMarker.prototype.hideInfoWnd = function() {
 		this._infoWindow.close();
 		this._infoWndOpened = false;
 	}
+	jQuery(document).trigger('gmapAfterHideInfoWnd', this);
 };
 gmpGoogleMarker.prototype.getRawMarkerInstance = function() {
 	return this._markerObj;
@@ -400,6 +401,7 @@ gmpGoogleMarker.prototype._updateInfoWndContent = function() {
  */
 gmpGoogleMarker.prototype._setInfoWndClosed = function() {
 	this._infoWndOpened = false;
+	jQuery(document).trigger('gmapAfterHideInfoWnd', this);
 };
 gmpGoogleMarker.prototype._setInfoWndContent = function(newContentHtmlObj) {
 	if (!this._infoWindow) {
@@ -423,6 +425,9 @@ gmpGoogleMarker.prototype.setMap = function( map ) {
 gmpGoogleMarker.prototype.getMap = function() {
 	return this._map;
 };
+gmpGoogleMarker.prototype.setVisible = function(state) {
+	this.getRawMarkerInstance().setVisible(state);
+}
 // Common functions
 var g_gmpGeocoder = null;
 jQuery.fn.mapSearchAutocompleateGmp = function(params) {

@@ -76,11 +76,11 @@ class csvControllerGmp extends controllerGmp {
 	}
 	private function _prepareValueToExport($val) {
 		$sitePath = $this->_getSitePath();
-		return str_replace($sitePath, '[GMP_SITE_PATH]', $val);
+		return htmlspecialchars(str_replace($sitePath, '[GMP_SITE_PATH]', $val));
 	}
 	private function _prepareValueToImport($val) {
 		$sitePath = $this->_getSitePath();
-		return str_replace('[GMP_SITE_PATH]', $sitePath, $val);
+		return str_replace('[GMP_SITE_PATH]', $sitePath, htmlspecialchars_decode($val));
 	}
 	public function exportMarkers() {
 		$fileSiteDate = str_replace(array('/', '.', ':'), '_', esc_html(get_bloginfo('name')). ' - '. date(GMP_DATE_FORMAT_HIS));
