@@ -30,6 +30,7 @@ jQuery(document).ready(function() {
 						gmpMarkerGroup = res.data.marker_group;
 					}
 					_gmpUnchangeMarkerGroupForm();
+					jQuery('#addMarkerGroup').show();
 				}
 			}
 		});

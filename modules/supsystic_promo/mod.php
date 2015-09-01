@@ -147,6 +147,6 @@ class supsystic_promoGmp extends moduleGmp {
 		return $fields;
 	}
 	public function isPro() {
-		return frameGmp::_()->getModule('license') ? true : false;
+		return frameGmp::_()->getModule('add_map_options') ? true : false;
 	}
 }

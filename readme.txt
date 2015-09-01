@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
 Tested up to: 4.3
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -163,6 +163,20 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 6. Google Map Stylizations. Make your map unique with our Map Themes!
 
 == Changelog ==
+
+= 1.3.4 / 01.09.2015 =
+ * Added the displaying of KML layers on the map
+ * Added the "Add new category" button to the edit marker group page
+ * Сhange marker group id to "0" after the removal of markers group from db for all markers belonged to this group
+ * Change the container name for markers without group in Slider Table Markers List
+ * Hide "Get Direction" column in Slider Table Markers List, if "Get Direction" button is disabled for map
+ * Fixed the displaying of the table of markers without group in Slider Table Markers List
+ * Fixed the layout of directions search form for "Get Directions" button
+ * Fixed the CSS styles for "Get directions" button and Slider Table Markers List
+ * Fixed the displaying of standard zoom controls on the map, if another map on the page has the custom map controls
+ * Moving down an actions buttons for plugin tables
+ * Minor fix for language strings for marker groups
+ * Minor issues fix
 
 = 1.3.3 / 25.08.2015 =
  * Adding the displaying of the markers list in the table form

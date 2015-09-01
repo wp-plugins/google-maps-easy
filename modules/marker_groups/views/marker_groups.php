@@ -18,6 +18,7 @@ class marker_groupsViewGmp extends viewGmp {
 			frameGmp::_()->addJSVar('admin.mgr.edit', 'mgrMarkerGroup', $markerGroup);
 		}
 		$this->assign('editMarkerGroup', $editMarkerGroup);
+		$this->assign('addNewLink', frameGmp::_()->getModule('options')->getTabUrl('marker_groups_add_new'));
 		return parent::getContent('mgrEditMarkerGroup');
 	}
 	public function getListOperations($markerGroup) {

@@ -39,7 +39,10 @@ class marker_groupsModelGmp extends modelGmp {
 	public function remove($markerGroupId){
 		$markerGroupId = (int) $markerGroupId;
 		if(!empty($markerGroupId)) {
-			return frameGmp::_()->getTable("marker_groups")->delete($markerGroupId);
+			$deleteMarkerGroup = frameGmp::_()->getTable("marker_groups")->delete($markerGroupId);
+			if($deleteMarkerGroup){
+				return frameGmp::_()->getTable("marker")->update(array('marker_group_id' => 0), array('marker_group_id' => $markerGroupId));
+			}
 		} else
 			$this->pushError (__('Invalid ID', GMP_LANG_CODE));
 		return false;

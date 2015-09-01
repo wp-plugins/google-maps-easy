@@ -411,12 +411,7 @@ function prepareToPlotDate(data) {
  */
 function gmpInitMainPromoPopup() {
 	if(!GMP_DATA.isPro) {
-		var $proOptWnd = jQuery('#gmpOptInProWnd').dialog({
-			modal:    true
-		,	autoOpen: false
-		,	width: 540
-		,	height: 200
-		});
+		var $proOptWnd = gmpGetMainPromoPopup();
 
 		jQuery('.gmpProOpt').change(function(e){
 			e.stopPropagation();
@@ -457,24 +452,35 @@ function gmpInitMainPromoPopup() {
 	}
 }
 function gmpInitNoticeDialog() {
-    $('#reviewNotice').dialog({
-        modal:    true,
-        width:    600,
-        autoOpen: true
-    });
+	$('#reviewNotice').dialog({
+		modal:    true,
+		width:    600,
+		autoOpen: true
+	});
 }
 function gmpShowReviewNotice() {
-    if(GMP_DATA.checkReviewNotice) {
-        gmpInitNoticeDialog();
-        jQuery('#reviewNotice [data-statistic-code]').on('click', function() {
-            var code = jQuery(this).data('statistic-code');
+	if(GMP_DATA.checkReviewNotice) {
+		gmpInitNoticeDialog();
+		jQuery('#reviewNotice [data-statistic-code]').on('click', function() {
+			var code = jQuery(this).data('statistic-code');
 
-            jQuery.sendFormGmp({
-                data: {mod: 'supsystic_promo', action: 'checkNoticeButton'}
-                ,	onSuccess: function(res) {
-                    $('#reviewNotice').dialog('close');
-                }
-            });
-        });
-    }
+			jQuery.sendFormGmp({
+				data: {mod: 'supsystic_promo', action: 'checkNoticeButton'}
+			,	onSuccess: function(res) {
+					$('#reviewNotice').dialog('close');
+				}
+			});
+		});
+	}
+}
+function gmpGetMainPromoPopup() {
+	if(jQuery('#gmpOptInProWnd').hasClass('ui-dialog-content')) {
+		return jQuery('#gmpOptInProWnd');
+	}
+	return jQuery('#gmpOptInProWnd').dialog({
+		modal:    true
+	,	autoOpen: false
+	,	width:	540
+	,	height: 200
+	});
 }

@@ -515,6 +515,78 @@
 											'attrs' => 'class="gmpProOpt"'))?>
 									</td>
 								</tr>
+								<tr>
+									<th scope="row">
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=add_kml_layers&utm_campaign=googlemaps'); ?>
+										<?php }?>
+										<label for="map_opts_add_kml_layers">
+											<?php _e('Add KML layers', GMP_LANG_CODE)?>:
+										</label>
+										<i
+											style="float: right;"
+											class="fa fa-question supsystic-tooltip"
+											title="<?php _e('Add KML files to display custom layers on the map.', GMP_LANG_CODE);
+											if(!$this->isPro){
+												echo esc_html('<a href="'. $proLink. '" target="_blank"><img src="'. $this->promoModPath. 'img/kml/kml.png" /></a>');
+											}?>"
+										></i>
+										<?php if(!$this->isPro) { ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<div id="gmpKmlFileRowExample" class="gmpKmlFileRow" style="display: none;">
+											<div style="clear: both;"></div>
+											<label for="map_opts_kml_file_url">
+												<?php _e('Enter KML file URL', GMP_LANG_CODE)?>
+											</label></br>
+											<button
+												class="btn btn-danger gmpProOpt"
+												style="
+													float: left;
+													margin: 6px 5px 0px 0px;
+													padding: 0px;
+													width: 20px;
+													height: 25px;"
+												onclick="gmpKmlRemoveFileRowBtnClick(this); return false;"
+											>
+												<?php _e('X', GMP_LANG_CODE)?>
+											</button>
+											<?php echo htmlGmp::text('map_opts[kml_file_url][]', array(
+												'value' => '',
+												'attrs' => 'class="gmpProOpt" style="width: 90%;" disabled="disabled"'))?>
+											<span
+												class="gmpKmlUploadMsg"
+												style="	float: right; width: 100%; text-align: right;"
+											></span>
+											<a
+												href="#"
+												class="gmpKmlUploadFileBtn button gmpProOpt"
+												data-nonce="<?php echo wp_create_nonce('upload-kml-file')?>"
+												data-url="<?php echo uriGmp::_(array(
+													'baseUrl' => admin_url('admin-ajax.php'),
+													'page' => 'kml',
+													'action' => 'addFromFile',
+													'reqType' => 'ajax',
+													'pl' => GMP_CODE))?>"
+												id="gmpKmlUploadFileBtn"
+												style="margin: 5px 0px; float: right;"
+											>
+												<?php _e('or Upload KML file', GMP_LANG_CODE)?>
+											</a><br />
+										</div>
+										<div id="gmpKmlFileRowsShell"></div>
+										<a
+										 	href="#"
+											class="button gmpProOpt"
+											id="gmpKmlAddFileRowBtn"
+											style="margin: 5px 5px 5px 0px; float: left;"
+										>
+											<?php _e('Add more files', GMP_LANG_CODE)?>
+										</a>
+									</td>
+								</tr>
 							</table>
 						</div>
 						<?php echo htmlGmp::hidden('mod', array('value' => 'gmap'))?>

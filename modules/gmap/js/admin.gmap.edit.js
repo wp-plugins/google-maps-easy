@@ -368,6 +368,14 @@ jQuery(document).ready(function(){
 			g_gmpMap.disableClasterization();
 		}
 	});
+	jQuery('#gmpKmlAddFileRowBtn').click(function(e){
+		if(GMP_DATA.isPro == '') {
+			e.stopPropagation();
+			var $proOptWnd = gmpGetMainPromoPopup();
+			$proOptWnd.dialog('open');
+			return false;
+		}
+	});
 	// Set base icon img
 	gmpSetIconImg();
 	// Map Markers List selection

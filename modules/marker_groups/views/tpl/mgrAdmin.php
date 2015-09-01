@@ -2,17 +2,18 @@
 	<div class="supsystic-item supsystic-panel">
 		<div id="containerWrapper">
 			<ul class="supsystic-bar-controls">
-				<li title="<?php _e('Add Category')?>">
-					<a class="button button-table-action" id="addMarkerGroup" href="<?php echo $this->addNewLink?>">Add Category
+				<li title="<?php _e('Add Category', GMP_LANG_CODE)?>">
+					<a class="button button-table-action" id="addMarkerGroup" href="<?php echo $this->addNewLink?>">
+						<?php _e('Add Category', GMP_LANG_CODE)?>
 					</a>
 				</li>
-				<li title="<?php _e('Delete selected')?>">
+				<li title="<?php _e('Delete selected', GMP_LANG_CODE)?>">
 					<button class="button" id="gmpMgrRemoveGroupBtn" disabled data-toolbar-button>
 						<i class="fa fa-fw fa-trash-o"></i>
 						<?php _e('Delete selected', GMP_LANG_CODE)?>
 					</button>
 				</li>
-				<li title="<?php _e('Clear All')?>">
+				<li title="<?php _e('Clear All', GMP_LANG_CODE)?>">
 					<button class="button" id="gmpMgrClearBtn" disabled data-toolbar-button>
 						<?php _e('Clear', GMP_LANG_CODE)?>
 					</button>

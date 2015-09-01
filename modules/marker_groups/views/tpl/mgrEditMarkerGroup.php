@@ -2,6 +2,14 @@
 	<div class="supsystic-item supsystic-panel">
 		<div id="containerWrapper">
 			<div id="gmpMgrTab" class="mgrTabContent">
+				<a
+					href="<?php echo $this->addNewLink?>"
+					class="button button-table-action"
+					id="addMarkerGroup"
+					style="display: <?php echo $this->editMarkerGroup ? 'inline-block;' : 'none;'?>"
+				>
+					<?php _e('Add Category', GMP_LANG_CODE)?>
+				</a>
 				<form id="gmpMgrForm">
 					<table class="form-table">
 						<tr>

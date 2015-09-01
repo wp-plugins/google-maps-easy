@@ -5,5 +5,5 @@
 	<a class="button button-table-action" id="deleteMap<?php echo $this->map['id']; ?>" href="#" onclick="gmpRemoveMapFromTblClick(<?php echo $this->map['id'];?>);">
 		<i class="fa fa-fw fa-trash-o"></i>
 	</a>
-	<div id="gmpRemoveElemLoader__<?php echo $this->map['id'];?>"></div>
+	<div id="gmpRemoveElemLoader__<?php echo $this->map['id'];?>" style="display: inline-block;"></div>
 </div>
