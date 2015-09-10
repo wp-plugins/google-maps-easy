@@ -137,7 +137,7 @@ jQuery(document).ready(function(){
 		} else {
 			markerTitle = 'current';
 		}
-		if(confirm('Remove "'+ markerTitle+ '" marker?')) {
+		if(confirm('Remove '+ markerTitle+ ' marker?')) {
 			var currentMarkerIdInForm = g_gmpCurrentEditMarker ? g_gmpCurrentEditMarker.getId() : 0;
 			var removeFinalClb = function() {
 				if(currentMarkerIdInForm) {

@@ -2,14 +2,14 @@
 class marker_groupsViewGmp extends viewGmp {
 	public function getTabContent() {
 		frameGmp::_()->getModule('templates')->loadJqGrid();
-		frameGmp::_()->addScript('admin.mgr.list', $this->getModule()->getModPath() . 'js/admin.marker.groups.list.js');
+		frameGmp::_()->addScript('admin.mgr.list', $this->getModule()->getModPath() . 'js/admin.marker_groups.list.js');
 		frameGmp::_()->addJSVar('admin.mgr.list', 'mgrTblDataUrl', uriGmp::mod('marker_groups', 'getListForTbl', array('reqType' => 'ajax')));
 
 		$this->assign('addNewLink', frameGmp::_()->getModule('options')->getTabUrl('marker_groups_add_new'));
 		return parent::getContent('mgrAdmin');
 	}
 	public function getEditMarkerGroup($id = 0) {
-		frameGmp::_()->addScript('admin.mgr.edit', $this->getModule()->getModPath(). 'js/admin.marker.groups.edit.js');
+		frameGmp::_()->addScript('admin.mgr.edit', $this->getModule()->getModPath(). 'js/admin.marker_groups.edit.js');
 		frameGmp::_()->addStyle('admin.mgr', $this->getModule()->getModPath() . 'css/admin.marker.groups.css');
 		$editMarkerGroup = $id ? true : false;
 		if($editMarkerGroup) {

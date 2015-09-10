@@ -25,6 +25,14 @@ class gmapModelGmp extends modelGmp {
 		if($map['params'] && isset($map['params']['map_stylization'])) {
 			$map['params']['map_stylization_data'] = $this->getModule()->getStylizationByName( $map['params']['map_stylization'] );
 		}
+		// This is for posibility to show multy maps with same ID on one page
+		$map['original_id'] = $map['id'];
+		$map['view_id'] = $map['id']. '_'. mt_rand(1, 99999);
+		$map['view_html_id'] = 'google_map_easy_'. $map['view_id'];
+
+		$map['params']['view_id'] = $map['view_id'];
+		$map['params']['view_html_id'] = $map['view_html_id'];
+		$map['params']['id'] = $map['id'];
 		return $map;
 	}
 	public function getParamsList() {

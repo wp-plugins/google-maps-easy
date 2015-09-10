@@ -357,6 +357,22 @@ class frameGmp {
         }
 		$this->_stylesInitialized = true;
     }
+	public function getScripts() {
+		return $this->_scripts;
+	}
+	public function getStyles() {
+		return $this->_styles;
+	}
+	public function setScriptsInitialized($state) {
+		$this->_scriptsInitialized = $state;
+	}
+	public function setStylesInitialized($state) {
+		$this->_stylesInitialized = $state;
+	}
+	public function getJSVars() {
+		return $this->_scriptsVars;
+	}
+
     //Very interesting thing going here.............
     public function loadPlugins() {
         require_once(ABSPATH. 'wp-includes/pluggable.php'); 

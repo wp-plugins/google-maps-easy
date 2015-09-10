@@ -86,14 +86,6 @@ class gmapViewGmp extends viewGmp {
 		if(empty($mapObj['params']['map_display_mode'])){
 			$mapObj['params']['map_display_mode'] = 'map';
 		}
-		// This is for posibility to show multy maps with same ID on one page
-		$mapObj['original_id'] = $mapObj['id'];
-		$mapObj['view_id'] = $mapObj['id']. '_'. mt_rand(1, 99999);
-		$mapObj['view_html_id'] = 'google_map_easy_'. $mapObj['view_id'];
-		
-		$mapObj['params']['view_id'] = $mapObj['view_id'];
-		$mapObj['params']['view_html_id'] = $mapObj['view_html_id'];
-		$mapObj['params']['id'] = $mapObj['id'];
 		$indoWindowSize = frameGmp::_()->getModule('options')->getModel('options')->get('infowindow_size');
 		$this->assign('indoWindowSize', $indoWindowSize);
 		
@@ -189,7 +181,7 @@ class gmapViewGmp extends viewGmp {
 		$this->assign('mainLink', frameGmp::_()->getModule('supsystic_promo')->getMainLink());
 		$this->assign('markerLists', $markerLists);
 		$this->assign('markerGroupsForSelect', $markerGroupsForSelect);
-		$this->assign('viewId', 'gmpPreview_'. mt_rand(1, 999));
+		$this->assign('viewId', $editMap ? $map['view_id'] : 'preview_id_'. mt_rand(1, 9999));
 		$this->assign('promoModPath', frameGmp::_()->getModule('supsystic_promo')->getModPath());
 		return parent::getContent('gmapEditMap');
 	}

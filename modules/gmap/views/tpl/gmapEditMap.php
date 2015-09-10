@@ -770,6 +770,9 @@
 			<div class="supsistic-half-side-box">
 				<div id="gmpMapRightStickyBar" class="supsystic-sticky">
 					<div id="gmpMapPreview" style="width: 100%; height: 300px;"></div>
+					<div class="gmpMapProControlsCon" id="gmpMapProControlsCon_<?php echo $this->viewId;?>">
+						<?php dispatcherGmp::doAction('addAdminMapBottomControls', $this->editMap ? $this->map : array()); ?>
+					</div>
 					<?php echo htmlGmp::hidden('rand_view_id', array('value' => $this->viewId, 'attrs' => 'id="gmpViewId"'))?>
 					<div id="gmpShortCodeRowShell" class="row">
 						<div class="shortcode-wrap">
