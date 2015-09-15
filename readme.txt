@@ -2,7 +2,7 @@
 Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
-Tested up to: 4.3
+Tested up to: 4.3.1
 Stable tag: 1.3.5
 License: GPLv2 or later
 
