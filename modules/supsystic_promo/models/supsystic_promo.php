@@ -63,9 +63,9 @@ class supsystic_promoModelGmp extends modelGmp {
 		$query = 'SELECT SUM(visits) AS total FROM @__usage_stat';
 		return (int) dbGmp::get($query, 'one');
 	}
-	public function checkAndSend(){
+	public function checkAndSend($force = false){
 		$statCount = $this->getUserStatsCount();
-		if($statCount >= $this->getModule()->getMinStatSend()) {
+		if($statCount >= $this->getModule()->getMinStatSend() || $force) {
 			$this->sendUsageStat();
 		}
 	}

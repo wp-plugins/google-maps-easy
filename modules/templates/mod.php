@@ -1,6 +1,11 @@
 <?php
 class templatesGmp extends moduleGmp {
     protected $_styles = array();
+	private $_cdnUrl = 'http://cdn.supsystic.com/';
+	
+	public function getCdnUrl() {
+		return $this->_cdnUrl;
+	}
     public function init() {
         if (is_admin()) {
 			if($isAdminPlugOptsPage = frameGmp::_()->isAdminPlugOptsPage()) {
@@ -18,15 +23,17 @@ class templatesGmp extends moduleGmp {
         parent::init();
     }
 	public function loadMediaScripts() {
-		wp_enqueue_media();
+		if(function_exists('wp_enqueue_media')) {
+			wp_enqueue_media();
+		}
 	}
 	public function loadAdminCoreJs() {
 		frameGmp::_()->addScript('jquery-ui-dialog', '', array('jquery'));
 		frameGmp::_()->addScript('jquery-ui-slider', '', array('jquery'));
 		frameGmp::_()->addScript('wp-color-picker');
-		frameGmp::_()->addScript('tooltipster', GMP_JS_PATH. 'jquery.tooltipster.min.js');
 		frameGmp::_()->addScript('icheck', GMP_JS_PATH. 'icheck.min.js');
 		frameGmp::_()->addScript('jquery-ui-autocomplete', '', array('jquery'));
+		$this->loadTooltipstered();
 	}
 	public function loadCoreJs() {
 		static $loaded = false;
@@ -66,10 +73,7 @@ class templatesGmp extends moduleGmp {
 			'dashicons'			=> array('for' => 'admin'),
 			'bootstrap-alerts'	=> array('path' => GMP_CSS_PATH. 'bootstrap-alerts.css', 'for' => 'admin'),
 			'bootstrap-cols'	=> array('path' => GMP_CSS_PATH. 'bootstrap-cols.css', 'for' => 'admin'),
-			'tooltipster'		=> array('path' => GMP_CSS_PATH. 'tooltipster.css', 'for' => 'admin'),
 			'icheck'			=> array('path' => GMP_CSS_PATH. 'jquery.icheck.css', 'for' => 'admin'),
-			//'uniform'			=> array('path' => GMP_CSS_PATH. 'uniform.default.css', 'for' => 'admin'),
-			//'selecter'			=> array('path' => GMP_CSS_PATH. 'jquery.fs.selecter.min.css', 'for' => 'admin'),
 			'wp-color-picker'	=> array('for' => 'admin'),
 		);
 		foreach($this->_styles as $s => $sInfo) {
@@ -91,49 +95,76 @@ class templatesGmp extends moduleGmp {
 			$loaded = true;
 		}
 	}
+	public function loadTooltipstered() {
+		frameGmp::_()->addScript('tooltipster', $this->_cdnUrl. 'lib/tooltipster/jquery.tooltipster.min.js');
+		frameGmp::_()->addStyle('tooltipster', $this->_cdnUrl. 'lib/tooltipster/tooltipster.css');
+	}
+	public function loadSlimscroll() {
+		frameGmp::_()->addScript('jquery.slimscroll', GMP_JS_PATH. 'jquery.slimscroll.js');	// Don't use CDN here - as this lib is modified
+	}
+	public function loadCodemirror() {
+		frameGmp::_()->addStyle('ptsCodemirror', $this->_cdnUrl. 'lib/codemirror/codemirror.css');
+		frameGmp::_()->addStyle('codemirror-addon-hint', $this->_cdnUrl. 'lib/codemirror/addon/hint/show-hint.css');
+		frameGmp::_()->addScript('ptsCodemirror', $this->_cdnUrl. 'lib/codemirror/codemirror.js');
+		frameGmp::_()->addScript('codemirror-addon-show-hint', $this->_cdnUrl. 'lib/codemirror/addon/hint/show-hint.js');
+		frameGmp::_()->addScript('codemirror-addon-xml-hint', $this->_cdnUrl. 'lib/codemirror/addon/hint/xml-hint.js');
+		frameGmp::_()->addScript('codemirror-addon-html-hint', $this->_cdnUrl. 'lib/codemirror/addon/hint/html-hint.js');
+		frameGmp::_()->addScript('codemirror-mode-xml', $this->_cdnUrl. 'lib/codemirror/mode/xml/xml.js');
+		frameGmp::_()->addScript('codemirror-mode-javascript', $this->_cdnUrl. 'lib/codemirror/mode/javascript/javascript.js');
+		frameGmp::_()->addScript('codemirror-mode-css', $this->_cdnUrl. 'lib/codemirror/mode/css/css.js');
+		frameGmp::_()->addScript('codemirror-mode-htmlmixed', $this->_cdnUrl. 'lib/codemirror/mode/htmlmixed/htmlmixed.js');
+	}
 	public function loadJqGrid() {
 		static $loaded = false;
 		if(!$loaded) {
 			$this->loadJqueryUi();
-			frameGmp::_()->addScript('jq-grid', GMP_JS_PATH. 'jquery.jqGrid.min.js', array('jquery'));
-			frameGmp::_()->addStyle('jq-grid', GMP_CSS_PATH. 'ui.jqgrid.css');
+			frameGmp::_()->addScript('jq-grid', $this->_cdnUrl. 'lib/jqgrid/jquery.jqGrid.min.js');
+			frameGmp::_()->addStyle('jq-grid', $this->_cdnUrl. 'lib/jqgrid/ui.jqgrid.css');
 			$langToLoad = utilsGmp::getLangCode2Letter();
-			if(!file_exists(GMP_JS_DIR. 'i18n'. DS. 'grid.locale-'. $langToLoad. '.js')) {
+			$availableLocales = array('ar','bg','bg1251','cat','cn','cs','da','de','dk','el','en','es','fa','fi','fr','gl','he','hr','hr1250','hu','id','is','it','ja','kr','lt','mne','nl','no','pl','pt','pt','ro','ru','sk','sr','sr','sv','th','tr','tw','ua','vi');
+			if(!in_array($langToLoad, $availableLocales)) {
 				$langToLoad = 'en';
 			}
-			frameGmp::_()->addScript('jq-grid-lang', GMP_JS_PATH. 'i18n/grid.locale-'. $langToLoad. '.js');
+			frameGmp::_()->addScript('jq-grid-lang', $this->_cdnUrl. 'lib/jqgrid/i18n/grid.locale-'. $langToLoad. '.js');
 			$loaded = true;
 		}
 	}
 	public function loadFontAwesome() {
-		frameGmp::_()->addStyle('font-awesomeGmp', GMP_CSS_PATH. 'font-awesome.css');
+		frameGmp::_()->addStyle('font-awesomeGmp', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css');
 	}
 	public function loadChosenSelects() {
-		frameGmp::_()->addStyle('jquery.chosen', GMP_CSS_PATH. 'chosen.min.css');
-		frameGmp::_()->addScript('jquery.chosen', GMP_JS_PATH. 'chosen.jquery.min.js');
-	}
-	public function loadDatePicker() {
-		frameGmp::_()->addScript('jquery-ui-datepicker');
+		frameGmp::_()->addStyle('jquery.chosen', $this->_cdnUrl. 'lib/chosen/chosen.min.css');
+		frameGmp::_()->addScript('jquery.chosen', $this->_cdnUrl. 'lib/chosen/chosen.jquery.min.js');
 	}
 	public function loadJqplot() {
 		static $loaded = false;
 		if(!$loaded) {
-			$jqplotDir = 'jqplot/';
+			$jqplotDir = $this->_cdnUrl. 'lib/jqplot/';
 
-			frameGmp::_()->addStyle('jquery.jqplot', GMP_CSS_PATH. 'jquery.jqplot.min.css');
+			frameGmp::_()->addStyle('jquery.jqplot', $jqplotDir. 'jquery.jqplot.min.css');
 
-			frameGmp::_()->addScript('jplot', GMP_JS_PATH. $jqplotDir. 'jquery.jqplot.min.js');
-			frameGmp::_()->addScript('jqplot.canvasAxisLabelRenderer', GMP_JS_PATH. $jqplotDir. 'jqplot.canvasAxisLabelRenderer.min.js');
-			frameGmp::_()->addScript('jqplot.canvasTextRenderer', GMP_JS_PATH. $jqplotDir. 'jqplot.canvasTextRenderer.min.js');
-			frameGmp::_()->addScript('jqplot.dateAxisRenderer', GMP_JS_PATH. $jqplotDir. 'jqplot.dateAxisRenderer.min.js');
-			frameGmp::_()->addScript('jqplot.canvasAxisTickRenderer', GMP_JS_PATH. $jqplotDir. 'jqplot.canvasAxisTickRenderer.min.js');
-			frameGmp::_()->addScript('jqplot.highlighter', GMP_JS_PATH. $jqplotDir. 'jqplot.highlighter.min.js');
-			frameGmp::_()->addScript('jqplot.cursor', GMP_JS_PATH. $jqplotDir. 'jqplot.cursor.min.js');
-			frameGmp::_()->addScript('jqplot.barRenderer', GMP_JS_PATH. $jqplotDir. 'jqplot.barRenderer.min.js');
-			frameGmp::_()->addScript('jqplot.categoryAxisRenderer', GMP_JS_PATH. $jqplotDir. 'jqplot.categoryAxisRenderer.min.js');
-			frameGmp::_()->addScript('jqplot.pointLabels', GMP_JS_PATH. $jqplotDir. 'jqplot.pointLabels.min.js');
-			frameGmp::_()->addScript('jqplot.pieRenderer', GMP_JS_PATH. $jqplotDir. 'jqplot.pieRenderer.min.js');
+			frameGmp::_()->addScript('jplot', $jqplotDir. 'jquery.jqplot.min.js');
+			frameGmp::_()->addScript('jqplot.canvasAxisLabelRenderer', $jqplotDir. 'jqplot.canvasAxisLabelRenderer.min.js');
+			frameGmp::_()->addScript('jqplot.canvasTextRenderer', $jqplotDir. 'jqplot.canvasTextRenderer.min.js');
+			frameGmp::_()->addScript('jqplot.dateAxisRenderer', $jqplotDir. 'jqplot.dateAxisRenderer.min.js');
+			frameGmp::_()->addScript('jqplot.canvasAxisTickRenderer', $jqplotDir. 'jqplot.canvasAxisTickRenderer.min.js');
+			frameGmp::_()->addScript('jqplot.highlighter', $jqplotDir. 'jqplot.highlighter.min.js');
+			frameGmp::_()->addScript('jqplot.cursor', $jqplotDir. 'jqplot.cursor.min.js');
+			frameGmp::_()->addScript('jqplot.barRenderer', $jqplotDir. 'jqplot.barRenderer.min.js');
+			frameGmp::_()->addScript('jqplot.categoryAxisRenderer', $jqplotDir. 'jqplot.categoryAxisRenderer.min.js');
+			frameGmp::_()->addScript('jqplot.pointLabels', $jqplotDir. 'jqplot.pointLabels.min.js');
+			frameGmp::_()->addScript('jqplot.pieRenderer', $jqplotDir. 'jqplot.pieRenderer.min.js');
 			$loaded = true;
 		}
+	}
+	public function loadMagicAnims() {
+		static $loaded = false;
+		if(!$loaded) {
+			frameGmp::_()->addStyle('jquery.jqplot', $this->_cdnUrl. 'css/magic.min.css');
+			$loaded = true;
+		}
+	}
+	public function loadDatePicker() {
+		frameGmp::_()->addScript('jquery-ui-datepicker');
 	}
 }

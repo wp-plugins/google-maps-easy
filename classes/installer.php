@@ -219,6 +219,7 @@ class installerGmp {
 		return false;
 	}
 	static public function delete() {
+		self::_checkSendStat('delete');
 		global $wpdb;
 		$wpPrefix = $wpdb->prefix; /* add to 0.0.3 Versiom */
 		$deleteOptions = false;
@@ -238,6 +239,18 @@ class installerGmp {
 		   delete_option(GMP_DB_PREF. 'db_version');
 		   delete_option($wpPrefix.GMP_DB_PREF.'db_installed');
 		   //delete_option(GMP_DB_PREF. 'plug_was_used');       
+		}
+	}
+	static public function deactivate() {
+		self::_checkSendStat('deactivate');
+	}
+	static private function _checkSendStat($statCode) {
+		if(class_exists('frameGmp') 
+			&& frameGmp::_()->getModule('supsystic_promo')
+			&& frameGmp::_()->getModule('options')
+		) {
+			frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat( $statCode );
+			frameGmp::_()->getModule('supsystic_promo')->getModel()->checkAndSend( true );
 		}
 	}
 	static public function update() {

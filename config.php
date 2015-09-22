@@ -47,7 +47,7 @@
 	define('GMP_EOL', "\n");    
     
     define('GMP_PLUGIN_INSTALLED', true);
-    define('GMP_VERSION_PLUGIN', '1.3.5');	//GMP_VERSION is pre-defined constant for PHP GMP module http://php.net/manual/en/book.gmp.php
+    define('GMP_VERSION_PLUGIN', '1.3.6');	//GMP_VERSION is pre-defined constant for PHP GMP module http://php.net/manual/en/book.gmp.php
     define('GMP_USER', 'user');
     
     define('GMP_CLASS_PREFIX', 'gmpc');     

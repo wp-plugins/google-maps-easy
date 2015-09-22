@@ -21,7 +21,7 @@ class optionsModelGmp extends modelGmp {
 			if(!$ignoreDbUpdate) {
 				$this->_updateOptsInDb();
 			}
-			frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('option.'. $optKey);
+			//frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('option.'. $optKey);
 		}
 	}
 	public function getAll() {
@@ -54,6 +54,7 @@ class optionsModelGmp extends modelGmp {
 	}
     public function saveGroup($d = array()) {
 		if(isset($d['opt_values']) && is_array($d['opt_values']) && !empty($d['opt_values'])) {
+			dispatcherGmp::doAction('beforeSaveOpts', $d);
 			foreach($d['opt_values'] as $code => $val) {
 				$this->save($code, $val, true);
 			}

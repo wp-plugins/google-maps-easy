@@ -18,6 +18,8 @@ class supsystic_promoGmp extends moduleGmp {
 		}
 		$this->weLoveYou();
 		dispatcherGmp::addFilter('mainAdminTabs', array($this, 'addAdminTab'));
+		dispatcherGmp::addAction('beforeSaveOpts', array($this, 'checkSaveOpts'));
+		dispatcherGmp::addAction('addMapBottomControls', array($this, 'checkWeLoveYou'), 99);
 	}
 	public function addAdminTab($tabs) {
 		$tabs['overview'] = array(
@@ -99,11 +101,6 @@ class supsystic_promoGmp extends moduleGmp {
 		return $this->_preparePromoLink($link, $ref);
 	}
 	public function checkStatisticStatus(){
-		// Do not send usage functionas statitistics
-		return;
-		if(frameGmp::_()->getModule('options')->isEmpty('send_stats')) {	// Enabled by default
-			frameGmp::_()->getModule('options')->getModel()->save('send_stats', 1);
-		}
 		$canSend = (int) frameGmp::_()->getModule('options')->get('send_stats');
 		if($canSend) {
 			$this->getModel()->checkAndSend();
@@ -118,13 +115,6 @@ class supsystic_promoGmp extends moduleGmp {
 			$this->_mainLink = 'http://supsystic.com/plugins/google-maps-plugin/' . $affiliateQueryString;
 		}
 		return $this->_mainLink ;
-	}
-	public function generateMainLink($params = '') {
-		$mainLink = $this->getMainLink();
-		if(!empty($params)) {
-			return $mainLink. (strpos($mainLink , '?') ? '&' : '?'). $params;
-		}
-		return $mainLink;
 	}
 	public function getContactFormFields() {
 		$fields = array(
@@ -148,5 +138,30 @@ class supsystic_promoGmp extends moduleGmp {
 	}
 	public function isPro() {
 		return frameGmp::_()->getModule('add_map_options') ? true : false;
+	}
+	public function generateMainLink($params = '') {
+		$mainLink = $this->getMainLink();
+		if(!empty($params)) {
+			return $mainLink. (strpos($mainLink , '?') ? '&' : '?'). $params;
+		}
+		return $mainLink;
+	}
+	public function getLoveLink() {
+		$title = 'WordPress Google Maps Plugin';
+		return '<a title="'. $title. '" style="border: none; color: #26bfc1 !important; font-size: 9px; display: block; float: right;" href="'. $this->generateMainLink('utm_source=plugin&utm_medium=love_link&utm_campaign=coming_soon'). '" target="_blank">'
+			. $title
+			. '</a>';
+	}
+	public function checkSaveOpts($newValues) {
+		$loveLinkEnb = (int) frameGmp::_()->getModule('options')->get('add_love_link');
+		$loveLinkEnbNew = isset($newValues['opt_values']['add_love_link']) ? (int) $newValues['opt_values']['add_love_link'] : 0;
+		if($loveLinkEnb != $loveLinkEnbNew) {
+			$this->getModel()->saveUsageStat('love_link.'. ($loveLinkEnbNew ? 'enb' : 'dslb'));
+		}
+	}
+	public function checkWeLoveYou() {
+		if(frameGmp::_()->getModule('options')->get('add_love_link')) {
+			echo $this->getLoveLink();
+		}
 	}
 }

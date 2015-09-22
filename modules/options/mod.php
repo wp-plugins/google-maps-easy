@@ -6,6 +6,16 @@ class optionsGmp extends moduleGmp {
 	
 	public function init() {
 		dispatcherGmp::addAction('afterModulesInit', array($this, 'initAllOptValues'));
+		dispatcherGmp::addFilter('mainAdminTabs', array($this, 'addAdminTab'));
+	}
+	public function addAdminTab($tabs) {
+		$tabs['settings'] = array(
+			'label' => __('Settings', GMP_LANG_CODE), 'callback' => array($this, 'getSettingsTabContent'), 'fa_icon' => 'fa-gear', 'sort_order' => 60,
+		);
+		return $tabs;
+	}
+	public function getSettingsTabContent() {
+		return $this->getView()->getSettingsTabContent();
 	}
 	public function initAllOptValues() {
 		// Just to make sure - that we loaded all default options values
@@ -83,7 +93,8 @@ class optionsGmp extends moduleGmp {
 				'general' => array(
 					'label' => __('General', GMP_LANG_CODE),
 					'opts' => array(
-						'send_stats' => array('label' => __('Send usage statistics', GMP_LANG_CODE), 'desc' => '', 'def' => '1', 'html' => 'checkboxHiddenVal'),
+						'send_stats' => array('label' => __('Send usage statistics', GMP_LANG_CODE), 'desc' => __('Send information about what plugin options you prefer to use, this will help us make our solution better for You.', GMP_LANG_CODE), 'def' => '0', 'html' => 'checkboxHiddenVal'),
+						'add_love_link' => array('label' => __('Enable promo link', GMP_LANG_CODE), 'desc' => __('We are trying to make our plugin better for you, and you can help us with this. Just check this option - and small promotion link will be added in the bottom of your Google Maps. This is easy for you - but very helpful for us!', GMP_LANG_CODE), 'def' => '0', 'html' => 'checkboxHiddenVal'),
 					),
 				),
 			));

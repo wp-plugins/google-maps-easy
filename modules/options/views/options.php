@@ -26,7 +26,7 @@ class optionsViewGmp extends viewGmp {
 		$activeTab = $this->getModule()->getActiveTab();
 		$content = 'No tab content found - ERROR';
 		if(isset($tabs[ $activeTab ]) && isset($tabs[ $activeTab ]['callback'])) {
-			frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('tab.'. $activeTab);
+			//frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('tab.'. $activeTab);
 			$content = call_user_func($tabs[ $activeTab ]['callback']);
 		}
 		$activeParentTabs = array();
@@ -76,5 +76,14 @@ class optionsViewGmp extends viewGmp {
             'PHP CURL Support' => array('value' => extension_loaded('curl') ? 'Yes' : 'No', 'error' => !extension_loaded('curl')),
         ));
 		return parent::display('_serverSettings');
+	}
+	public function getSettingsTabContent() {
+		frameGmp::_()->addScript('admin.settings', $this->getModule()->getModPath(). 'js/admin.settings.js');
+		frameGmp::_()->addStyle('admin.settings', $this->getModule()->getModPath(). 'css/admin.settings.css');
+		frameGmp::_()->getModule('templates')->loadJqueryUi();
+		
+		$options = frameGmp::_()->getModule('options')->getAll();
+		$this->assign('options', $options);
+		return parent::getContent('optionsSettingsTabContent');
 	}
 }

@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
 Tested up to: 4.3.1
-Stable tag: 1.3.5
+Stable tag: 1.3.6
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -65,7 +65,7 @@ Under "Settings" you can import and export maps, markers and locations.
 
 In order to create your Google Map, simply click on "Add Maps" in your left menu. When Google Maps page loads, set the height, width and google map name (map width can set in percent and in pixels). To add a marker to your Google Map click on button "Add marker". Here you can set map marker configuration. 
 
-It is already possible to add the name of the map marker, the marker icon, set the address marker, and a description of the marker. Also in the description of the marker can be attached images, text, links. Google Map Description token support html-code. Important! One map marker may be used on a single map. You can not use 1 marker on two different maps.
+It is already possible to add the name of the map marker, the marker icon, set the address marker, and a description of the marker. Also in the description of the google map marker can be attached images, text, links. Google Map Description token support html-code. Important! One map marker may be used on a single map. You can not use 1 marker on two different maps.
 
 Don't forget to press the "Save map" button. After all these points you can see the result in the right top corner. Under the google map will show short code. Copy and paste the shortcode into your post or page and Google Maps Easy will automatically create the google map on your page using the settings you chose above.
 Important! Short code must be inserted in a text editor page, and not in the visual.
@@ -93,7 +93,7 @@ Here you can change default options of google map:
 
 * set the google map width in pixels or percent;
 * set the map height in pixels;
-* choose the google map stylization **(PRO feature)** - click "Choose style" button and select your map style, click "Apply" button on style that you like;
+* choose the google map stylization **(PRO feature)** - click "Choose style" button and select your google map style, click "Apply" button on style that you like;
 * set the google map zoom - simply using the mouse wheel or zoom buttons on the google map;
 * delete the google map
 
@@ -106,7 +106,7 @@ Don't forget to press the "Save map" button.
 3. Set the address of the marker by using the address field or fields with marker coordinates. Or you can just click on a point on the map.
 4. Click "Save map marker" button.
 
-At this point you have the ability to set marker configuration:
+At this point you have the ability to set google map marker configuration:
 
 * add marker description - besides text, you can attach images, links and videos;
 * select the icon for the marker - you can choose it from the list of icons or upload your own icon;
@@ -165,6 +165,12 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 6. Google Map Stylizations. Make your map unique with our Map Themes!
 
 == Changelog ==
+
+= 1.3.6 / 22.09.2015 =
+ * Moved static info - to CDN servers: make plugin lighter
+ * Option for users, who want to help our plugin, check it in Settings tab -> Promo link
+ * Plugin functionality usage statistics added - to detect what our users need more, and develop those things for You
+ * Minor issues fix
 
 = 1.3.5 / 08.09.2015 =
  * Add displaying of custom controls in the google map admin area - PRO

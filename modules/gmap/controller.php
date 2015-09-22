@@ -48,7 +48,7 @@ class gmapControllerGmp extends controllerGmp {
 		} else {
 			$res->pushError( $this->getModel()->getErrors() );
 		}
-		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('map.edit');
+		//frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('map.edit');
 		return $res->ajaxExec();
 	}
 	public function remove() {

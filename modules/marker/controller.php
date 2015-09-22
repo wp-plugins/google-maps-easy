@@ -11,7 +11,7 @@ class markerControllerGmp extends controllerGmp {
 		} else {
 			$res->pushError($this->getModel()->getErrors());
 		}
-        frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('marker.save');
+        //frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('marker.save');
         return $res->ajaxExec();
 	}
 	public function updatePos() {
@@ -32,7 +32,7 @@ class markerControllerGmp extends controllerGmp {
         } else {
 			$res->pushError($this->getModel()->getErrors());
         }
-        frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('geolocation.address.search');
+        //frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('geolocation.address.search');
         return $res->ajaxExec();
     }
     public function removeMarker(){
@@ -47,7 +47,7 @@ class markerControllerGmp extends controllerGmp {
         }else{
             $res->pushError(__("Cannot remove marker", GMP_LANG_CODE));
         }
-        frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat('marker.delete');
+        //frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat('marker.delete');
         return $res->ajaxExec();
     }
 	public function removeList() {
@@ -62,7 +62,7 @@ class markerControllerGmp extends controllerGmp {
         } else {
             $res->pushError(__('Cannot remove markers', GMP_LANG_CODE));
         }
-        frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat('marker.delete_list');
+        //frameGmp::_()->getModule("supsystic_promo")->getModel()->saveUsageStat('marker.delete_list');
         return $res->ajaxExec();
 	}
 	public function getMarkerForm($params){
@@ -145,7 +145,7 @@ class markerControllerGmp extends controllerGmp {
 		return $res->ajaxExec();
 	}
 	public function saveFindAddressStat() {
-		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('geolocation.address.search');
+		//frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('geolocation.address.search');
 	}
 	/**
 	 * @see controller::getPermissions();

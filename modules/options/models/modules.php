@@ -1,5 +1,8 @@
 <?php
 class modulesModelGmp extends modelGmp {
+	public function __construct() {
+		$this->_setTbl('modules');
+	}
     public function get($d = array()) {
         if(isset($d['id']) && $d['id'] && is_numeric($d['id'])) {
             $fields = frameGmp::_()->getTable('modules')->fillFromDB($d['id'])->getFields();

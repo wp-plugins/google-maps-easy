@@ -115,6 +115,7 @@ class frameGmp {
 
         register_activation_hook(  GMP_DIR. DS. GMP_MAIN_FILE, array('utilsGmp', 'activatePlugin')  ); //See classes/install.php file
         register_uninstall_hook(GMP_DIR. DS. GMP_MAIN_FILE, array('utilsGmp', 'deletePlugin'));
+		register_deactivation_hook(GMP_DIR. DS. GMP_MAIN_FILE, array( 'utilsGmp', 'deactivatePlugin' ) );
         
 		add_action('init', array($this, 'connectLang'));
         //$operationTime = microtime(true) - $startTime;
@@ -197,25 +198,65 @@ class frameGmp {
     public function getRes() {
         return $this->_res;
     }
+    public function execAfterWpInit() {
+		$this->_doExec();
+	}
+	/**
+	 * Check if method for module require some special permission. We can detect users permissions only after wp init action was done.
+	 */
+	protected function _execOnlyAfterWpInit() {
+		$res = false;
+        $mod = $this->getModule( $this->_mod );
+        $action = strtolower( $this->_action );
+        if($mod) {
+            $permissions = $mod->getController()->getPermissions();
+            if(!empty($permissions)) {  // Special permissions
+                if(isset($permissions[GMP_METHODS]) 
+                    && !empty($permissions[GMP_METHODS])
+                ) {
+                    foreach($permissions[GMP_METHODS] as $method => $permissions) {   // Make case-insensitive
+                        $permissions[GMP_METHODS][strtolower($method)] = $permissions;
+                    }
+                    if(array_key_exists($action, $permissions[GMP_METHODS])) {        // Permission for this method exists
+						$res = true;
+					}
+                }
+                if(isset($permissions[GMP_USERLEVELS])
+                    && !empty($permissions[GMP_USERLEVELS])
+                ) {
+					$res = true;
+                }
+            }
+        }
+        return $res;
+	}
     protected function _execModules() {
         if($this->_mod) {
             // If module exist and is active
             $mod = $this->getModule($this->_mod);
             if($mod && $this->_action) {
-                if($this->checkPermissions($this->_mod, $this->_action)) {
-                    switch(reqGmp::getVar('reqType')) {
-                        case 'ajax':
-                            add_action('wp_ajax_'. $this->_action, array($mod->getController(), $this->_action));
-                            add_action('wp_ajax_nopriv_'. $this->_action, array($mod->getController(), $this->_action));
-                            break;
-                        default:
-                            $this->_res = $mod->exec($this->_action);
-                            break;
-                    }
-                }
+                if($this->_execOnlyAfterWpInit()) {
+					add_action('init', array($this, 'execAfterWpInit'));
+				} else {
+					$this->_doExec();
+				}
             }
         }
     }
+	protected function _doExec() {
+		$mod = $this->getModule($this->_mod);
+		if($mod && $this->checkPermissions($this->_mod, $this->_action)) {
+			switch(reqGmp::getVar('reqType')) {
+				case 'ajax':
+					add_action('wp_ajax_'. $this->_action, array($mod->getController(), $this->_action));
+					add_action('wp_ajax_nopriv_'. $this->_action, array($mod->getController(), $this->_action));
+					break;
+				default:
+					$this->_res = $mod->exec($this->_action);
+					break;
+			}
+		}
+	}
     protected function _extractTables($tablesDir = GMP_TABLES_DIR) {
         $mDirHandle = opendir($tablesDir);
         while(($file = readdir($mDirHandle)) !== false) {

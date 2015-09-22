@@ -15,7 +15,7 @@ class supsystic_promoViewGmp extends viewGmp {
 		parent::display('welcomePage');
 	}
 	public function getOverviewTabContent() {
-		frameGmp::_()->addScript('jquery.slimscroll', GMP_JS_PATH. 'jquery.slimscroll.js');
+		frameGmp::_()->getModule('templates')->loadSlimscroll();
 		frameGmp::_()->addScript('admin.overview', $this->getModule()->getModPath(). 'js/admin.overview.js');
 		frameGmp::_()->addStyle('admin.overview', $this->getModule()->getModPath(). 'css/admin.overview.css');
 		$this->assign('mainLink', $this->getModule()->getMainLink());

@@ -26,7 +26,7 @@ class gmpMapsWidget extends WP_Widget {
         frameGmp::_()->getModule('gmap_widget')->getView()->displayWidget($instance);
     }
     public function update($new_instance, $old_instance) {
-		frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('map.widget.update');
+		//frameGmp::_()->getModule('supsystic_promo')->getModel()->saveUsageStat('map.widget.update');
         return $new_instance;
     }
     public function form($instance) {
