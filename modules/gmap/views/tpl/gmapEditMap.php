@@ -495,7 +495,7 @@
 											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=enable_directions_btn&utm_campaign=googlemaps'); ?>
 										<?php }?>
 										<label for="map_opts_enable_directions_btn">
-											<?php _e('Endable Get Directions button', GMP_LANG_CODE)?>:
+											<?php _e('Enable Get Directions button', GMP_LANG_CODE)?>:
 										</label>
 										<i
 											style="float: right;"
@@ -585,6 +585,23 @@
 										>
 											<?php _e('Add more files', GMP_LANG_CODE)?>
 										</a>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_hide_poi">
+											<?php _e('Hide POI', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Hide the Points Of Interest - landmark or other object, the marked points on the map, for example: hotels, campsites, fuel stations etc.', GMP_LANG_CODE)?>"></i>
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=hide_poi&utm_campaign=googlemaps'); ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[hide_poi]', array(
+											'value' => $this->editMap && isset($this->map['params']['hide_poi']) ? $this->map['params']['hide_poi'] : false,
+											'attrs' => 'class="gmpProOpt"'))?>
 									</td>
 								</tr>
 							</table>

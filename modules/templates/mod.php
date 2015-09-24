@@ -1,9 +1,20 @@
 <?php
 class templatesGmp extends moduleGmp {
     protected $_styles = array();
-	private $_cdnUrl = 'http://cdn.supsystic.com/';
+	private $_cdnUrl = '';
 	
+	public function __construct($d) {
+		parent::__construct($d);
+		$this->getCdnUrl();	// Init CDN URL
+	}
 	public function getCdnUrl() {
+		if(empty($this->_cdnUrl)) {
+			if(uriGmp::isHttps()) {
+				$this->_cdnUrl = 'https://supsystic.com/';
+			} else {
+				$this->_cdnUrl = 'http://cdn.supsystic.com/';
+			}
+		}
 		return $this->_cdnUrl;
 	}
     public function init() {

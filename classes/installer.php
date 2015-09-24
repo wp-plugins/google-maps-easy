@@ -125,20 +125,20 @@ class installerGmp {
 		if(!dbGmp::exist($wpPrefix.GMP_DB_PREF."markers")){
 			dbDelta("CREATE TABLE IF NOT EXISTS `".$wpPrefix.GMP_DB_PREF."markers"."` (
 					`id` int(11) NOT NULL AUTO_INCREMENT,
-					`title` varchar(125) CHARACTER SET utf8  NOT NULL,
+					`title` varchar(125) CHARACTER SET utf8 NOT NULL,
 					`description` text CHARACTER SET utf8 NULL,
-					`coord_x` varchar(30) NOT NULL,
-					`coord_y` varchar(30) NOT NULL,
+					`coord_x` varchar(30) CHARACTER SET utf8 NOT NULL,
+					`coord_y` varchar(30) CHARACTER SET utf8 NOT NULL,
 					`icon` int(11),
 					`map_id` int(11),
 					`marker_group_id` int(11),
-					`address` text,
+					`address` text CHARACTER SET utf8,
 					`animation` int(1),
 					`create_date` datetime,
-					`params` text  CHARACTER SET utf8  NOT NULL,
+					`params` text  CHARACTER SET utf8 NOT NULL,
 					`sort_order` tinyint(1) NOT NULL DEFAULT '0',
 					PRIMARY KEY (`id`)
-				)");
+				) DEFAULT CHARSET=utf8");
 		}
 		if(!dbGmp::exist($wpPrefix.GMP_DB_PREF."markers", 'sort_order')) {
 			dbGmp::query("ALTER TABLE `@__markers` ADD COLUMN `sort_order` tinyint(1) NOT NULL DEFAULT '0';");
@@ -153,7 +153,7 @@ class installerGmp {
 				`description` text CHARACTER SET utf8,   
 				`path` varchar(250) CHARACTER SET utf8,   
 				 PRIMARY KEY (`id`)
-			)");        
+			) DEFAULT CHARSET=utf8");
 		}
 
 		/**
@@ -165,7 +165,7 @@ class installerGmp {
 					`title` varchar(250) CHARACTER SET utf8,
 					`description` text CHARACTER SET utf8,
 				 PRIMARY KEY (`id`)
-				  )");
+				  ) DEFAULT CHARSET=utf8");
 		}
 		$markerGroupsClearedInvalid = get_option($wpPrefix. GMP_DB_PREF. 'mg_cleared_inv', 0);
 		if(!$markerGroupsClearedInvalid) {
