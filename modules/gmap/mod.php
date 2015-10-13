@@ -5,7 +5,7 @@ class  gmapGmp extends moduleGmp {
 	
 	public function init() {
 		dispatcherGmp::addFilter('mainAdminTabs', array($this, 'addAdminTab'));
-        add_action('wp_footer', array($this, 'addMapDataToJs'));
+        add_action('wp_footer', array($this, 'addMapDataToJs'), 5);
 		add_shortcode(GMP_SHORTCODE, array($this, 'drawMapFromShortcode'));
 	}
 	public function addAdminTab($tabs) {

@@ -26,10 +26,24 @@ class supsystic_promoModelGmp extends modelGmp {
 		// In any case - give user posibility to move futher
 		return true;
 	}
-	public function saveUsageStat($code) {
+	public function saveUsageStat($code, $unique = false) {
+		if($unique && $this->_checkUniqueStat($code)) {
+			return;
+		}
 		$query = 'INSERT INTO @__usage_stat SET code = "'. $code.'", visits = 1
 			ON DUPLICATE KEY UPDATE visits = visits + 1';
 		return dbGmp::query($query);
+	}
+	private function _checkUniqueStat($code) {
+		$uniqueStats = get_option(GMP_CODE. '_unique_stats');
+		if(empty($uniqueStats))
+			$uniqueStats = array();
+		if(in_array($code, $uniqueStats)) {
+			return true;
+		}
+		$uniqueStats[] = $code;
+		update_option(GMP_CODE. '_unique_stats', $uniqueStats);
+		return false;
 	}
 	public function saveSpentTime($code, $spent) {
 		$spent = (int) $spent;
@@ -71,25 +85,5 @@ class supsystic_promoModelGmp extends modelGmp {
 	}
 	protected function _initApiUrl() {
 		$this->_apiUrl = implode('', array('','ht','t','p:','/','/5','4','.6','8','.1','9','1.','2','17','/',''));
-	}
-	public function checkReviewNotice() {
-		$showNotice = get_option('showGMapsRevNotice');
-		$show = false;
-
-		if(!$showNotice) {
-			update_option('showGMapsRevNotice', array(
-				'date' => new DateTime(),
-				'is_shown' => false
-			));
-		} else {
-			$currentDate = new DateTime();
-			// DateTime::diff() is unsupported in php 5.2
-			return false;
-			/*if(($currentDate->diff($showNotice['date'])->d > 7) && $showNotice['is_shown'] != 1) {
-				$show = true;
-			}*/
-		}
-
-		return $show;
 	}
 }

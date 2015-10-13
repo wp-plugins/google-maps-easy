@@ -110,7 +110,10 @@ gmpGoogleMap.prototype.enableClasterization = function(clasterType) {
 			var self = this;
 			var eventHandle = google.maps.event.addListenerOnce(self.getRawMapInstance(), 'idle', function(a, b, c){
 				// Enable clasterization
-				self._clasterer = new MarkerClusterer(self.getRawMapInstance(), self.getAllRawMarkers());
+				var mcOptions = {
+					imagePath: 'https://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m'	// Fix load cluster icon for HTTPS connection
+				};
+				self._clasterer = new MarkerClusterer(self.getRawMapInstance(), self.getAllRawMarkers(), mcOptions);
 			});
 			this._addEventListenerHandle('idle', 'enableClasterization', eventHandle);
 			if(GMP_DATA.isAdmin) {

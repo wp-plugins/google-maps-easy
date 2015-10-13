@@ -32,6 +32,16 @@ function gmpGetMapInfoById(id) {
 	}
 	return false;
 }
+function gmpGetMapInfoByViewId(viewId) {
+	if(typeof(gmpAllMapsInfo) !== 'undefined' && gmpAllMapsInfo && gmpAllMapsInfo.length) {
+		for(var i = 0; i < gmpAllMapsInfo.length; i++) {
+			if(gmpAllMapsInfo[i].view_id == viewId) {
+				return gmpAllMapsInfo[i];
+			}
+		}
+	}
+	return false;
+}
 function gmpGetAllMaps() {
 	return g_gmlAllMaps;
 }

@@ -83,7 +83,7 @@ jQuery(document).ready(function(){
 	tooltipsterize();
 
     // Check for showing review notice after a week usage
-    gmpShowReviewNotice();
+    gmpInitPlugNotices();
 });
 jQuery(window).load(function(){
 	setTimeout(function(){	// setTimeout to make sure that all required show/hide were triggered
@@ -451,24 +451,28 @@ function gmpInitMainPromoPopup() {
 		});
 	}
 }
-function gmpInitNoticeDialog() {
-	$('#reviewNotice').dialog({
-		modal:    true,
-		width:    600,
-		autoOpen: true
-	});
-}
-function gmpShowReviewNotice() {
-	if(GMP_DATA.checkReviewNotice) {
-		gmpInitNoticeDialog();
-		jQuery('#reviewNotice [data-statistic-code]').on('click', function() {
-			var code = jQuery(this).data('statistic-code');
-
-			jQuery.sendFormGmp({
-				data: {mod: 'supsystic_promo', action: 'checkNoticeButton'}
-			,	onSuccess: function(res) {
-					$('#reviewNotice').dialog('close');
+function gmpInitPlugNotices() {
+	var $notices = jQuery('.supsystic-admin-notice');
+	if($notices && $notices.size()) {
+		$notices.each(function(){
+			jQuery(this).find('.notice-dismiss').click(function(){
+				var $notice = jQuery(this).parents('.supsystic-admin-notice');
+				if(!$notice.data('stats-sent')) {
+					// User closed this message - that is his choise, let's respect this and save it's saved status
+					jQuery.sendFormGmp({
+						data: {mod: 'supsystic_promo', action: 'addNoticeAction', code: $notice.data('code'), choice: 'hide'}
+					});
 				}
+			});
+			jQuery(this).find('[data-statistic-code]').click(function(){
+				var href = jQuery(this).attr('href')
+				,	$notice = jQuery(this).parents('.supsystic-admin-notice');
+				jQuery.sendFormGmp({
+					data: {mod: 'supsystic_promo', action: 'addNoticeAction', code: $notice.data('code'), choice: jQuery(this).data('statistic-code')}
+				});
+				$notice.data('stats-sent', 1).find('.notice-dismiss').trigger('click');
+				if(!href || href === '' || href === '#')
+					return false;
 			});
 		});
 	}

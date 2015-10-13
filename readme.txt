@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
 Tested up to: 4.3.1
-Stable tag: 1.3.8
+Stable tag: 1.3.9
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -165,6 +165,12 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 6. Google Map Stylizations. Make your map unique with our Map Themes!
 
 == Changelog ==
+
+= 1.3.9 / 13.10.2015 =
+ * Small spelling issues fix
+ * Fix issue for HTTPS connection and clasterization image source
+ * Fix small compatibility issue with our PopUp plugin https://wordpress.org/plugins/popup-by-supsystic
+ * More interactions with our users - just trying improve software for your needs!
 
 = 1.3.8 / 06.10.2015 =
  * Fix small issue for servers, that make auto translate "&" sign to "&amp;" in http_build_query() function

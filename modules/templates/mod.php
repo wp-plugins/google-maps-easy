@@ -67,7 +67,6 @@ class templatesGmp extends moduleGmp {
 				'ajaxurl'					=> $ajaxurl,
 				'GMP_CODE'					=> GMP_CODE,
 				'isAdmin'					=> is_admin(),
-				'checkReviewNotice'			=> frameGmp::_()->getModule('supsystic_promo')->getModel()->checkReviewNotice(),
 			);
 			if(is_admin()) {
 				$jsData['isPro'] = frameGmp::_()->getModule('supsystic_promo')->isPro();

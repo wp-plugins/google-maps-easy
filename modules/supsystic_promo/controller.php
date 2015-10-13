@@ -69,36 +69,30 @@ class supsystic_promoControllerGmp extends controllerGmp {
 		}
         $res->ajaxExec();
 	}
-	public function checkNoticeButton() {
+	public function addNoticeAction() {
 		$res = new responseGmp();
-		$code = reqGmp::getVar('buttonCode');
-		$showNotice = get_option('showGMapsRevNotice');
-
-		if($code == 'is_shown') {
-			$showNotice['is_shown'] = true;
-		} else {
-			$showNotice['date'] = new DateTime();
+		$code = reqGmp::getVar('code', 'post');
+		$choice = reqGmp::getVar('choice', 'post');
+		if(!empty($code) && !empty($choice)) {
+			$optModel = frameGmp::_()->getModule('options')->getModel();
+			switch($choice) {
+				case 'hide':
+					$optModel->save('hide_'. $code, 1);
+					break;
+				case 'later':
+					$optModel->save('later_'. $code, time());
+					break;
+				case 'done':
+					$optModel->save('done_'. $code, 1);
+					if($code == 'enb_promo_link_msg') {
+						$optModel->save('add_love_link', 1);
+					}
+					break;
+			}
+			$this->getModel()->saveUsageStat($code. '.'. $choice, true);
+			$this->getModel()->checkAndSend( true );
 		}
-
-		$this->sendUsageStat($code);
-		update_option('showGMapsRevNotice', $showNotice);
-
-		return $res->ajaxExec();
-	}
-	public function sendUsageStat($state) {
-		$apiUrl = 'http://54.68.191.217';
-
-		$reqUrl = $apiUrl . '?mod=options&action=saveUsageStat&pl=rcs';
-		$res = wp_remote_post($reqUrl, array(
-			'body' => array(
-				'site_url' => get_bloginfo('wpurl'),
-				'site_name' => get_bloginfo('name'),
-				'plugin_code' => 'gmp',
-				'all_stat' => array('views' => 'review', 'code' => $state),
-			)
-		));
-
-		return true;
+		$res->ajaxExec();
 	}
 	/**
 	 * @see controller::getPermissions();
@@ -106,7 +100,7 @@ class supsystic_promoControllerGmp extends controllerGmp {
 	public function getPermissions() {
 		return array(
 			GMP_USERLEVELS => array(
-				GMP_ADMIN => array('welcomePageSaveInfo', 'sendContact'),
+				GMP_ADMIN => array('welcomePageSaveInfo', 'sendContact', 'addNoticeAction'),
 			),
 		);
 	}

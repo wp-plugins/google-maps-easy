@@ -16,22 +16,6 @@
 	</div>
 	<div class="gmpAdminFooterCell">|</div>
 	<div class="gmpAdminFooterCell">
-		<?php _e('Add your', GMP_LANG_CODE)?> <a target="_blank" href="http://wordpress.org/support/view/plugin-reviews/google-maps-easy?filter=5#postform">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on wordpsess.org.
+		<?php _e('Add your', GMP_LANG_CODE)?> <a target="_blank" href="http://wordpress.org/support/view/plugin-reviews/google-maps-easy?filter=5#postform">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on wordpress.org.
 	</div>
-</div>
-<div id="reviewNotice" title="Review" style="display: none;" hidden>
-	<h3>Hey, I noticed you just use Google Maps Easy by Supsystic over a week – that’s awesome!</h3>
-	<p>Could you please do me a BIG favor and give it a 5-star rating on WordPress? Just to help us spread the word and boost our motivation.</p>
-
-	<ul style="list-style: circle; padding-left: 30px;">
-		<li>
-			<button class="button button-primary"><a href="//wordpress.org/support/view/plugin-reviews/google-maps-easy?rate=5#postform" target="_blank" class="bupSendStatistic" data-statistic-code="is_shown" style="color:#000000 !important;">Ok, you deserve it</a></button>
-		</li>
-		<li>
-			<button class="button button-primary"><span class="toeLikeLink bupSendStatistic" data-statistic-code="date">Nope, maybe later</span></button>
-		</li>
-		<li>
-			<button class="button button-primary"><span class="toeLikeLink bupSendStatistic" data-statistic-code="is_shown">I already did</span></button>
-		</li>
-	</ul>
 </div>
