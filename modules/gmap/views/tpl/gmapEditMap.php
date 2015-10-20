@@ -124,12 +124,12 @@
 										<label for="map_opts_zoom_control">
 											<?php _e('Zoom control', GMP_LANG_CODE)?>:
 										</label>
-										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Zoom control type on your map', GMP_LANG_CODE)?>"></i>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Zoom control type on your map. Note, to view Zoom control on the map the Custom Map Controls option must be disabled.', GMP_LANG_CODE)?>"></i>
 									</th>
 									<td>
 										<div class="sup-col sup-w-50">
 											<?php echo htmlGmp::selectbox('map_opts[zoom_control]', array(
-												'options' => array('none' => __('None', GMP_LANG_CODE), 'DEFAULT' => __('Default', GMP_LANG_CODE), 'LARGE' => __('Large', GMP_LANG_CODE), 'SMALL' => __('Small', GMP_LANG_CODE)),
+												'options' => array('none' => __('None', GMP_LANG_CODE), 'DEFAULT' => __('Default', GMP_LANG_CODE)/*, 'LARGE' => __('Large', GMP_LANG_CODE), 'SMALL' => __('Small', GMP_LANG_CODE)*/),
 												'value' => $this->editMap && isset($this->map['params']['zoom_control']) ? $this->map['params']['zoom_control'] : 'DEFAULT',
 												'attrs' => 'style="width: 100%;" id="map_opts_zoom_control"'))?>
 										</div>
@@ -144,6 +144,11 @@
 											<?php if(!$this->isPro) { ?>
 												<span class="gmpProOptMiniLabel" style="padding-left: 20px;"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
 											<?php }?>
+										</div>
+										<div id="gmpDefaultZoomDisable" style="display: none;" title="<?php _e('Notice', GMP_LANG_CODE)?>">
+											<p>
+												<?php printf(__('Standard Zoom control will not displaying for this map, because the Custom Map Controls option enabled now.', GMP_LANG_CODE))?>
+											</p>
 										</div>
 									</td>
 								</tr>
@@ -174,7 +179,8 @@
 										</div>
 									</td>
 								</tr>
-								<tr>
+								<?php /* ?>
+ 								<tr>
 									<th scope="row">
 										<label for="map_optspan_control_check">
 											<?php _e('Pan control', GMP_LANG_CODE)?>:
@@ -217,6 +223,7 @@
 										</div>
 									</td>
 								</tr>
+								<?php */ ?>
 								<tr>
 									<th scope="row">
 										<label for="map_optsdraggable_check">
@@ -272,6 +279,26 @@
 								</tr>
 								<tr>
 									<th scope="row">
+										<label for="map_opts_map_stylization">
+											<?php _e('Map Stylization', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Make your map unique with our Map Themes, just try to change it here - and you will see results on your Map Preview.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::selectbox('map_opts[map_stylization]', array(
+											'options' => $this->stylizationsForSelect,
+											'value' => $this->editMap && isset($this->map['params']['map_stylization']) ? $this->map['params']['map_stylization'] : 'none',
+											'attrs' => 'style="width: '. ($this->isPro ? '100%' : 'calc(100% - 200px)'). ';" id="map_opts_map_stylization"'))?>
+										<?php if(!$this->isPro) {?>
+											<a target="_blank" href="<?php echo $this->mainLink;?>" class="sup-standard-link">
+												<i class="fa fa-plus"></i>
+												<?php _e('Get 300+ Themes with PRO', GMP_LANG_CODE)?>
+											</a>
+										<?php }?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
 										<label for="map_opts_enable_trafic_layer">
 											<?php _e('Traffic Layer', GMP_LANG_CODE)?>:
 										</label>
@@ -323,22 +350,14 @@
 								</tr>
 								<tr>
 									<th scope="row">
-										<label for="map_opts_map_stylization">
-											<?php _e('Map Stylization', GMP_LANG_CODE)?>:
+										<label for="map_opts_marker_title_color">
+											<?php _e('Marker Title color', GMP_LANG_CODE)?>:
 										</label>
-										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Make your map unique with our Map Themes, just try to change it here - and you will see results on your Map Preview.', GMP_LANG_CODE)?>"></i>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('You can set your markers title color here', GMP_LANG_CODE)?>"></i>
 									</th>
 									<td>
-										<?php echo htmlGmp::selectbox('map_opts[map_stylization]', array(
-											'options' => $this->stylizationsForSelect,
-											'value' => $this->editMap && isset($this->map['params']['map_stylization']) ? $this->map['params']['map_stylization'] : 'none',
-											'attrs' => 'style="width: '. ($this->isPro ? '100%' : 'calc(100% - 200px)'). ';" id="map_opts_map_stylization"'))?>
-										<?php if(!$this->isPro) {?>
-											<a target="_blank" href="<?php echo $this->mainLink;?>" class="sup-standard-link">
-												<i class="fa fa-plus"></i>
-												<?php _e('Get 300+ Themes with PRO', GMP_LANG_CODE)?>
-											</a>
-										<?php }?>
+										<?php echo htmlGmp::colorpicker('map_opts[marker_title_color]', array(
+											'value' => $this->editMap && isset($this->map['params']['marker_title_color']) ? $this->map['params']['marker_title_color'] : '#A52A2A'))?>
 									</td>
 								</tr>
 								<tr>
@@ -379,35 +398,6 @@
 											'options' => array('none' => __('None', GMP_LANG_CODE), 'MarkerClusterer' => __('Base Clasterization', GMP_LANG_CODE)),
 											'value' => $this->editMap && isset($this->map['params']['marker_clasterer']) ? $this->map['params']['marker_clasterer'] : 'none',
 											'attrs' => 'style="width: 100%;" id="map_opts_marker_clasterer"'))?>
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">
-										<label for="map_opts_enable_full_screen_btn">
-											<?php _e('Full Screen Button', GMP_LANG_CODE)?>:
-										</label>
-										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Add a button on map to open it full screen.', GMP_LANG_CODE)?>"></i>
-										<?php if(!$this->isPro) { ?>
-											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=enable_full_screen_btn&utm_campaign=googlemaps'); ?>
-											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
-										<?php }?>
-									</th>
-									<td>
-										<?php echo htmlGmp::checkboxHiddenVal('map_opts[enable_full_screen_btn]', array(
-											'value' => $this->editMap && isset($this->map['params']['enable_full_screen_btn']) ? $this->map['params']['enable_full_screen_btn'] : false,
-											'attrs' => 'class="gmpProOpt"'))?>
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">
-										<label for="map_opts_marker_title_color">
-											<?php _e('Marker Title color', GMP_LANG_CODE)?>:
-										</label>
-										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('You can set your markers title color here', GMP_LANG_CODE)?>"></i>
-									</th>
-									<td>
-										<?php echo htmlGmp::colorpicker('map_opts[marker_title_color]', array(
-											'value' => $this->editMap && isset($this->map['params']['marker_title_color']) ? $this->map['params']['marker_title_color'] : '#A52A2A'))?>
 									</td>
 								</tr>
 								<tr>
@@ -491,11 +481,28 @@
 								</tr>
 								<tr>
 									<th scope="row">
+										<label for="map_opts_enable_full_screen_btn">
+											<?php _e('Full Screen Button', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Add a button on map to open it full screen.', GMP_LANG_CODE)?>"></i>
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=enable_full_screen_btn&utm_campaign=googlemaps'); ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[enable_full_screen_btn]', array(
+											'value' => $this->editMap && isset($this->map['params']['enable_full_screen_btn']) ? $this->map['params']['enable_full_screen_btn'] : false,
+											'attrs' => 'class="gmpProOpt"'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
 										<?php if(!$this->isPro) { ?>
 											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=enable_directions_btn&utm_campaign=googlemaps'); ?>
 										<?php }?>
 										<label for="map_opts_enable_directions_btn">
-											<?php _e('Enable Get Directions button', GMP_LANG_CODE)?>:
+											<?php _e('Directions Button', GMP_LANG_CODE)?>:
 										</label>
 										<i
 											style="float: right;"
@@ -602,6 +609,109 @@
 										<?php echo htmlGmp::checkboxHiddenVal('map_opts[hide_poi]', array(
 											'value' => $this->editMap && isset($this->map['params']['hide_poi']) ? $this->map['params']['hide_poi'] : false,
 											'attrs' => 'class="gmpProOpt"'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_center_on_cur_user_pos">
+											<?php _e('Center on current user location', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('On frontend map will be centered on current user location.', GMP_LANG_CODE)?>"></i>
+										<?php if(!$this->isPro) { ?>
+											<?php $proLink = frameGmp::_()->getModule('supsystic_promo')->generateMainLink('utm_source=plugin&utm_medium=center_on_cur_user_pos&utm_campaign=googlemaps'); ?>
+											<br /><span class="gmpProOptMiniLabel"><a target="_blank" href="<?php echo $proLink?>"><?php _e('PRO option', GMP_LANG_CODE)?></a></span>
+										<?php }?>
+									</th>
+									<td>
+										<?php echo htmlGmp::checkboxHiddenVal('map_opts[center_on_cur_user_pos]', array(
+											'value' => $this->editMap && isset($this->map['params']['center_on_cur_user_pos']) ? $this->map['params']['center_on_cur_user_pos'] : false,
+											'attrs' => 'class="gmpProOpt"'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_marker_infownd_width">
+											<?php _e('Markers Info Window Width', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Width of markers info windows.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+									<?php
+										$markersInfoWndWidthUnits = isset($this->map['params']['marker_infownd_width_units']) && $this->map['params']['marker_infownd_width_units'];
+										$markersInfoWndWidthInput = isset($this->map['params']['marker_infownd_width']) && $this->map['params']['marker_infownd_width'];
+										$markersInfoWndWidthInputViewStyle = $this->editMap && $markersInfoWndWidthUnits && htmlGmp::checkedOpt($this->map['params'], 'marker_infownd_width_units', 'px') ? 'block' : 'none';
+										$markersInfoWndWidthUnitsLabelStyle = $this->editMap && $markersInfoWndWidthUnits && htmlGmp::checkedOpt($this->map['params'], 'marker_infownd_width_units', 'px') ? '7px' : '0px';
+									?>
+										<div class="sup-col" style="padding-right: 0px;">
+											<label
+												for="map_opts_marker_infownd_width_units"
+												style="margin-right: 15px; position: relative; top: <?php echo $markersInfoWndWidthUnitsLabelStyle?>;"
+											>
+												<?php echo htmlGmp::radiobutton('map_opts[marker_infownd_width_units]', array(
+													'value' => 'auto',
+													'checked' => $this->editMap && $markersInfoWndWidthUnits ? htmlGmp::checkedOpt($this->map['params'], 'marker_infownd_width_units', 'auto') : true,
+												))?>&nbsp;<?php _e('Auto', GMP_LANG_CODE)?>
+											</label>
+											<label
+												for="map_opts_marker_infownd_width_units"
+												class="supsystic-tooltip"
+												title="<?php _e('Pixels', GMP_LANG_CODE)?>"
+												style="margin-right: 15px; position: relative; top: <?php echo $markersInfoWndWidthUnitsLabelStyle?>;"
+											>
+												<?php echo htmlGmp::radiobutton('map_opts[marker_infownd_width_units]', array(
+													'value' => 'px',
+													'checked' => $this->editMap && $markersInfoWndWidthUnits ? htmlGmp::checkedOpt($this->map['params'], 'marker_infownd_width_units', 'px') : false,
+												))?>&nbsp;<?php _e('Px', GMP_LANG_CODE)?>
+											</label>
+										</div>
+										<div class="sup-col sup-w-25">
+											<?php echo htmlGmp::text('map_opts[marker_infownd_width]', array(
+												'value' => $this->editMap && $markersInfoWndWidthInput ? $this->map['params']['marker_infownd_width'] : '200',
+												'attrs' => 'style="width: 100%; display: '. $markersInfoWndWidthInputViewStyle .';"'))?>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_marker_infownd_height">
+											<?php _e('Markers Info Window Height', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Height of markers info windows.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php
+										$markersInfoWndHeightUnits = isset($this->map['params']['marker_infownd_height_units']) && $this->map['params']['marker_infownd_height_units'];
+										$markersInfoWndHeightInput = isset($this->map['params']['marker_infownd_height']) && $this->map['params']['marker_infownd_height'];
+										$markersInfoWndHeightInputViewStyle = $this->editMap && $markersInfoWndHeightUnits && htmlGmp::checkedOpt($this->map['params'], 'marker_infownd_height_units', 'px') ? 'block' : 'none';
+										$markersInfoWndHeightUnitsLabelStyle = $this->editMap && $markersInfoWndHeightUnits && htmlGmp::checkedOpt($this->map['params'], 'marker_infownd_height_units', 'px') ? '7px' : '0px';
+										?>
+										<div class="sup-col" style="padding-right: 0px;">
+											<label
+												for="map_opts_marker_infownd_height_units"
+												style="margin-right: 15px; position: relative; top: <?php echo $markersInfoWndHeightUnitsLabelStyle?>;"
+												>
+												<?php echo htmlGmp::radiobutton('map_opts[marker_infownd_height_units]', array(
+													'value' => 'auto',
+													'checked' => $this->editMap && $markersInfoWndHeightUnits ? htmlGmp::checkedOpt($this->map['params'], 'marker_infownd_height_units', 'auto') : true,
+												))?>&nbsp;<?php _e('Auto', GMP_LANG_CODE)?>
+											</label>
+											<label
+												for="map_opts_marker_infownd_height_units"
+												class="supsystic-tooltip"
+												title="<?php _e('Pixels', GMP_LANG_CODE)?>"
+												style="margin-right: 15px; position: relative; top: <?php echo $markersInfoWndHeightUnitsLabelStyle?>;"
+												>
+												<?php echo htmlGmp::radiobutton('map_opts[marker_infownd_height_units]', array(
+													'value' => 'px',
+													'checked' => $this->editMap && $markersInfoWndHeightUnits ? htmlGmp::checkedOpt($this->map['params'], 'marker_infownd_height_units', 'px') : false,
+												))?>&nbsp;<?php _e('Px', GMP_LANG_CODE)?>
+											</label>
+										</div>
+										<div class="sup-col sup-w-25">
+											<?php echo htmlGmp::text('map_opts[marker_infownd_height]', array(
+												'value' => $this->editMap && $markersInfoWndHeightInput ? $this->map['params']['marker_infownd_height'] : '100',
+												'attrs' => 'style="width: 100%; display: '. $markersInfoWndHeightInputViewStyle .';"'))?>
+										</div>
 									</td>
 								</tr>
 							</table>

@@ -343,7 +343,7 @@ abstract class tableGmp {
                     if(isset($this->_fields[$k]) && $this->_fields[$k]->adapt['dbTo']) 
                         $val = fieldAdapterGmp::_($val, $this->_fields[$k]->adapt['dbTo'], fieldAdapterGmp::DB);
                     if($validate) {
-                        if (is_object($this->_fields[$k])) {
+						if(isset($this->_fields[$k]) && is_object($this->_fields[$k])) {
                             $objForValidation = clone $this->_fields[$k];
                             $objForValidation->setValue($val);
                             if($errors = validatorGmp::_($objForValidation)) {

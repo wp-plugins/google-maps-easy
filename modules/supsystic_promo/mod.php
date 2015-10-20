@@ -31,7 +31,7 @@ class supsystic_promoGmp extends moduleGmp {
 		$currTime = time();
 		$day = 24 * 3600;
 		if($startUsage) {	// Already saved
-			$rateMsg = sprintf(__("<h3>Hey, I noticed you just use %s over a week – that’s awesome!</h3><p>Could you please do me a BIG favor and give it a 5-star rating on WordPress? Just to help us spread the word and boost our motivation.</p>", GMP_LANG_CODE), GMP_WP_PLUGIN_NAME);
+			$rateMsg = sprintf(__("<h3>Hey, I noticed you just use %s over a week - that's awesome!</h3><p>Could you please do me a BIG favor and give it a 5-star rating on WordPress? Just to help us spread the word and boost our motivation.</p>", GMP_LANG_CODE), GMP_WP_PLUGIN_NAME);
 			$rateMsg .= '<p><a href="https://wordpress.org/support/view/plugin-reviews/google-maps-easy?rate=5#postform" target="_blank" class="button button-primary" data-statistic-code="done">'. __('Ok, you deserve it', GMP_LANG_CODE). '</a>
 			<a href="#" class="button" data-statistic-code="later">'. __('Nope, maybe later', GMP_LANG_CODE). '</a>
 			<a href="#" class="button" data-statistic-code="hide">'. __('I already did', GMP_LANG_CODE). '</a></p>';

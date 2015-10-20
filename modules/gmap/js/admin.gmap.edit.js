@@ -277,7 +277,18 @@ jQuery(document).ready(function(){
 		}
 	});
 	// Map zoom control style
-	jQuery('#gmpMapForm select[name="map_opts[zoom_control]"]').change(function(){
+	jQuery('#gmpMapForm select[name="map_opts[zoom_control]"]').change(function(e){
+		if(jQuery('#gmpMapForm input[name="map_opts[enable_custom_map_controls]"]').val() == 1) {
+			e.stopPropagation();
+			var $zoomDisableMsg = jQuery('#gmpDefaultZoomDisable').dialog({
+				modal:    true
+			,	autoOpen: false
+			,	width:	540
+			,	height: 150
+			});
+			$zoomDisableMsg.dialog('open');
+			return false;
+		}
 		var newType = jQuery(this).val();
 		if(typeof(google.maps.ZoomControlStyle[ newType ]) !== 'undefined') {
 			var zoomControlOptions = g_gmpMap.get('zoomControlOptions') || {};
@@ -374,6 +385,30 @@ jQuery(document).ready(function(){
 			var $proOptWnd = gmpGetMainPromoPopup();
 			$proOptWnd.dialog('open');
 			return false;
+		}
+	});
+	jQuery('#gmpMapForm input[name="map_opts[marker_infownd_width_units]"]').change(function(){
+		var infoWndWidthInput = jQuery('#gmpMapForm input[name="map_opts[marker_infownd_width]"]')
+		,	infoWndWidthLabel = jQuery('#gmpMapForm').find('[for="map_opts_marker_infownd_width_units"]');
+
+		if(jQuery(this).val() == 'px' && jQuery(this).val()) {
+			infoWndWidthLabel.css('top', '7px');
+			infoWndWidthInput.show();
+		} else {
+			infoWndWidthLabel.css('top', '0px');
+			infoWndWidthInput.hide();
+		}
+	});
+	jQuery('#gmpMapForm input[name="map_opts[marker_infownd_height_units]"]').change(function(){
+		var infoWndHeightInput = jQuery('#gmpMapForm input[name="map_opts[marker_infownd_height]"]')
+		,	infoWndHeightLabel = jQuery('#gmpMapForm').find('[for="map_opts_marker_infownd_height_units"]');
+
+		if(jQuery(this).val() == 'px' && jQuery(this).val()) {
+			infoWndHeightLabel.css('top', '7px');
+			infoWndHeightInput.show();
+		} else {
+			infoWndHeightLabel.css('top', '0px');
+			infoWndHeightInput.hide();
 		}
 	});
 	// Set base icon img

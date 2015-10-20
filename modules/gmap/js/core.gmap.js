@@ -104,7 +104,8 @@ gmpGoogleMap.prototype._afterInit = function() {
 	}
 	jQuery(document).trigger('gmapAfterMapInit', this);
 };
-gmpGoogleMap.prototype.enableClasterization = function(clasterType) {
+gmpGoogleMap.prototype.enableClasterization = function(clasterType, needTrigger) {
+	var needTrigger = needTrigger ? needTrigger : false;
 	switch(clasterType) {
 		case 'MarkerClusterer':	// Support only this one for now
 			var self = this;
@@ -113,10 +114,17 @@ gmpGoogleMap.prototype.enableClasterization = function(clasterType) {
 				var mcOptions = {
 					imagePath: 'https://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m'	// Fix load cluster icon for HTTPS connection
 				};
-				self._clasterer = new MarkerClusterer(self.getRawMapInstance(), self.getAllRawMarkers(), mcOptions);
+				var allMapMarkers = self.getAllRawMarkers()
+				,	allVisibleMapMarkers = [];
+				for(var marker in allMapMarkers) {
+					if(allMapMarkers[marker].getVisible()) {
+						allVisibleMapMarkers.push(allMapMarkers[marker]);
+					}
+				}
+				self._clasterer = new MarkerClusterer(self.getRawMapInstance(), allVisibleMapMarkers, mcOptions);
 			});
 			this._addEventListenerHandle('idle', 'enableClasterization', eventHandle);
-			if(GMP_DATA.isAdmin) {
+			if(GMP_DATA.isAdmin || needTrigger) {
 				google.maps.event.trigger(self.getRawMapInstance(), 'idle');
 			}
 			this._clastererEnabled = true;
@@ -408,11 +416,17 @@ gmpGoogleMarker.prototype._setInfoWndClosed = function() {
 };
 gmpGoogleMarker.prototype._setInfoWndContent = function(newContentHtmlObj) {
 	if (!this._infoWindow) {
-		var self = this;
-		this._infoWindow = new google.maps.InfoWindow();
+		var self = this
+		,	infoWndParams = this._map.getParam('marker_infownd_width_units') == 'px' ? { maxWidth: this._map.getParam('marker_infownd_width') } : {};
+		this._infoWindow = new google.maps.InfoWindow(infoWndParams);
 		google.maps.event.addListener(this._infoWindow, 'closeclick', function(){
 			self._setInfoWndClosed();
 		});
+	}
+
+	var infoWndHeight = this._map.getParam('marker_infownd_height_units') == 'px' ? this._map.getParam('marker_infownd_height')+ 'px' : false;
+	if(infoWndHeight) {
+		newContentHtmlObj[0]['style']['maxHeight'] = infoWndHeight;
 	}
 	this._infoWindow.setContent(newContentHtmlObj[0]);
 };
@@ -430,6 +444,9 @@ gmpGoogleMarker.prototype.getMap = function() {
 };
 gmpGoogleMarker.prototype.setVisible = function(state) {
 	this.getRawMarkerInstance().setVisible(state);
+}
+gmpGoogleMarker.prototype.getVisible = function(state) {
+	this.getRawMarkerInstance().getVisible(state);
 }
 // Common functions
 var g_gmpGeocoder = null;

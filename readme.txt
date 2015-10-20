@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
 Tested up to: 4.3.1
-Stable tag: 1.3.9
+Stable tag: 1.4.0
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -165,6 +165,19 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 6. Google Map Stylizations. Make your map unique with our Map Themes!
 
 == Changelog ==
+
+= 1.4.0 / 20.10.2015 =
+ * Add "Center on current user location" option - PRO
+ * Add "Markers Info Window Width" and "Markers Info Window Height" options
+ * Remove deprecated functions (Pan, Overview controls, Zoom type) for latest version of Google Maps API (3.22)
+ * Fix of default Zoom controls displaying on the map preview if Custom Map Controls is enabled - PRO
+ * Add an explanation why the map the default Zoom control is not displayed if enabled Custom Map Controls - PRO
+ * Fix of markers search and filter rezults in the Custom Map Controls forms, when clusterization is enabled - PRO
+ * Small fixes for the Markers Lists design - PRO
+ * Fix of plugin activation/deactivation "unexpected output" notices
+ * Update dialog popup styles
+ * Small permutation of map admin options
+ * Update the English language strings
 
 = 1.3.9 / 13.10.2015 =
  * Small spelling issues fix
