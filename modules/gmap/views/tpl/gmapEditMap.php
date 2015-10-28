@@ -398,6 +398,45 @@
 											'options' => array('none' => __('None', GMP_LANG_CODE), 'MarkerClusterer' => __('Base Clasterization', GMP_LANG_CODE)),
 											'value' => $this->editMap && isset($this->map['params']['marker_clasterer']) ? $this->map['params']['marker_clasterer'] : 'none',
 											'attrs' => 'style="width: 100%;" id="map_opts_marker_clasterer"'))?>
+										<div id="gmpMarkerClastererIcon" style="display: none; margin-top: 5px;">
+											<label for="map_opts_marker_clasterer_icon">
+												<?php _e('Claster Icon', GMP_LANG_CODE)?>
+											</label>
+											<div style="float: right;">
+												<a id="gmpUploadClastererIconBtn" href="#" class="button" style="float: right; margin-bottom: 5px;"><?php _e('Upload Icon', GMP_LANG_CODE)?></a><br />
+												<a id="gmpDefaultClastererIconBtn" href="#" class="button" style="float: right; margin-bottom: 5px;"><?php _e('Default', GMP_LANG_CODE)?></a>
+												<div class="gmpClastererUplRes"></div>
+											</div>
+											<div style="margin-top: 10px;">
+												<?php $curClusterIcon =
+													$this->editMap
+													&& isset($this->map['params']['marker_clasterer_icon'])
+													&& $this->map['params']['marker_clasterer_icon']
+														? $this->map['params']['marker_clasterer_icon']
+														: 'https://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png';
+												$curClusterIconWidth =
+													$this->editMap
+													&& isset($this->map['params']['marker_clasterer_icon_width'])
+													&& $this->map['params']['marker_clasterer_icon_width']
+														? $this->map['params']['marker_clasterer_icon_width']
+														: 53;
+												$curClusterIconHeight =
+													$this->editMap
+													&& isset($this->map['params']['marker_clasterer_icon_width'])
+													&& $this->map['params']['marker_clasterer_icon_width']
+														? $this->map['params']['marker_clasterer_icon_width']
+														: 52;
+												?>
+												<?php echo htmlGmp::hidden('map_opts[marker_clasterer_icon]', array(
+													'value' => $curClusterIcon, ))?>
+												<?php echo htmlGmp::hidden('map_opts[marker_clasterer_icon_width]', array(
+													'value' => $curClusterIconWidth, ))?>
+												<?php echo htmlGmp::hidden('map_opts[marker_clasterer_icon_height]', array(
+													'value' => $curClusterIconHeight, ))?>
+												<img id="gmpMarkerClastererIconPrevImg" src="<?php echo $curClusterIcon?>" style="max-width: 53px; height: auto;" />
+											</div>
+											<div style="clear: both;"></div>
+										</div>
 									</td>
 								</tr>
 								<tr>
@@ -712,6 +751,34 @@
 												'value' => $this->editMap && $markersInfoWndHeightInput ? $this->map['params']['marker_infownd_height'] : '100',
 												'attrs' => 'style="width: 100%; display: '. $markersInfoWndHeightInputViewStyle .';"'))?>
 										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_zoom_min" class="sup-medium-label">
+											<?php _e('Min Zoom Level', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Sets min zoom level for map.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::selectbox('map_opts[zoom_min]', array(
+											'options' => array(1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16, 17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21),
+											'value' => $this->editMap && isset($this->map['params']['zoom_min']) ? $this->map['params']['zoom_min'] : 1,
+											'attrs' => 'style="width: 100%;"'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label for="map_opts_zoom_max" class="sup-medium-label">
+											<?php _e('Min Zoom Level', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Sets max zoom level for map.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::selectbox('map_opts[zoom_max]', array(
+											'options' => array(1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16, 17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21),
+											'value' => $this->editMap && isset($this->map['params']['zoom_max']) ? $this->map['params']['zoom_max'] : 21,
+											'attrs' => 'style="width: 100%;"'))?>
 									</td>
 								</tr>
 							</table>

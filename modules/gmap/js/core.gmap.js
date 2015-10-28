@@ -97,22 +97,57 @@ gmpGoogleMap.prototype.getParam = function(key){
 };
 gmpGoogleMap.prototype.setParam = function(key, value){
 	this._mapParams[ key ] = value;
+	return this;
 };
 gmpGoogleMap.prototype._afterInit = function() {
 	if(typeof(this._mapParams.marker_clasterer) !== 'undefined' && this._mapParams.marker_clasterer) {
-		this.enableClasterization( this._mapParams.marker_clasterer );
+		this.enableClasterization(this._mapParams.marker_clasterer);
 	}
+	if(typeof(this._mapParams.zoom_min) !== 'undefined') {
+		var minZoom = parseInt(this._mapParams.zoom_min) ? parseInt(this._mapParams.zoom_min) : null;
+		this.getRawMapInstance().setOptions({maxZoom: minZoom});
+		if(this.getRawMapInstance().zoom < minZoom)
+			this.getRawMapInstance().setOptions({zoom: minZoom});
+	}
+	if(typeof(this._mapParams.zoom_max) !== 'undefined') {
+		var maxZoom = parseInt(this._mapParams.zoom_max) ? parseInt(this._mapParams.zoom_max) : null;
+		this.getRawMapInstance().setOptions({maxZoom: maxZoom});
+		if(this.getRawMapInstance().zoom > maxZoom)
+			this.getRawMapInstance().setOptions({zoom: maxZoom});
+	}
+	var self = this;
+	var eventHandle = google.maps.event.addListener(this.getRawMapInstance(), 'zoom_changed', function(){
+		if (self.getZoom() < minZoom) {
+			self.setZoom(minZoom);
+		}
+		if (self.getZoom() > maxZoom) {
+			self.setZoom(maxZoom);
+		}
+	});
+	this._addEventListenerHandle('zoom_changed', 'zoomChanged', eventHandle);
 	jQuery(document).trigger('gmapAfterMapInit', this);
 };
 gmpGoogleMap.prototype.enableClasterization = function(clasterType, needTrigger) {
 	var needTrigger = needTrigger ? needTrigger : false;
+
 	switch(clasterType) {
 		case 'MarkerClusterer':	// Support only this one for now
 			var self = this;
+
 			var eventHandle = google.maps.event.addListenerOnce(self.getRawMapInstance(), 'idle', function(a, b, c){
+				var clasterIcon = 'https://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png'
+				,	iconWidth = 53
+				,	iconHeight = 52;
+
+				clasterIcon = self.getParam('marker_clasterer_icon') ? self.getParam('marker_clasterer_icon') : clasterIcon;
+				iconWidth = self.getParam('marker_clasterer_icon_width') ? self.getParam('marker_clasterer_icon_width') : iconWidth;
+				iconHeight = self.getParam('marker_clasterer_icon_height') ? self.getParam('marker_clasterer_icon_height') : iconHeight;
+
+				var clusterStyles = [ { url: clasterIcon, width: iconWidth, height: iconHeight } ];
+
 				// Enable clasterization
 				var mcOptions = {
-					imagePath: 'https://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m'	// Fix load cluster icon for HTTPS connection
+					styles: clusterStyles
 				};
 				var allMapMarkers = self.getAllRawMarkers()
 				,	allVisibleMapMarkers = [];
@@ -121,7 +156,17 @@ gmpGoogleMap.prototype.enableClasterization = function(clasterType, needTrigger)
 						allVisibleMapMarkers.push(allMapMarkers[marker]);
 					}
 				}
-				self._clasterer = new MarkerClusterer(self.getRawMapInstance(), allVisibleMapMarkers, mcOptions);
+				if(self._clasterer){
+					self._clasterer.clearMarkers();
+					self._clasterer.addMarkers( allVisibleMapMarkers );
+					var styles = self._clasterer.getStyles();
+					styles[0]['url'] = clusterStyles[0]['url'];
+					styles[0]['width'] = clusterStyles[0]['width'];
+					styles[0]['height'] = clusterStyles[0]['height'];
+					self._clasterer.resetViewport();
+					self._clasterer.redraw();
+				} else
+					self._clasterer = new MarkerClusterer(self.getRawMapInstance(), allVisibleMapMarkers, mcOptions);
 			});
 			this._addEventListenerHandle('idle', 'enableClasterization', eventHandle);
 			if(GMP_DATA.isAdmin || needTrigger) {

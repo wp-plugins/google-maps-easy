@@ -371,14 +371,19 @@ jQuery(document).ready(function(){
 		}
 	});
 	// Map Clasterization
-	jQuery('#gmpMapForm select[name="map_opts[marker_clasterer]"]').change(function(){
+	var markerClustererInput = jQuery('#gmpMapForm select[name="map_opts[marker_clasterer]"]');
+	markerClustererInput.change(function(){
 		var newType = jQuery(this).val();
 		if(newType !== 'none' && newType) {
 			g_gmpMap.enableClasterization( newType );
+			gmpSwitchClustererIconView(newType);
 		} else {
 			g_gmpMap.disableClasterization();
+			gmpSwitchClustererIconView('none');
 		}
 	});
+	gmpSwitchClustererIconView(markerClustererInput.val());
+	// Map KML layers
 	jQuery('#gmpKmlAddFileRowBtn').click(function(e){
 		if(GMP_DATA.isPro == '') {
 			e.stopPropagation();
@@ -387,6 +392,7 @@ jQuery(document).ready(function(){
 			return false;
 		}
 	});
+	// Map Marker Info Window width and height units
 	jQuery('#gmpMapForm input[name="map_opts[marker_infownd_width_units]"]').change(function(){
 		var infoWndWidthInput = jQuery('#gmpMapForm input[name="map_opts[marker_infownd_width]"]')
 		,	infoWndWidthLabel = jQuery('#gmpMapForm').find('[for="map_opts_marker_infownd_width_units"]');
@@ -570,6 +576,53 @@ function gmpInitIconsWnd() {
         //Open the uploader dialog
         custom_uploader.open();
     });
+}
+jQuery('#gmpUploadClastererIconBtn').click(function(e){
+	var custom_uploader;
+	e.preventDefault();
+	//If the uploader object has already been created, reopen the dialog
+	if (custom_uploader) {
+		custom_uploader.open();
+		return;
+	}
+	//Extend the wp.media object
+	custom_uploader = wp.media.frames.file_frame = wp.media({
+		title: 'Choose Image'
+	,	button: {
+			text: 'Choose Image'
+		}
+	,	multiple: false
+	});
+	//When a file is selected, grab the URL and set it as the text field's value
+	custom_uploader.on('select', function(){
+		var attachment = custom_uploader.state().get('selection').first().toJSON()
+	,	iconPrevImg = jQuery('#gmpMarkerClastererIconPrevImg')
+	,	width  = 53
+	,	height = 'auto';
+
+		iconPrevImg.attr('src', attachment.url);
+		width = document.getElementById('gmpMarkerClastererIconPrevImg').naturalWidth;
+		height = document.getElementById('gmpMarkerClastererIconPrevImg').naturalHeight;
+		gmpUpdateClusterIcon(attachment.url, width, height);
+	});
+	//Open the uploader dialog
+	custom_uploader.open();
+});
+jQuery('#gmpDefaultClastererIconBtn').click(function(e) {
+	e.preventDefault();
+	var defIconUrl = 'https://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png';
+	jQuery('#gmpMarkerClastererIconPrevImg').attr('src', defIconUrl);
+	gmpUpdateClusterIcon(defIconUrl, 53, 52);
+});
+function gmpUpdateClusterIcon(url, width, height) {
+	jQuery('input[name="map_opts[marker_clasterer_icon]"]').val(url);
+	jQuery('input[name="map_opts[marker_clasterer_icon_width]"]').val(width);
+	jQuery('input[name="map_opts[marker_clasterer_icon_height]"]').val(height);
+	g_gmpMap
+		.setParam('marker_clasterer_icon', url)
+		.setParam('marker_clasterer_icon_width', width)
+		.setParam('marker_clasterer_icon_height', height)
+		.enableClasterization(g_gmpMap.getParam('marker_clasterer'));
 }
 function gmpSetIconImg() {
 	var id = parseInt( jQuery('#gmpMarkerForm input[name="marker_opts[icon]"]').val() );
@@ -922,6 +975,13 @@ function gmpAddCustomControlsOptions() {
 	} else {
 		jQuery('#custom_controls_options').css('display', 'none');
 	};
+}
+function gmpSwitchClustererIconView(clusterType) {
+	if (clusterType == 'none') {
+		jQuery('#gmpMarkerClastererIcon').hide();
+	} else {
+		jQuery('#gmpMarkerClastererIcon').show();
+	}
 }
 function wpColorPicker_map_optscustom_controls_bg_color_change(event, ui) {
 	if(!GMP_DATA.isPro) {

@@ -3,7 +3,7 @@ Contributors: supsystic.com
 Donate link: http://supsystic.com/plugins/google-maps-plugin
 Tags: google map, google map plugin, map, location, direction, map marker, marker, geocoder, post map, widget map, custom marker, geo, google map short code, google map styles, latitude, longitude, placemarker, wp map
 Tested up to: 4.3.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 
 The easiest way to create Google Map with markers, locations and clusterization. Any data on the map: text, images, videos. Custom map marker icons
@@ -36,7 +36,7 @@ Ultimate solution to display google map on the contact page, routes, real estate
 
 [youtube http://www.youtube.com/watch?v=Ej8EtuLcLZk]
 
-Google Map Easy plugin is an excellent way to make a beautiful map on your website and to help your clients  in discovering your location on the google map. For example, if you are an owner of  a restaurant, you will have much more possibilities of attracting visitors by using this plugin. The Google map allows you not only to mark the place of your business location, but also to show people its coloured pictures. You can attach photos and videos to the map marker description and make your potential visitors to feel the atmosphere inside your restaurant, shop or other place of interest.
+Google Map Easy plugin is an excellent way to make a beautiful map on your website and to help your clients  in discovering your location on the google map. For example, if you are an owner of  a restaurant, you will have much more possibilities of attracting visitors by using this plugin. The Google map allows you not only to mark the place of your business location, but also to show people its coloured pictures. You can attach photos and videos to the google map marker description and make your potential visitors to feel the atmosphere inside your restaurant, shop or other place of interest.
 
 = Google Maps Plugin Support =
 
@@ -54,7 +54,7 @@ You have an incredible opportunity to get PRO version for free. Just Make Transl
 * Chinese
 * Italian
 
-Google Maps for WordPress are very useful these days usually in contact forms which showcase the correct location of the business or a place of interest. Google Map by Supsystic plugin require only location input to mark the point accurately as it will auto fetch the live map details from Google. Marking different locations on the google map can be done easily with the map marker options the plugin provides and that too with colorful icons for interaction on the google map. Route your journey across multiple travel location with google map plugin and you will start loving them. Add titles, description and much more details on your travel details on the map with the help of pointers.
+Google Maps for WordPress are very useful these days usually in contact forms which showcase the correct location of the business or a place of interest. Google Map by Supsystic plugin require only location input to mark the point accurately as it will auto fetch the live map details from Google map. Marking different locations on the google map can be done easily with the google map marker options the plugin provides and that too with colorful icons for interaction on the google map. Route your journey across multiple travel location with google map plugin and you will start loving them. Add titles, description and much more details on your travel details on the map with the help of pointers.
 
 
 == Installation ==
@@ -66,12 +66,12 @@ Under "Settings" you can import and export maps, markers and locations.
 
 In order to create your Google Map, simply click on "Add Maps" in your left menu. When Google Maps page loads, set the height, width and google map name (map width can set in percent and in pixels). To add a marker to your Google Map click on button "Add marker". Here you can set map marker configuration. 
 
-It is already possible to add the name of the map marker, the marker icon, set the address marker, and a description of the marker. Also in the description of the google map marker can be attached images, text, links. Google Map Description token support html-code. Important! One map marker may be used on a single map. You can not use 1 marker on two different maps.
+It is already possible to add the name of the google map marker, the map marker icon, set the address marker, and a description of the map marker. Also in the description of the google map marker can be attached images, text, links. Google Map Description token support html-code. Important! One google map marker may be used on a single map. You can not use 1 marker on two different maps.
 
 Don't forget to press the "Save map" button. After all these points you can see the result in the right top corner. Under the google map will show short code. Copy and paste the shortcode into your post or page and Google Maps Easy will automatically create the google map on your page using the settings you chose above.
 Important! Short code must be inserted in a text editor page, and not in the visual.
 
-= To install a plugin via FTP, you must = 
+= To install a Google Maps Easy plugin via FTP, you must = 
 
 1. Download the Google Maps Easy plugin
 2. Unarchive plugin google-maps-easy.zip
@@ -166,6 +166,11 @@ Copy and paste the shortcode into your post or page and Google Maps Easy will au
 6. Google Map Stylizations. Make your map unique with our Map Themes!
 
 == Changelog ==
+
+= 1.4.1 / 28.10.2015 =
+ * Add ability to load custom clustering map icons
+ * Add "Min Zoom Level" and "Max Zoom Level" google map options
+ * Minor issues fix
 
 = 1.4.0 / 20.10.2015 =
  * Add "Center on current user location" option - PRO
