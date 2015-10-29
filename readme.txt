@@ -56,7 +56,6 @@ You have an incredible opportunity to get PRO version for free. Just Make Transl
 
 Google Maps for WordPress are very useful these days usually in contact forms which showcase the correct location of the business or a place of interest. Google Map by Supsystic plugin require only location input to mark the point accurately as it will auto fetch the live map details from Google map. Marking different locations on the google map can be done easily with the google map marker options the plugin provides and that too with colorful icons for interaction on the google map. Route your journey across multiple travel location with google map plugin and you will start loving them. Add titles, description and much more details on your travel details on the map with the help of pointers.
 
-
 == Installation ==
 
 = First time Google Maps Easy user =
