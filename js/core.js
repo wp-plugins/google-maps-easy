@@ -205,7 +205,7 @@ function toeProcessAjaxResponseGmp(res, msgEl, form, sentFromForm, params) {
             if(msgEl) {
                 jQuery(msgEl).removeClass('gmpErrorMsg')
 					.addClass('gmpSuccessMsg');
-                for(var i in res.messages) {
+                for(var i = 0; i < res.messages.length; i++) {
                     jQuery(msgEl).append(res.messages[i]).append('<br />');
                 }
             }

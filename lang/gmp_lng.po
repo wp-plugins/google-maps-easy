@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Google Maps Easy\n"
-"POT-Creation-Date: 2015-10-30 12:47+0300\n"
-"PO-Revision-Date: 2015-10-30 12:47+0300\n"
+"POT-Creation-Date: 2015-11-09 20:00+0300\n"
+"PO-Revision-Date: 2015-11-09 20:00+0300\n"
 "Last-Translator: \n"
 "Language-Team: supsystic.com <supsystic.team@gmail.com>\n"
 "Language: en\n"
@@ -363,18 +363,6 @@ msgstr ""
 msgid "Open Full Screen"
 msgstr ""
 
-#: doc/google-maps-easy-pro/custom_controls/views/tpl/customMapControls.php:13
-msgid "+"
-msgstr ""
-
-#: doc/google-maps-easy-pro/custom_controls/views/tpl/customMapControls.php:25
-msgid "-"
-msgstr ""
-
-#: doc/google-maps-easy-pro/custom_controls/views/tpl/customMapControls.php:39
-msgid "?"
-msgstr ""
-
 #: doc/google-maps-easy-pro/custom_controls/views/tpl/customMapControls.php:50
 msgid "Search address..."
 msgstr ""
@@ -395,40 +383,36 @@ msgstr ""
 msgid "Search area have no markers, please try to modify search criterias."
 msgstr ""
 
-#: doc/google-maps-easy-pro/custom_controls/views/tpl/customMapControls.php:134
-msgid "f"
+#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:1
+msgid "Get Direction"
 msgstr ""
 
-#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:10
-msgid "Get Directions"
-msgstr ""
-
-#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:26
+#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:24
 msgid "Type the address..."
 msgstr ""
 
-#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:35
+#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:33
 msgid "or"
 msgstr ""
 
-#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:52
+#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:50
 #: modules/supsystic_promo/views/tpl/adminFooter.php:10
 msgid "Go"
 msgstr ""
 
-#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:67
+#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:65
 msgid "The Geolocation service failed."
 msgstr ""
 
-#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:73
+#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:71
 msgid "Your browser does not support geolocation."
 msgstr ""
 
-#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:79
+#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:77
 msgid "Route could not be found. Please, try to select another address!"
 msgstr ""
 
-#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:85
+#: doc/google-maps-easy-pro/directions/views/tpl/directionsBtn.php:83
 msgid "Please, select address from search list!"
 msgstr ""
 
@@ -558,7 +542,7 @@ msgid "Title"
 msgstr ""
 
 #: doc/google-maps-easy-pro/markers_list/views/tpl/mmlSliderTable.php:55
-msgid "Get Direction"
+msgid "Directions"
 msgstr ""
 
 #: doc/google-maps-easy-pro/wpUpdater.php:68
