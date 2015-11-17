@@ -373,6 +373,7 @@ gmpGoogleMarker.prototype.showInfoWnd = function() {
 		}
 		this._infoWindow.open(this._map.getRawMapInstance(), this._markerObj);
 		this._infoWndOpened = true;
+		this._changeMarkerInfoWndBgColor(this._map.getParam('marker_infownd_bg_color'));
 	}
 };
 gmpGoogleMarker.prototype.hideInfoWnd = function() {
@@ -451,6 +452,16 @@ gmpGoogleMarker.prototype._updateInfoWndContent = function() {
 			.html(description));
 	}
 	this._setInfoWndContent( contentStr );
+};
+gmpGoogleMarker.prototype._changeMarkerInfoWndBgColor = function(color) {
+	g_gmpMarkerBgColorTimeoutSet = false;
+
+	//This is a standart google maps api class
+	var markerContent = jQuery('.gm-style-iw');
+
+	markerContent.prev().children().last().css('background-color', color);
+	markerContent.prev().children(':nth-child(3)').children().last().prev().children().last().css('background-color', color);
+	markerContent.prev().children(':nth-child(3)').children().last().children().css('background-color', color);
 };
 /**
  * Just mark it as closed

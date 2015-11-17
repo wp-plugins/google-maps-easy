@@ -45,7 +45,8 @@ class gmapModelGmp extends modelGmp {
 					'type_control', 'zoom_control', 'street_view_control', 'pan_control', 'overview_control', 'draggable',
 					'dbl_click_zoom', 'mouse_wheel_zoom', 'map_type', 'map_stylization', 'marker_clasterer', 'marker_title_color',
 					'marker_infownd_width', 'marker_infownd_width_units', 'marker_infownd_height', 'marker_infownd_height_units',
-					'marker_clasterer_icon', 'marker_clasterer_icon_width', 'marker_clasterer_icon_height', 'zoom_min', 'zoom_max',
+					'marker_clasterer_icon', 'marker_clasterer_icon_width', 'marker_clasterer_icon_height', 'marker_infownd_bg_color',
+					'zoom_min', 'zoom_max',
 					// Maybe PRO params - but let them be here - to avoid dublications
 					'markers_list_type', 'markers_list_color',));
 		return $mapOptKeys;

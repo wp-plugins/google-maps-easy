@@ -6,7 +6,8 @@ var g_gmpMap = null
 ,	g_gmpMarkerFormChanged = false
 ,	g_gmpMapFormChanged = false
 ,	g_gmpMarkerTitleColorTimeoutSet = false
-,	g_gmpMarkerTitleColorLast = '';
+,	g_gmpMarkerTitleColorLast = ''
+,	g_gmpMarkerBgColorTimeoutSet = false;
 window.onbeforeunload = function(){
 	// If there are at lease one unsaved form - show message for confirnation for page leave
 	if(_gmpIsMapFormChanged()) {
@@ -991,5 +992,20 @@ function wpColorPicker_map_optscustom_controls_bg_color_change(event, ui) {
 function wpColorPicker_map_optscustom_controls_txt_color_change(event, ui) {
 	if(!GMP_DATA.isPro) {
 		jQuery('#gmpMapForm [name="map_opts[custom_controls_txt_color]"]').trigger('change');
+	}
+}
+function wpColorPicker_map_optsmarker_infownd_bg_color_change(event, ui) {
+	//If map has no markers return
+	if(!g_gmpMap._markers[0]) return;
+
+	var color = ui.color.toString();
+	if(!g_gmpMarkerBgColorTimeoutSet) {
+		setTimeout(function(){
+			var color = ui.color.toString();
+			g_gmpMap.setParam('marker_infownd_bg_color', color);
+			//This callback does not depend from marker id
+			g_gmpMap._markers[0]._changeMarkerInfoWndBgColor(color);
+		}, 500);
+		g_gmpMarkerBgColorTimeoutSet = true;
 	}
 }

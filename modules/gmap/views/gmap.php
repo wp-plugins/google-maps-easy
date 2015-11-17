@@ -190,7 +190,6 @@ class gmapViewGmp extends viewGmp {
 		frameGmp::_()->addScript('google_maps_api', $this->getApiUrl(). '&language='. $params['language']);
 		frameGmp::_()->addScript('core.gmap', $this->getModule()->getModPath(). 'js/core.gmap.js');
 		frameGmp::_()->addStyle('core.gmap', $this->getModule()->getModPath(). 'css/core.gmap.css');
-		frameGmp::_()->getModule('templates')->loadFontAwesome();
 		if((isset($params['marker_clasterer']) && $params['marker_clasterer'] != 'none') || $forAdminArea) {
 			frameGmp::_()->addScript('core.markerclusterer', $this->getModule()->getModPath(). 'js/core.markerclusterer.min.js');
 		}

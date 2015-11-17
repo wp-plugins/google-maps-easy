@@ -755,6 +755,18 @@
 								</tr>
 								<tr>
 									<th scope="row">
+										<label for="map_opts_marker_infownd_bg_color">
+											<?php _e('Markers Info Window Background', GMP_LANG_CODE)?>:
+										</label>
+										<i style="float: right;" class="fa fa-question supsystic-tooltip" title="<?php _e('Background color of markers info windows.', GMP_LANG_CODE)?>"></i>
+									</th>
+									<td>
+										<?php echo htmlGmp::colorpicker('map_opts[marker_infownd_bg_color]', array(
+											'value' => $this->editMap && isset($this->map['params']['marker_infownd_bg_color']) ? $this->map['params']['marker_infownd_bg_color'] : '#FFFFFF'))?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
 										<label for="map_opts_zoom_min" class="sup-medium-label">
 											<?php _e('Min Zoom Level', GMP_LANG_CODE)?>:
 										</label>
